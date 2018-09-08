@@ -1,9 +1,9 @@
 import Complex from 'complex.js';
 
-import { buildConstrainedColorMap, makeColorMapFunction } from '../utils/color';
-import { createImage, mapPixelToDomain, saveImage, readImage, getPictureSize } from '../utils/picture';
+import { readImage, getPictureSize, mapPixelToDomain, createImage, saveImage } from '../utils/picture';
 import { mandelbrot, MANDELBROT_DOMAIN, continuousMandelbrot, orbitTrapMandelbrot, MULTIBROT_DOMAIN } from '../fractalsets/mandelbrot';
 import { makeBitmapTrap } from '../fractalsets/trap';
+import { makeColorMapFunction, buildConstrainedColorMap } from '../utils/color';
 
 const colormap = buildConstrainedColorMap(
   [[0, 7, 100], [32, 107, 203], [237, 255, 255], [255, 170, 0], [0, 2, 0], [0, 7, 0]],

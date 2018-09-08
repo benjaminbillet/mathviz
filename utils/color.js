@@ -98,6 +98,16 @@ export const makeColorMapFunction = (map) => {
   return x => pickColorMapValue(x, map);
 }
 
+export const buildSteppedColorMap = (colors, positions, steps = 1024) => {
+  let current = 0;
+  return new Array(steps).fill(0).map((_, i) => {
+    if (current < (colors.length - 1) && i / steps > positions[current]) {
+      current++;
+    }
+    return colors[current];
+  });
+};
+
 
 /** Common maps */
 export const RAINBOW_COLORMAP = buildColorMap([[255, 0, 0], [0, 255, 0], [0, 0, 255]]);

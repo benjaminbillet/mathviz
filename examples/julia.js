@@ -1,9 +1,39 @@
 import Complex from 'complex.js';
 
-import { readImage, getPictureSize } from '../utils/picture';
+import { readImage, getPictureSize, mapPixelToDomain, createImage, saveImage } from '../utils/picture';
 import { julia, JULIA_DOMAIN, continuousJulia, orbitTrapJulia } from '../fractalsets/julia';
 import { makeBitmapTrap } from '../fractalsets/trap';
-import { plotFunction } from './mandelbrot';
+import { makeColorMapFunction, buildConstrainedColorMap } from '../utils/color';
+
+const colormap = buildConstrainedColorMap(
+  [[0, 7, 100], [32, 107, 203], [237, 255, 255], [255, 170, 0], [0, 2, 0], [0, 7, 0]],
+  [0, 0.16, 0.42, 0.6425, 0.8575, 1],
+);
+const colorfunc = makeColorMapFunction(colormap);
+
+export const plotFunction = async (path, width, height, f, domain) => {
+  const image = createImage(width, height);
+  const buffer = image.getImage().data;
+
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height; j++) {
+      const [x, y] = mapPixelToDomain(i, j, width, height, domain);
+
+      let color = f(new Complex(x, y));
+      if (color.length == null) {
+        color = colorfunc(color);
+      }
+
+      const idx = (i + j * width) * 4;
+      buffer[idx + 0] = color[0];
+      buffer[idx + 1] = color[1];
+      buffer[idx + 2] = color[2];
+      buffer[idx + 3] = 255;
+    }
+  }
+
+  await saveImage(image, path);
+};
 
 const plotJulia = async (c, d, maxIterations, domain) => {
   const [width, height] = getPictureSize(1024, domain)
