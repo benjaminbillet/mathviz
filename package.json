@@ -1,0 +1,26 @@
+{
+  "name": "mathviz",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "execute": "babel-node",
+    "transpile": "babel . --ignore ./node_modules,./generated --out-dir ./generated"
+  },
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-preset-env": "1.7.0",
+    "eslint": "4.8.0",
+    "eslint-config-airbnb": "16.0.0",
+    "eslint-plugin-import": "2.7.0"
+  },
+  "dependencies": {
+    "color": "3.0.0",
+    "complex.js": "2.0.11",
+    "d3-interpolate": "1.2.0",
+    "d3-random": "1.1.0",
+    "google-palette": "1.1.0",
+    "mathjs": "5.1.0",
+    "parcel-bundler": "1.9.7",
+    "pngjs-image": "0.11.7"
+  }
+}
