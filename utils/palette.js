@@ -116,5 +116,3 @@ export const expandPalette = (palette, nbColors) => {
   }
   return palette;
 };
-
-console.log(getTonePalette([ 	1, 35, 69], 13))
