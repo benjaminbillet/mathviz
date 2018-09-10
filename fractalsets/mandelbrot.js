@@ -20,12 +20,12 @@ export const mandelbrot = (u, d = 2, maxIterations = 100) => {
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= 4 && iterations < maxIterations) {
     zn = zn.pow(d).add(u);
-  
+
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;
   }
 
-  // the number of iterations represent the "speed" at which the magnitude of the zₙ 
+  // the number of iterations represent the "speed" at which the magnitude of the zₙ
   // sequence exceeds the bailout radius
   return iterations / maxIterations;
 };
@@ -37,11 +37,11 @@ export const continuousMandelbrot = (u, d = 2, maxIterations = 100) => {
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= 4 && iterations < maxIterations) {
     zn = zn.pow(d).add(u);
-  
+
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;
   }
-  
+
   if (iterations === maxIterations) {
     return 1;
   }
@@ -58,7 +58,7 @@ export const orbitTrapMandelbrot = (u, trap, d = 2, maxIterations = 100) => {
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= 4 && iterations < maxIterations) {
     zn = zn.pow(d).add(u);
-  
+
     // if the point is trapped, we return the interpolated value from the trap
     if (trap.isTrapped(zn)) {
       return trap.interpolateTrap(zn);
@@ -67,7 +67,7 @@ export const orbitTrapMandelbrot = (u, trap, d = 2, maxIterations = 100) => {
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;
   }
-  
+
   return trap.untrappedValue;
 };
 

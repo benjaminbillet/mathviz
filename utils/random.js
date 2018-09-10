@@ -107,18 +107,18 @@ export const makeCumulative = (distribution) => {
 
 export const makeGaussian = (sigma = 1, mu = 0) => {
   const twoSigmaSquared = 2 * sigma * sigma;
-  const oneOverSqrtOfTwoPiSigmaSquared  = 1 / Math.sqrt(twoSigmaSquared * Math.PI);
+  const oneOverSqrtOfTwoPiSigmaSquared = 1 / Math.sqrt(twoSigmaSquared * Math.PI);
   return (x) => {
     const d = Math.pow(x - mu, 2);
-    return oneOverSqrtOfTwoPiSigmaSquared * Math.exp(-d / twoSigmaSquared)
+    return oneOverSqrtOfTwoPiSigmaSquared * Math.exp(-d / twoSigmaSquared);
   };
 };
 
 export const makeGaussian2d = (sigma = 1, xmu = 0, ymu = 0) => {
   const twoSigmaSquared = 2 * sigma * sigma;
-  const oneOverTwoPiSigmaSquared  = 1 / (twoSigmaSquared * Math.PI);
+  const oneOverTwoPiSigmaSquared = 1 / (twoSigmaSquared * Math.PI);
   return (x, y) => {
     const d = Math.pow(x - xmu, 2) + Math.pow(y - ymu, 2);
-    return oneOverTwoPiSigmaSquared * Math.exp(-d / twoSigmaSquared)
+    return oneOverTwoPiSigmaSquared * Math.exp(-d / twoSigmaSquared);
   };
 };

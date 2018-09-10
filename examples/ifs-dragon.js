@@ -1,6 +1,17 @@
 import { simpleIfsChaosPlot } from '../ifs/chaos-game';
-import { GOLDEN_DRAGON_DOMAIN, HEIGHWAY_DRAGON_DOMAIN, makeHeighwayDragonIfs, makeGoldenDragonIfs, makeTwinDragonIfs, TWIN_DRAGON_DOMAIN, makeTerdragonIfs, TERDRAGON_DOMAIN, FUDGEFLAKE_DOMAIN, makeFudgeFlake, Z2_HEIGHWAY_DRAGON_DOMAIN, makeZ2HeighwayDragonIfs } from '../ifs/heighway-dragon';
-import { makeAffine2dFromMatrix, rotate, combine } from '../utils/affine';
+import {
+  GOLDEN_DRAGON_DOMAIN,
+  HEIGHWAY_DRAGON_DOMAIN,
+  makeHeighwayDragonIfs,
+  makeGoldenDragonIfs,
+  makeTwinDragonIfs,
+  TWIN_DRAGON_DOMAIN,
+  makeTerdragonIfs,
+  TERDRAGON_DOMAIN,
+  FUDGEFLAKE_DOMAIN,
+  makeFudgeFlake,
+} from '../ifs/heighway-dragon';
+import { makeAffine2dFromMatrix, rotate } from '../utils/affine';
 import { createImage, saveImage } from '../utils/picture';
 
 const plot = async (path, width, height, ifs, domain, iterations) => {
@@ -29,9 +40,6 @@ ifs = makeGoldenDragonIfs();
 plot('golden-dragon.png', 512, 512, ifs, GOLDEN_DRAGON_DOMAIN, 1000000);
 
 
-
-
-
 // example of multi-plotting, with 4 rotated dragons
 
 const plot2 = async (path, width, height, ifs, finalTransforms, domain, iterations) => {
@@ -40,7 +48,7 @@ const plot2 = async (path, width, height, ifs, finalTransforms, domain, iteratio
 
   // we plot all the dragon in the same buffer, one for each defined final transformations
   finalTransforms.forEach(f => simpleIfsChaosPlot(buffer, width, height, ifs, f, domain, iterations));
-  
+
   await saveImage(image, path);
 };
 

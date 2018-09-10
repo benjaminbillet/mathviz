@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import { mapDomainToPixel } from "../utils/picture";
+import { mapDomainToPixel } from '../utils/picture';
 
 export const makeBitmapTrap = (bitmap, bitmapWidth, bitmapHeight, trapWidth, trapHeight, x, y ) => {
   const xmin = x - trapWidth / 2;

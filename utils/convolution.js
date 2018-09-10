@@ -1,67 +1,67 @@
-import { clamp, clampInt } from "./misc";
-import { makeGaussian2d } from "./random";
+import { clamp, clampInt } from './misc';
+import { makeGaussian2d } from './random';
 
-export const SHARPEN_3x3_KERNEL = [
+export const Sharpen3x3Kernel = [
   0,  -1,  0,
   -1,  5, -1,
   0,  -1,  0,
 ];
 
-export const AVG_BLUR_3x3_KERNEL = [
+export const AvgBlur3x3Kernel = [
   1/9, 1/9, 1/9,
   1/9, 1/9, 1/9,
   1/9, 1/9, 1/9,
 ];
 
-export const ENHANCE_EDGES_3x3_KERNEL = [
+export const EnhanceEdges3x3Kernel = [
   0,  0, 0,
   -1, 1, 0,
   0,  0, 0,
 ];
 
-export const OUTLINE_3x3_KERNEL = [
+export const Outline3x3Kernel = [
   -1, -1, -1,
   -1,  8, -1,
   -1, -1, -1,
 ];
 
-export const EDGE_DETECT_3x3_KERNEL = [
+export const EdgeDetect3x3Kernel = [
   0,  1, 0,
   1, -4, 1,
   0,  1, 0,
 ];
 
-export const EMBOSS_3x3_KERNEL = [
+export const Emboss3x3Kernel = [
   -2, -1, 0,
   -1,  1, 1,
   0,   1, 2,
 ];
 
-export const SOBEL_VERTICAL_3x3_KERNEL = [
+export const SobelVertical3x3Kernel = [
   -1, 0, 1,
   -2, 0, 2,
   -1, 0, 1,
 ];
 
-export const SOBEL_HORIZONTAL_3x3_KERNEL = [
+export const SobelHorizontal3x3Kernel = [
   -1, -2, -1,
   0,   0,  0,
   1,   2,  1,
 ];
 
-export const LIGHTEN_3x3_KERNEL = [
+export const Lighten3x3Kernel = [
   0, 0,    0,
   0, 12/9, 0,
   0, 0,    0,
 ];
 
-export const DARKEN_3x3_KERNEL = [
+export const Darken3x3Kernel = [
   0, 0,   0,
   0, 6/9, 0,
   0, 0,   0,
 ];
 
-/*export const makeEpanechnikovKernel = (size = 3) => {
+/* export const makeEpanechnikovKernel = (size = 3) => {
   const kernel = new Array(size);
   const halfSize = Math.trunc(size / 2);
   const reverseSize = 1 / size;
@@ -116,7 +116,7 @@ export const convolve = (input, output, width, height, kern, divisor = 1, offset
           const x2 = clamp(x + kx - kernHalfSize, 0, width - 1);
           const y2 = clamp(y + ky - kernHalfSize, 0, height - 1);
           const idx2 = (x2 + y2 * width) * 4;
-          const kidx = kx  + (ky * kernSize);
+          const kidx = kx + (ky * kernSize);
 
           r += input[idx2 + 0] * kern[kidx];
           g += input[idx2 + 1] * kern[kidx];
@@ -132,7 +132,7 @@ export const convolve = (input, output, width, height, kern, divisor = 1, offset
   return output;
 };
 
-/*export const densityAdaptiveConvolve = (input, output, width, height, maxKernelSize = 5, offset = 0) => {
+/* export const densityAdaptiveConvolve = (input, output, width, height, maxKernelSize = 5, offset = 0) => {
   const filtersPerSize = {};
   let divisor = 1;
   for (let x = 0; x < width; x++) {

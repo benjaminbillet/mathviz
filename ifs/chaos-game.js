@@ -10,7 +10,7 @@ import Complex from 'complex.js';
 
 import { mapDomainToPixel } from '../utils/picture';
 import { randomIntegerWeighted } from '../utils/random';
-import { pickColorMapValue, RAINBOW_COLORMAP } from '../utils/color';
+import { pickColorMapValue, RainbowColormap } from '../utils/color';
 
 export const simpleIfsChaosPlot = (buffer, width, height, ifs, finalTransform, domain, iterations) => {
   // we get the list of functions and the associated probabilities
@@ -34,7 +34,7 @@ export const simpleIfsChaosPlot = (buffer, width, height, ifs, finalTransform, d
     }
 
     // ... then the transformed value is mapped to the pixel domain
-    const [x, y] = mapDomainToPixel(finalZ.re, finalZ.im, domain, width, height);
+    const [ x, y ] = mapDomainToPixel(finalZ.re, finalZ.im, domain, width, height);
 
     // pixels that are outside the image are discarded
     if (x < 0 || y < 0 || x >= width || y >= height) {
@@ -42,7 +42,7 @@ export const simpleIfsChaosPlot = (buffer, width, height, ifs, finalTransform, d
     }
 
     // we apply a different color to the point, depending on which function is selected
-    const color = pickColorMapValue(selected / functions.length, RAINBOW_COLORMAP);
+    const color = pickColorMapValue(selected / functions.length, RainbowColormap);
 
     // the buffer is 1-dimensional and each pixel has 4 components (r, g, b, a)
     const idx = (x + y * width) * 4;
@@ -60,7 +60,7 @@ export const simpleWalkChaosPlot = (buffer, width, height, walk, finalTransform,
   for (let i = 0; i < iterations; i++) {
     // at each iteration we get the next step of the random walk...
     zn = walk(zn);
-  
+
     // ... we apply an optional final transform that will not be part of the walk...
     let finalZ = zn;
     if (finalTransform) {
@@ -68,7 +68,7 @@ export const simpleWalkChaosPlot = (buffer, width, height, walk, finalTransform,
     }
 
     // ... then the destination is mapped to the pixel domain
-    const [x, y] = mapDomainToPixel(finalZ.re, finalZ.im, domain, width, height);
+    const [ x, y ] = mapDomainToPixel(finalZ.re, finalZ.im, domain, width, height);
 
     // pixels that are outside the image are discarded
     if (x < 0 || y < 0 || x >= width || y >= height) {

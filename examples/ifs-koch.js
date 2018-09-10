@@ -12,7 +12,7 @@ const plot = async (path, width, height, ifs, domain, iterations) => {
   await saveImage(image, path);
 };
 
-/*const plotTransformedGrid = async (path, width, height, ifs, domain) => {
+/* const plotTransformedGrid = async (path, width, height, ifs, domain) => {
   const image = createImage(width, height, 0, 0, 0, 255);
   const buffer = image.getImage().data;
 
@@ -36,9 +36,9 @@ const plot = async (path, width, height, ifs, domain, iterations) => {
         if (fx < 0 || fy < 0 || fx >= width || fy >= height) {
           return;
         }
-        
+
         // the pixel color will be based on the ifs
-        const color = pickColorMapValue(i / ifs.functions.length, RAINBOW_COLORMAP);
+        const color = pickColorMapValue(i / ifs.functions.length, RainbowColormap);
 
         // the buffer is 1-dimensional and each pixel has 4 components (r, g, b, a)
         const idx = (fx + fy * width) * 4;

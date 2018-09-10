@@ -6,7 +6,6 @@
 
 // Note: in the zₙ₊₁ = zₙ² + c sequence, zₙ² can be replaced by zₙᵈ (d > 2) to create multijulia sets.
 
-
 export const julia = (z0, c, d = 2, maxIterations = 100) => {
   let zn = z0;
 
@@ -18,12 +17,12 @@ export const julia = (z0, c, d = 2, maxIterations = 100) => {
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= 4 && iterations < maxIterations) {
     zn = zn.pow(d).add(c);
-  
+
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;
   }
 
-  // the number of iterations represent the "speed" at which the magnitude of the zₙ 
+  // the number of iterations represent the "speed" at which the magnitude of the zₙ
   // sequence exceeds the bailout radius
   return iterations / maxIterations;
 };
@@ -35,11 +34,11 @@ export const continuousJulia = (z0, c, d = 2, maxIterations = 100) => {
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= 4 && iterations < maxIterations) {
     zn = zn.pow(d).add(c);
-  
+
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;
   }
-  
+
   if (iterations === maxIterations) {
     return 1;
   }
@@ -56,7 +55,7 @@ export const orbitTrapJulia = (z0, c, trap, d = 2, maxIterations = 100) => {
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= 4 && iterations < maxIterations) {
     zn = zn.pow(d).add(c);
-  
+
     // if the point is trapped, we return the interpolated value from the trap
     if (trap.isTrapped(zn)) {
       return trap.interpolateTrap(zn);
@@ -65,7 +64,7 @@ export const orbitTrapJulia = (z0, c, trap, d = 2, maxIterations = 100) => {
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;
   }
-  
+
   return trap.untrappedValue;
 };
 

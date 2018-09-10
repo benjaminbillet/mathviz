@@ -17,12 +17,7 @@ export const makePythagoreanTree = (alpha = Math.PI/4) => {
     affine.scale(sinAlpha, sinAlpha),
   ));
   const f3 = (z) => z; // identity
-  return makeIfs([
-    f1, f2,
-    //affine.makeAffine2dFromCoeffs([cosAlpha * cosAlpha, -cosAlpha * sinAlpha, 0, cosAlpha * sinAlpha, cosAlpha * cosAlpha, 1]),
-    //affine.makeAffine2dFromCoeffs([sinAlpha * sinAlpha, cosAlpha * sinAlpha, cosAlpha * cosAlpha, -cosAlpha * sinAlpha, sinAlpha * sinAlpha, 1 + cosAlpha * sinAlpha]),
-    f3
-  ], [1/3, 1/3, 1/3]);
+  return makeIfs([ f1, f2, f3 ], [ 1/3, 1/3, 1/3 ]);
 };
 
 

@@ -9,27 +9,25 @@ export const makeCustom = (z0, f, bailoutRadiusSquared = 4, maxIterations = 100)
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= bailoutRadiusSquared && iterations < maxIterations) {
     zn = f(zn);
-  
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;
   }
 
-  // the number of iterations represent the "speed" at which the magnitude of the zₙ 
+  // the number of iterations represent the "speed" at which the magnitude of the zₙ
   // sequence exceeds the bailout radius
   return iterations / maxIterations;
 };
 
-export const makeContinuousCustom = (z0, f, bailoutRadiusSquared = 4, maxIterations = 100) => {
+export const makeContinuousCustom = (z0, f, d = 2, bailoutRadiusSquared = 4, maxIterations = 100) => {
   let zn = z0;
   let iterations = 0;
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= bailoutRadiusSquared && iterations < maxIterations) {
     zn = f(zn);
-  
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;
   }
-  
+
   if (iterations === maxIterations) {
     return 1;
   }
@@ -46,7 +44,7 @@ export const makeOrbitTrapCustom = (z0, f, trap, bailoutRadiusSquared = 4, maxIt
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= bailoutRadiusSquared && iterations < maxIterations) {
     zn = f(zn);
-  
+
     // if the point is trapped, we return the interpolated value from the trap
     if (trap.isTrapped(zn)) {
       return trap.interpolateTrap(zn);
@@ -55,6 +53,6 @@ export const makeOrbitTrapCustom = (z0, f, trap, bailoutRadiusSquared = 4, maxIt
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;
   }
-  
+
   return trap.untrappedValue;
 };

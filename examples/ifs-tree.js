@@ -3,7 +3,6 @@ import { createImage, saveImage } from '../utils/picture';
 import { makePythagoreanTree, PYTHAGOREAN_TREE_DOMAIN } from '../ifs/pythagorean-tree';
 import { makeBinaryTree, BINARY_TREE_DOMAIN } from '../ifs/binary-tree';
 
-
 const plot = async (path, width, height, ifs, domain, iterations) => {
   const image = createImage(width, height);
   const buffer = image.getImage().data;

@@ -36,25 +36,25 @@ export const plotFunction = async (path, width, height, f, domain) => {
 };
 
 const plotMandelbar = async (d, maxIterations, domain) => {
-  const [width, height] = getPictureSize(1024, domain)
+  const [width, height] = getPictureSize(1024, domain);
   const configuredMandelbar = (z) => mandelbar(z, d, maxIterations);
   await plotFunction(`mandelbar-d=${d}.png`, width, height, configuredMandelbar, domain);
-}
+};
 
 const plotContinuousMandelbar = async (d, maxIterations, domain) => {
-  const [width, height] = getPictureSize(1024, domain)
+  const [width, height] = getPictureSize(1024, domain);
   const configuredMandelbar = (z) => continuousMandelbar(z, d, maxIterations);
   await plotFunction(`mandelbar-d=${d}-continuous.png`, width, height, configuredMandelbar, domain);
-}
+};
 
 const plotBitmapTrapMandelbar = async (bitmapPath, trapSize, d, maxIterations, domain) => {
   const bitmap = await readImage(bitmapPath);
-  const trap = makeBitmapTrap(bitmap.getImage().data, bitmap.getWidth(), bitmap.getHeight(), trapSize, trapSize, 0, 0)
+  const trap = makeBitmapTrap(bitmap.getImage().data, bitmap.getWidth(), bitmap.getHeight(), trapSize, trapSize, 0, 0);
 
   const [width, height] = getPictureSize(1024, domain);
   const configuredMandelbar = (z) => orbitTrapMandelbar(z, trap, d, maxIterations);
   await plotFunction(`mandelbar-d=${d}-trap.png`, width, height, configuredMandelbar, domain);
-}
+};
 
 plotMandelbar(2, 100, MANDELBAR_DOMAIN);
 plotMandelbar(4, 100, MANDELBAR_DOMAIN);

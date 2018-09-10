@@ -8,10 +8,10 @@
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
+    "babel-eslint": "9.0.0",
     "babel-preset-env": "1.7.0",
-    "eslint": "4.8.0",
-    "eslint-config-airbnb": "16.0.0",
-    "eslint-plugin-import": "2.7.0"
+    "eslint": "5.5.0",
+    "eslint-config-google": "0.10.0"
   },
   "dependencies": {
     "color": "3.0.0",
@@ -20,7 +20,6 @@
     "d3-random": "1.1.0",
     "google-palette": "1.1.0",
     "mathjs": "5.1.0",
-    "parcel-bundler": "1.9.7",
     "pngjs-image": "0.11.7"
   }
 }

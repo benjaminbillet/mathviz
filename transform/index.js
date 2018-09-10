@@ -36,6 +36,7 @@ export { makeShear} from './shear';
 export { makeTranslation} from './translation';
 export { makeScale} from './scale';
 export { makeIdentity} from './identity';
+export { makeCircle } from './circle';
 export { makeHypocycloid} from './hypocycloid';
 export { makeJuliaScope} from './juliaScope';
 export { makeIteratedMandelbrot} from './iteratedMandelbrot';

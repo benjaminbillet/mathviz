@@ -1,5 +1,5 @@
-import { makeAffine2d } from "../utils/affine";
-import { compose2dFunctions } from "../utils/misc";
+import { makeAffine2d } from '../utils/affine';
+import { compose2dFunctions } from '../utils/misc';
 
 export const addAffineFunction = (ifs, coeffs, p) => {
   return addFunction(ifs, makeAffine2d(coeffs), p);

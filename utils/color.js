@@ -13,12 +13,12 @@ export const applyContrastBasedScalefactor = (buffer, width, height, luminanceMe
     for (let j = 0; j < height; j++) {
       const idx = (i + j * width) * 4;
       const luminance = getLuminance(buffer[idx], buffer[idx + 1], buffer[idx + 2]) / luminanceMean;
-      logSum += Math.log(Math.max(luminance, 0.0001))
+      logSum += Math.log(Math.max(luminance, 0.0001));
     }
   }
 
   const logAverage = Math.pow(10, (logSum / (width * height)));
-  
+
   // scale factor, as described in 'A Contrast-Based Scalefactor for Luminance Display'
   // http://gaia.lbl.gov/btech/papers/35252.pdf
   const scalefactor = Math.pow(SCALEFACTOR_NUMERATOR / (1.219 + Math.pow(logAverage, 0.4)), 2.5) / DISPLAY_LUMINANCE_MAX;
@@ -69,7 +69,7 @@ const interpolatePositions = (x, positions) => {
       return start + percentRange * (x - val1) / valRange;
     }
   }
-}
+};
 
 export const buildConstrainedColorMap = (colors, posFunction, steps = 1024) => {
   const rgbColors = colors.map(color => D3Color.rgb(...color));
@@ -79,7 +79,7 @@ export const buildConstrainedColorMap = (colors, posFunction, steps = 1024) => {
     f1 = x => x;
   } else if (Array.isArray(posFunction)) {
     const positions = posFunction;
-    f1 = (x) => interpolatePositions(x, positions)
+    f1 = (x) => interpolatePositions(x, positions);
   }
   const f2 = D3Interpolate.interpolateRgbBasis(rgbColors);
   const colormap = D3Interpolate.quantize(x => f2(f1(x)), steps);
@@ -96,7 +96,7 @@ export const pickColorMapValue = (x, map) => {
 
 export const makeColorMapFunction = (map) => {
   return x => pickColorMapValue(x, map);
-}
+};
 
 export const buildSteppedColorMap = (colors, positions, steps = 1024) => {
   let current = 0;
@@ -110,4 +110,4 @@ export const buildSteppedColorMap = (colors, positions, steps = 1024) => {
 
 
 /** Common maps */
-export const RAINBOW_COLORMAP = buildColorMap([[255, 0, 0], [0, 255, 0], [0, 0, 255]]);
+export const RainbowColormap = buildColorMap([ [ 255, 0, 0 ], [ 0, 255, 0 ], [ 0, 0, 255 ] ]);

@@ -1,12 +1,21 @@
 import { saveImage, createImage } from '../utils/picture';
 import { buildColorMap, buildConstrainedColorMap } from '../utils/color';
-import { getTolDivergentPalette, getBigQualitativePalette, getTolSequentialPalette, getAnalogousPalette, getTriadicColors, getTetradicColors, getComplementaryColors, getSplitComplementaryColors } from '../utils/palette';
+import {
+  getTolDivergentPalette,
+  getBigQualitativePalette,
+  getTolSequentialPalette,
+  getAnalogousPalette,
+  getTriadicColors,
+  getTetradicColors,
+  getComplementaryColors,
+  getSplitComplementaryColors,
+} from '../utils/palette';
 
 const plotColorMap = async (colormap, name = '') => {
   // each color will be represented by a 1x100 vertical line
   const image = createImage(colormap.length, 100);
   const buffer = image.getImage().data;
- 
+
   colormap.forEach((color, i) => {
     for (let j = 0; j < image.getHeight(); j++) {
       // the buffer is 1-dimensional and each pixel has 4 components (r, g, b, a)
