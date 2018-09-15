@@ -1,12 +1,8 @@
 import Complex from 'complex.js';
+import fs from 'fs';
 import { randomScalar } from '../utils/random';
 
-export const makeNgon = (power, sides, corners, circle) => {
-  power = power == null ? randomScalar(1, 10) : power;
-  sides = sides == null ? randomScalar(1, 10) : sides;
-  corners = corners == null ? randomScalar(-1, 1) : corners;
-  circle = circle == null ? randomScalar(-1, 1) : circle;
-
+export const makeNgonFunction = (power, sides, corners, circle) => {
   const piOverSides = Math.PI / sides;
   const twoPiOverSides = 2 * piOverSides;
   return (z) => {
@@ -22,3 +18,11 @@ export const makeNgon = (power, sides, corners, circle) => {
   };
 };
 
+export const makeNgon = (file) => {
+  const power = randomScalar(1, 10);
+  const sides = randomScalar(1, 10);
+  const corners = randomScalar(-1, 1);
+  const circle = randomScalar(-1, 1);
+  fs.appendFileSync(file, `makeNgonFunction(${power}, ${sides}, ${corners}, ${circle})\n`);
+  return makeNgonFunction(power, sides, corners, circle);
+};

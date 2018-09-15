@@ -2,6 +2,16 @@ import Complex from 'complex.js';
 import math, { matrix } from 'mathjs';
 
 
+export const applyAffine2dFromMatrix = (matrix, x, y) => {
+  const a11 = matrix.get([ 0, 0 ]);
+  const a12 = matrix.get([ 0, 1 ]);
+  const a13 = matrix.get([ 0, 2 ]);
+  const a21 = matrix.get([ 1, 0 ]);
+  const a22 = matrix.get([ 1, 1 ]);
+  const a23 = matrix.get([ 1, 2 ]);
+  return [ a11 * x + a12 * y + a13, a21 * x + a22 * y + a23 ];
+};
+
 export const makeAffine2dFromCoeffs = (coeffs) => {
   return (z) => new Complex(coeffs[0] * z.re + coeffs[1] * z.im + coeffs[2], coeffs[3] * z.re + coeffs[4] * z.im + coeffs[5]);
 };
@@ -13,8 +23,15 @@ export const makeAffine2dFromMatrix = (matrix) => {
   const a21 = matrix.get([ 1, 0 ]);
   const a22 = matrix.get([ 1, 1 ]);
   const a23 = matrix.get([ 1, 2 ]);
-  console.log(a11, a12, a13, a21, a22, a23);
   return (z) => new Complex(a11 * z.re + a12 * z.im + a13, a21 * z.re + a22 * z.im + a23);
+};
+
+export const identity = () => {
+  return matrix([
+    [ 1, 0, 0 ],
+    [ 0, 1, 0 ],
+    [ 0, 0, 1 ],
+  ]);
 };
 
 export const scale = (x = 1, y = 1) => {
@@ -74,5 +91,5 @@ export const reflect = (x = true, y = true) => {
 };
 
 export const combine = (...matrices) => {
-  return matrices.reduce((result, m) => math.multiply(result, m), math.identity(3));
+  return matrices.reduce((result, m) => math.multiply(result, m), identity(3));
 };

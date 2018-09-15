@@ -1,9 +1,8 @@
 import Complex from 'complex.js';
+import fs from 'fs';
 import { randomInteger, randomScalar } from '../utils/random';
 
-export const makeJuliaScope = (power, dist) => {
-  power = power == null ? randomInteger(5, 10) : power;
-  dist = dist == null ? randomScalar(2, 4) : dist;
+export const makeJuliaScopeFunction = (power, dist) => {
   const ratio = dist / power;
   return (z) => {
     const r = Math.pow(z.abs(), ratio);
@@ -13,5 +12,12 @@ export const makeJuliaScope = (power, dist) => {
     }
     t = (t * Math.atan2(z.im, z.re) + 2 * Math.PI * Math.trunc(power * Math.random())) / power;
     return new Complex(Math.cos(t) * r, Math.sin(t) * r);
-  }
+  };
+};
+
+export const makeJuliaScope = (file) => {
+  const power = randomInteger(5, 10);
+  const dist = randomScalar(2, 4);
+  fs.appendFileSync(file, `makeJuliaScopeFunction(${power}, ${dist})\n`);
+  return makeJuliaScopeFunction(power, dist);
 };

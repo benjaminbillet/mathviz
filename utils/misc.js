@@ -14,3 +14,10 @@ export const compose2dFunctionsRandom = (functions, randomIntFunction) => {
   return (z) => functions[randomIntFunction()](z);
 };
 
+export const toRadian = (degrees) => {
+  return degrees * Math.PI / 180;
+};
+
+export const toDegree = (radian) => {
+  return radian * 180 / Math.PI;
+};
