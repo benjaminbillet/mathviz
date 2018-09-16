@@ -1,28 +1,29 @@
 import Complex from 'complex.js';
 import fs from 'fs';
-import { randomScalar, randomInteger } from '../utils/random';
+import { randomInteger } from '../utils/random';
+import math from '../utils/math';
 
-export const makeHypocycloidFunction = (r, k) => {
+export const makeHypocycloidFunction = (k) => {
+  const r = 1 / k;
   k = k - 1;
   return (z) => {
-    const theta = Math.atan2(z.re, z.im);
-    const cosTheta = Math.cos(theta);
-    const sinTheta = Math.sin(theta);
-    const x = r * (k * cosTheta + Math.cos(k * theta));
-    const y = r * (k * sinTheta - Math.sin(k * theta));
+    const theta = math.atan2(z.im, z.re);
+    const cosTheta = math.cos(theta);
+    const sinTheta = math.sin(theta);
+    const x = r * (k * cosTheta + math.cos(k * theta));
+    const y = r * (k * sinTheta - math.sin(k * theta));
 
     const xSquared = z.re * z.re;
     const ySquared = z.im * z.im;
-    const r2 = Math.sqrt((xSquared * (1 - 0.5 * ySquared) + ySquared * (1 - 0.5 * xSquared)) * (x * x + y * y));
-    const theta2 = Math.atan2(x, y);
+    const r2 = math.sqrt((xSquared * (1 - 0.5 * ySquared) + ySquared * (1 - 0.5 * xSquared)) * (x * x + y * y));
+    const theta2 = math.atan2(y, x);
 
-    return new Complex(r2 * Math.cos(theta2), r2 * Math.sin(theta2));
+    return new Complex(r2 * math.cos(theta2), r2 * math.sin(theta2));
   };
 };
 
 export const makeHypocycloid = (file) => {
-  const r = randomScalar(0.1, 0.5);
-  const k = randomInteger(2, 10);
-  fs.appendFileSync(file, `makeHypocycloidFunction(${r}, ${k})\n`);
-  return makeHypocycloidFunction(r, k);
+  const k = randomInteger(2, 20);
+  fs.appendFileSync(file, `makeHypocycloidFunction(${k})\n`);
+  return makeHypocycloidFunction(k);
 };

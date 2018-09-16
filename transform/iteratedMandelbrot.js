@@ -1,14 +1,19 @@
 import Complex from 'complex.js';
 import fs from 'fs';
 import { randomInteger } from '../utils/random';
+import math from '../utils/math';
 
 export const makeIteratedMandelbrotFunction = (d, n) => {
+  const halfD = d / 2;
   return (z) => {
     let znRe = 0;
     let znIm = 0;
     for (let i = 0; i < n; i++) {
-      znRe = (znRe * znRe - znIm * znIm) + z.re;
-      znIm = (2 * znRe * znIm) + z.im;
+      // zn = zn.pow(d).add(z);
+      const theta = math.atan2(znIm, znRe) * d;
+      const loh = Math.exp(Math.log(znRe * znRe + znIm * znIm) * halfD);
+      znRe = loh * math.cos(theta) + z.re;
+      znIm = loh * math.sin(theta) + z.im;
     }
     return new Complex(znRe, znIm);
   };

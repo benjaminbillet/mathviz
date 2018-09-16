@@ -1,11 +1,12 @@
 import Complex from 'complex.js';
 import fs from 'fs';
 import { randomScalar } from '../utils/random';
+import math from '../utils/math';
 
 export const makeWaveFunction = (a, b, c, d) => {
   const bSquared = b * b;
   const dSquared = d * d;
-  return (z) => new Complex(z.re + a * Math.sin(z.im / bSquared), z.im + c * Math.sin(z.re / dSquared));
+  return (z) => new Complex(z.re + a * math.sin(z.im / bSquared), z.im + c * math.sin(z.re / dSquared));
 };
 
 export const makeWave = (file) => {

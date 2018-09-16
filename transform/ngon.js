@@ -1,19 +1,20 @@
 import Complex from 'complex.js';
 import fs from 'fs';
 import { randomScalar } from '../utils/random';
+import math from '../utils/math';
 
 export const makeNgonFunction = (power, sides, corners, circle) => {
   const piOverSides = Math.PI / sides;
   const twoPiOverSides = 2 * piOverSides;
   return (z) => {
-    const bigTheta = Math.atan2(z.im, z.re);
+    const bigTheta = math.atan2(z.re, z.im);
     const t1 = bigTheta - twoPiOverSides * Math.floor(bigTheta / twoPiOverSides);
     let t2 = t1;
     if (t1 <= piOverSides) {
       t2 = t1 - twoPiOverSides;
     }
 
-    const factor = (corners * ((1 / Math.cos(t2)) - 1) + circle) / (Math.pow(z.abs(), power));
+    const factor = (corners * ((1 / math.cos(t2)) - 1) + circle) / (Math.pow(z.abs(), power));
     return new Complex(factor * z.re, factor * z.im);
   };
 };

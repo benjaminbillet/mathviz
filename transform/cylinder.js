@@ -1,8 +1,9 @@
 import Complex from 'complex.js';
 import fs from 'fs';
+import math from '../utils/math';
 
 export const makeCylinderFunction = () => {
-  return (z) => new Complex(Math.sin(z.re), z.im);
+  return (z) => new Complex(math.sin(z.re), z.im);
 };
 
 export const makeCylinder = (file) => {

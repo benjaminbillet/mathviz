@@ -1,9 +1,10 @@
 import Complex from 'complex.js';
 import fs from 'fs';
 import { randomScalar } from '../utils/random';
+import math from '../utils/math';
 
 export const makePDJFunction = (a, b, c, d) => {
-  return (z) => new Complex(Math.sin(a * z.im) - Math.cos(b * z.re), Math.sin(c * z.re) - Math.cos(d * z.im));
+  return (z) => new Complex(math.sin(a * z.im) - math.cos(b * z.re), math.sin(c * z.re) - math.cos(d * z.im));
 };
 
 export const makePDJ = (file) => {

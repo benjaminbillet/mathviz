@@ -2,10 +2,7 @@ import Complex from 'complex.js';
 
 import { createImage, saveImage, mapPixelToDomain, mapDomainToPixel } from '../utils/picture';
 import {
-  makeEpicycloidFunction,
-  makeEpitrochoidFunction,
   makeFanFunction,
-  makeCardioidFunction,
   makeNgonFunction,
   makeRingsFunction,
   makePowerFunction,
@@ -42,13 +39,19 @@ import {
   makeTranslationFunction,
   makeScaleFunction,
   makeIdentityFunction,
-  makeHypocycloidFunction,
   makeJuliaScopeFunction,
   makeIteratedMandelbrotFunction,
   makeCircleFunction,
+  makeHypocycloidFunction,
+  makeEpicycloidFunction,
+  makeEpitrochoidFunction,
+  makeCardioidFunction,
 } from '../transform';
 import { pickColorMapValue, RainbowColormap } from '../utils/color';
 import { BI_UNIT_DOMAIN } from '../utils/domain';
+import { enableMathApprox } from '../utils/math';
+
+enableMathApprox();
 
 const TRANSFORMATIONS = {
   identity: makeIdentityFunction(),
@@ -92,15 +95,14 @@ const TRANSFORMATIONS = {
   ngon: makeNgonFunction(5, 5, 0.5, 0.5),
   curl: makeCurlFunction(1, 1),
   tangent: makeTangentFunction(),
-  cardioid: makeCardioidFunction(0.5),
   circle: makeCircleFunction(1),
-  hypocycloid: makeHypocycloidFunction(0.2, 4),
   juliaScope: makeJuliaScopeFunction(5, 2),
   iteratedMandelbrot: makeIteratedMandelbrotFunction(5, 3),
-  epicycloid: makeEpicycloidFunction(0.1, 4),
+  epicycloid: makeEpicycloidFunction(4),
   epichotroid: makeEpitrochoidFunction(0.1, 0.3, 0.05),
+  hypocycloid: makeHypocycloidFunction(4),
+  cardioid: makeCardioidFunction(0.5),
 };
-
 
 const plotTransformedGrid = async (width, height, transformKey) => {
   const image = createImage(width, height, 255, 255, 255, 255);

@@ -1,12 +1,13 @@
 import Complex from 'complex.js';
 import fs from 'fs';
 import { randomScalar } from '../utils/random';
+import math from '../utils/math';
 
 export const makePowerFunction = (a) => {
   return (z) => {
-    const theta = Math.atan2(z.re, z.im);
-    const rPowerSinTheta = Math.pow(z.abs(), Math.sin(theta));
-    return new Complex(rPowerSinTheta * Math.cos(theta + a), rPowerSinTheta * Math.sin(theta + a));
+    const theta = math.atan2(z.im, z.re);
+    const rPowerSinTheta = Math.pow(z.abs(), math.sin(theta));
+    return new Complex(rPowerSinTheta * math.cos(theta + a), rPowerSinTheta * math.sin(theta + a));
   };
 };
 

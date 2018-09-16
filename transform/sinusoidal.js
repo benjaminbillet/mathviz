@@ -1,8 +1,10 @@
 import Complex from 'complex.js';
 import fs from 'fs';
+import math from '../utils/math';
+
 
 export const makeSinusoidalFunction = () => {
-  return (z) => new Complex(Math.sin(z.re), Math.sin(z.im));
+  return (z) => new Complex(math.sin(z.re), math.sin(z.im));
 };
 
 export const makeSinusoidal = (file) => {

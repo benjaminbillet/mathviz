@@ -1,6 +1,7 @@
 import Complex from 'complex.js';
 import fs from 'fs';
 import { randomInteger, randomScalar } from '../utils/random';
+import math from '../utils/math';
 
 export const makeJuliaScopeFunction = (power, dist) => {
   const ratio = dist / power;
@@ -10,8 +11,8 @@ export const makeJuliaScopeFunction = (power, dist) => {
     if (Math.random() < 0.5) {
       t = 1;
     }
-    t = (t * Math.atan2(z.im, z.re) + 2 * Math.PI * Math.trunc(power * Math.random())) / power;
-    return new Complex(Math.cos(t) * r, Math.sin(t) * r);
+    t = (t * math.atan2(z.re, z.im) + 2 * Math.PI * Math.trunc(power * Math.random())) / power;
+    return new Complex(math.cos(t) * r, math.sin(t) * r);
   };
 };
 

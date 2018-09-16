@@ -39,6 +39,6 @@ export { makeIdentity, makeIdentityFunction } from './identity';
 export { makeCircle, makeCircleFunction } from './circle';
 export { makeHypocycloid, makeHypocycloidFunction } from './hypocycloid';
 export { makeEpicycloid, makeEpicycloidFunction } from './epicycloid';
-export { makeEpichotroid, makeEpitrochoidFunction } from './epichotroid';
+export { makeEpitrochoid, makeEpitrochoidFunction } from './epitrochoid';
 export { makeJuliaScope, makeJuliaScopeFunction } from './juliaScope';
 export { makeIteratedMandelbrot, makeIteratedMandelbrotFunction } from './iteratedMandelbrot';

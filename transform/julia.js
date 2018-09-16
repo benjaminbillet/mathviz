@@ -1,20 +1,23 @@
 import Complex from 'complex.js';
 import fs from 'fs';
 import { randomComplex } from '../utils/random';
+import math from '../utils/math';
 
 export const makeJuliaFunction = (c) => {
   return (z) => {
-    z = c.sub(z);
+    // z = c.sub(z);
+    const zRe = c.re - z.re;
+    const zIm = c.im - z.im;
 
-    const sqrtOfR = Math.pow(z.im * z.im + z.re * z.re, 0.25);
-    const halfTheta = Math.atan2(z.re, z.im) / 2;
+    const sqrtOfR = Math.pow(zIm * zIm + zRe * zRe, 0.25);
+    const halfTheta = math.atan2(zIm, zRe) / 2;
 
     // this transformation occupies half the space, so we make it symmetrical by randomly alternating periods
-    let omega = 0;
+    let omega = halfTheta;
     if (Math.random() >= 0.5) {
-      omega = Math.PI;
+      omega = halfTheta + Math.PI;
     }
-    return new Complex(Math.cos(halfTheta + omega) * sqrtOfR, Math.sin(halfTheta + omega) * sqrtOfR);
+    return new Complex(math.cos(omega) * sqrtOfR, math.sin(omega) * sqrtOfR);
   };
 };
 

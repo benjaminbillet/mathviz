@@ -1,13 +1,14 @@
 import Complex from 'complex.js';
 import fs from 'fs';
 import { randomScalar } from '../utils/random';
+import math from '../utils/math';
 
 export const makeBlobFunction = (high, low, waves) => {
   const halfDistance = (high - low) / 2;
   return (z) => {
-    const theta = Math.atan2(z.re, z.im);
-    const factor = z.abs() * (low + halfDistance * (Math.sin(waves * theta) + 1));
-    return new Complex(factor * Math.cos(theta), factor * Math.sin(theta));
+    const theta = math.atan2(z.im, z.re);
+    const factor = z.abs() * (low + halfDistance * (math.sin(waves * theta) + 1));
+    return new Complex(factor * math.cos(theta), factor * math.sin(theta));
   };
 };
 
