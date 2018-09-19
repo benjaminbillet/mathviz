@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import math from '../utils/math';
 
 export const makeExponentialFunction = () => {
@@ -10,7 +10,7 @@ export const makeExponentialFunction = () => {
   };
 };
 
-export const makeExponential = (file) => {
-  fs.appendFileSync(file, 'makeExponentialFunction()\n');
+export const makeExponential = () => {
+  console.log('makeExponentialFunction()');
   return makeExponentialFunction();
 };

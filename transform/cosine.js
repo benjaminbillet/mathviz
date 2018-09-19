@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import math from '../utils/math';
 
 export const makeCosineFunction = () => {
@@ -9,7 +9,7 @@ export const makeCosineFunction = () => {
   };
 };
 
-export const makeCosine = (file) => {
-  fs.appendFileSync(file, 'makeCosineFunction()\n');
+export const makeCosine = () => {
+  console.log('makeCosineFunction()');
   return makeCosineFunction();
 };

@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
 
@@ -11,8 +11,8 @@ export const makePowerFunction = (a) => {
   };
 };
 
-export const makePower = (file) => {
+export const makePower = () => {
   const a = randomScalar(0, 2 * Math.PI);
-  fs.appendFileSync(file, `makePowerFunction(${a})\n`);
+  console.log(`makePowerFunction(${a})`);
   return makePowerFunction(a);
 };

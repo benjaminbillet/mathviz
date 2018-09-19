@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomInteger } from '../utils/random';
 import math from '../utils/math';
 
@@ -22,8 +22,8 @@ export const makeEpicycloidFunction = (k) => {
   };
 };
 
-export const makeEpicycloid = (file) => {
+export const makeEpicycloid = () => {
   const k = randomInteger(2, 20);
-  fs.appendFileSync(file, `makeEpicycloidFunction(${k})\n`);
+  console.log(`makeEpicycloidFunction(${k})`);
   return makeEpicycloidFunction(k);
 };

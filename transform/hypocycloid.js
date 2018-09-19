@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomInteger } from '../utils/random';
 import math from '../utils/math';
 
@@ -22,8 +22,8 @@ export const makeHypocycloidFunction = (k) => {
   };
 };
 
-export const makeHypocycloid = (file) => {
+export const makeHypocycloid = () => {
   const k = randomInteger(2, 20);
-  fs.appendFileSync(file, `makeHypocycloidFunction(${k})\n`);
+  console.log(`makeHypocycloidFunction(${k})`);
   return makeHypocycloidFunction(k);
 };

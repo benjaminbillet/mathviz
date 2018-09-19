@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import math from '../utils/math';
 
 export const makeSpiralFunction = () => {
@@ -10,7 +10,7 @@ export const makeSpiralFunction = () => {
   };
 };
 
-export const makeSpiral = (file) => {
-  fs.appendFileSync(file, 'makeSpiralFunction()\n');
+export const makeSpiral = () => {
+  console.log('makeSpiralFunction()');
   return makeSpiralFunction();
 };

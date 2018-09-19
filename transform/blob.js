@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
 
@@ -12,11 +12,11 @@ export const makeBlobFunction = (high, low, waves) => {
   };
 };
 
-export const makeBlob = (file) => {
+export const makeBlob = () => {
   const high = randomScalar(-1, 1);
   const low = randomScalar(-1, 1);
   const waves = randomScalar(-1, 1);
 
-  fs.appendFileSync(file, `makeBlobFunction(${high}, ${low}, ${waves})\n`);
+  console.log(`makeBlobFunction(${high}, ${low}, ${waves})`);
   return makeBlobFunction(high, low, waves);
 };

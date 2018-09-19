@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 
 export const makeBentFunction = () => {
   return (z) => {
@@ -14,7 +14,7 @@ export const makeBentFunction = () => {
   };
 };
 
-export const makeBent = (file) => {
-  fs.appendFileSync(file, 'makeBentFunction()\n');
+export const makeBent = () => {
+  console.log('makeBentFunction()');
   return makeBentFunction();
 };

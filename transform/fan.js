@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
 
@@ -16,9 +16,9 @@ export const makeFanFunction = (a, b) => {
   };
 };
 
-export const makeFan = (file) => {
+export const makeFan = () => {
   const a = randomScalar(0, 1);
   const b = randomScalar(Math.PI, 2 * Math.PI);
-  fs.appendFileSync(file, `makeFanFunction(${a}, ${b})\n`);
+  console.log(`makeFanFunction(${a}, ${b})`);
   return makeFanFunction(a, b);
 };

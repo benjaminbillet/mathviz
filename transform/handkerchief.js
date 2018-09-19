@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import math from '../utils/math';
 
 export const makeHandkerchiefFunction = () => {
@@ -10,7 +10,7 @@ export const makeHandkerchiefFunction = () => {
   };
 };
 
-export const makeHandkerchief = (file) => {
-  fs.appendFileSync(file, 'makeHandkerchiefFunction()\n');
+export const makeHandkerchief = () => {
+  console.log('makeHandkerchiefFunction()');
   return makeHandkerchiefFunction();
 };

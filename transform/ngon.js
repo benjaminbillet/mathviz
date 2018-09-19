@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
 
@@ -19,11 +19,11 @@ export const makeNgonFunction = (power, sides, corners, circle) => {
   };
 };
 
-export const makeNgon = (file) => {
+export const makeNgon = () => {
   const power = randomScalar(1, 10);
   const sides = randomScalar(1, 10);
   const corners = randomScalar(-1, 1);
   const circle = randomScalar(-1, 1);
-  fs.appendFileSync(file, `makeNgonFunction(${power}, ${sides}, ${corners}, ${circle})\n`);
+  console.log(`makeNgonFunction(${power}, ${sides}, ${corners}, ${circle})`);
   return makeNgonFunction(power, sides, corners, circle);
 };

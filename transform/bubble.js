@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 
 export const makeBubbleFunction = () => {
   return (z) => {
@@ -9,7 +9,7 @@ export const makeBubbleFunction = () => {
   };
 };
 
-export const makeBubble = (file) => {
-  fs.appendFileSync(file, 'makeBubbleFunction()\n');
+export const makeBubble = () => {
+  console.log('makeBubbleFunction()');
   return makeBubbleFunction();
 };

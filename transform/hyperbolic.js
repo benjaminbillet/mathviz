@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import math from '../utils/math';
 
 export const makeHyperbolicFunction = () => {
@@ -10,7 +10,7 @@ export const makeHyperbolicFunction = () => {
   };
 };
 
-export const makeHyperbolic = (file) => {
-  fs.appendFileSync(file, 'makeHyperbolicFunction()\n');
+export const makeHyperbolic = () => {
+  console.log('makeHyperbolicFunction()');
   return makeHyperbolicFunction();
 };

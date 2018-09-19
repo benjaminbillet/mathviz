@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 
 export const makeSphericalFunction = () => {
   return (z) => {
@@ -8,7 +8,7 @@ export const makeSphericalFunction = () => {
   };
 };
 
-export const makeSpherical = (file) => {
-  fs.appendFileSync(file, 'makeSphericalFunction()\n');
+export const makeSpherical = () => {
+  console.log('makeSphericalFunction()');
   return makeSphericalFunction();
 };

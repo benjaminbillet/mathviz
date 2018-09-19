@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 
 export const makeHorseshoeFunction = () => {
   return (z) => {
@@ -8,7 +8,7 @@ export const makeHorseshoeFunction = () => {
   };
 };
 
-export const makeHorseshoe = (file) => {
-  fs.appendFileSync(file, 'makeHorseshoeFunction()\n');
+export const makeHorseshoe = () => {
+  console.log('makeHorseshoeFunction()');
   return makeHorseshoeFunction();
 };

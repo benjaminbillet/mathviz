@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomComplex } from '../utils/random';
 
 export const makeMobiusFunction = (a, b, c, d) => {
@@ -18,11 +18,11 @@ export const makeMobiusFunction = (a, b, c, d) => {
   };
 };
 
-export const makeMobius = (file) => {
+export const makeMobius = () => {
   const a = randomComplex(-1, 1);
   const b = randomComplex(-1, 1);
   const c = randomComplex(-1, 1);
   const d = randomComplex(-1, 1);
-  fs.appendFileSync(file, `makeMobiusFunction(${a}, ${b}, ${c}, ${d})\n`);
+  console.log(`makeMobiusFunction(${a}, ${b}, ${c}, ${d})`);
   return makeMobiusFunction(a, b, c, d);
 };

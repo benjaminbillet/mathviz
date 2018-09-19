@@ -11,6 +11,7 @@ export { makePDJ, makePDJFunction } from './PDJ';
 export { makePerspective, makePerspectiveFunction } from './perspective';
 export { makeCurl, makeCurlFunction } from './curl';
 export { makeLinear, makeLinearFunction } from './linear';
+export { makeSimpleLinear } from './simpleLinear';
 export { makeMobius, makeMobiusFunction } from './mobius';
 export { makeSinusoidal, makeSinusoidalFunction } from './sinusoidal';
 export { makeSpherical, makeSphericalFunction } from './spherical';

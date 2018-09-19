@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomScalar } from '../utils/random';
 
 export const makeCurlFunction = (a, b) => {
@@ -12,9 +12,9 @@ export const makeCurlFunction = (a, b) => {
   };
 };
 
-export const makeCurl = (file) => {
+export const makeCurl = () => {
   const a = randomScalar(-1, 1);
   const b = randomScalar(-1, 1);
-  fs.appendFileSync(file, `makeCurlFunction(${a}, ${b})\n`);
+  console.log(`makeCurlFunction(${a}, ${b})`);
   return makeCurlFunction(a, b);
 };

@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
 
@@ -20,10 +20,10 @@ export const makeEpitrochoidFunction = (r, R, d) => {
   };
 };
 
-export const makeEpitrochoid = (file) => {
+export const makeEpitrochoid = () => {
   const r = randomScalar(0.1, 0.5);
   const R = randomScalar(0.1, 0.5);
   const d = randomScalar(0, 0.5);
-  fs.appendFileSync(file, `makeEpitrochoidFunction(${r}, ${R}, ${d})\n`);
+  console.log(`makeEpitrochoidFunction(${r}, ${R}, ${d})`);
   return makeEpitrochoidFunction(r, R, d);
 };

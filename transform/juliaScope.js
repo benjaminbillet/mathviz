@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomInteger, randomScalar } from '../utils/random';
 import math from '../utils/math';
 
@@ -16,9 +16,9 @@ export const makeJuliaScopeFunction = (power, dist) => {
   };
 };
 
-export const makeJuliaScope = (file) => {
+export const makeJuliaScope = () => {
   const power = randomInteger(5, 10);
   const dist = randomScalar(2, 4);
-  fs.appendFileSync(file, `makeJuliaScopeFunction(${power}, ${dist})\n`);
+  console.log(`makeJuliaScopeFunction(${power}, ${dist})`);
   return makeJuliaScopeFunction(power, dist);
 };

@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomComplex } from '../utils/random';
 import math from '../utils/math';
 
@@ -21,8 +21,8 @@ export const makeJuliaFunction = (c) => {
   };
 };
 
-export const makeJulia = (file) => {
+export const makeJulia = () => {
   const c = randomComplex(-1, 1);
-  fs.appendFileSync(file, `makeJuliaFunction(${c})\n`);
+  console.log(`makeJuliaFunction(${c})`);
   return makeJuliaFunction(c);
 };

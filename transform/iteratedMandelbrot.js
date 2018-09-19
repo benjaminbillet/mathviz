@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomInteger } from '../utils/random';
 import math from '../utils/math';
 
@@ -19,9 +19,9 @@ export const makeIteratedMandelbrotFunction = (d, n) => {
   };
 };
 
-export const makeIteratedMandelbrot = (file) => {
+export const makeIteratedMandelbrot = () => {
   const d = randomInteger(2, 5);
   const n = randomInteger(2, 10);
-  fs.appendFileSync(file, `makeIteratedMandelbrotFunction(${d}, ${n})\n`);
+  console.log(`makeIteratedMandelbrotFunction(${d}, ${n})`);
   return makeIteratedMandelbrotFunction(d, n);
 };

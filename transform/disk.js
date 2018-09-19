@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import math from '../utils/math';
 
 export const makeDiskFunction = () => {
@@ -10,7 +10,7 @@ export const makeDiskFunction = () => {
   };
 };
 
-export const makeDisk = (file) => {
-  fs.appendFileSync(file, 'makeDiskFunction()\n');
+export const makeDisk = () => {
+  console.log('makeDiskFunction()');
   return makeDiskFunction();
 };

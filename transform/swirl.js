@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
 
@@ -12,8 +12,8 @@ export const makeSwirlFunction = (offset) => {
   };
 };
 
-export const makeSwirl = (file) => {
+export const makeSwirl = () => {
   const offset = randomScalar(0, 2 * Math.PI);
-  fs.appendFileSync(file, `makeSwirlFunction(${offset})\n`);
+  console.log(`makeSwirlFunction(${offset})`);
   return makeSwirlFunction(offset);
 };

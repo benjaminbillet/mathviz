@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import math from '../utils/math';
 
 export const makeDiamondFunction = () => {
@@ -10,7 +10,7 @@ export const makeDiamondFunction = () => {
   };
 };
 
-export const makeDiamond = (file) => {
-  fs.appendFileSync(file, 'makeDiamondFunction()\n');
+export const makeDiamond = () => {
+  console.log('makeDiamondFunction()');
   return makeDiamondFunction();
 };

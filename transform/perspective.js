@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomScalar } from '../utils/random';
 
 export const makePerspectiveFunction = (angle, depth) => {
@@ -11,9 +11,9 @@ export const makePerspectiveFunction = (angle, depth) => {
   };
 };
 
-export const makePerspective = (file) => {
+export const makePerspective = () => {
   const depth = randomScalar(0.01, 50);
   const angle = randomScalar(0, Math.PI * 2);
-  fs.appendFileSync(file, `makePerspectiveFunction(${depth}, ${angle})\n`);
+  console.log(`makePerspectiveFunction(${depth}, ${angle})`);
   return makePerspectiveFunction(depth, angle);
 };

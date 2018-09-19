@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
 
@@ -13,8 +13,8 @@ export const makeRingsFunction = (a) => {
   };
 };
 
-export const makeRings = (file) => {
+export const makeRings = () => {
   const a = randomScalar(-1, 1);
-  fs.appendFileSync(file, `makeRingsFunction(${a})\n`);
+  console.log(`makeRingsFunction(${a})`);
   return makeRingsFunction(a);
 };

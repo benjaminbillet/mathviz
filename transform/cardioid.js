@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
 
@@ -14,8 +14,8 @@ export const makeCardioidFunction = (a) => {
   };
 };
 
-export const makeCardioid = (file) => {
+export const makeCardioid = () => {
   const a = randomScalar(0.5, 1);
-  fs.appendFileSync(file, `makeCardioidFunction(${a})\n`);
+  console.log(`makeCardioidFunction(${a})`);
   return makeCardioidFunction(a);
 };

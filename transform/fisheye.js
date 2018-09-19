@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 
 export const makeFisheyeFunction = () => {
   return (z) => {
@@ -8,7 +8,7 @@ export const makeFisheyeFunction = () => {
   };
 };
 
-export const makeFisheye = (file) => {
-  fs.appendFileSync(file, 'makeFisheyeFunction()\n');
+export const makeFisheye = () => {
+  console.log('makeFisheyeFunction()');
   return makeFisheyeFunction();
 };

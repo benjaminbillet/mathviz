@@ -1,5 +1,5 @@
 import Complex from 'complex.js';
-import fs from 'fs';
+
 
 export const makeMagnifyFunction = () => {
   return (z) => {
@@ -8,7 +8,7 @@ export const makeMagnifyFunction = () => {
   };
 };
 
-export const makeMagnify = (file) => {
-  fs.appendFileSync(file, 'makeMagnifyFunction()\n');
+export const makeMagnify = () => {
+  console.log('makeMagnifyFunction()');
   return makeMagnifyFunction();
 };
