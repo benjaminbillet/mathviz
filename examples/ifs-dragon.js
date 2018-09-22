@@ -57,7 +57,7 @@ const rotate0 = makeAffine2dFromMatrix(rotate(0));
 const rotate90 = makeAffine2dFromMatrix(rotate(Math.PI * 0.5));
 const rotate180 = makeAffine2dFromMatrix(rotate(Math.PI));
 const rotate270 = makeAffine2dFromMatrix(rotate(Math.PI * 1.5));
-plot2('heighway-multidragon.png', 512, 512, ifs, [rotate0, rotate90, rotate180, rotate270], { xmin: -7/6, xmax: 7/6, ymin: -7/6, ymax: 7/6 }, 1000000);
+plot2('heighway-multidragon.png', 512, 512, ifs, [ rotate0, rotate90, rotate180, rotate270 ], { xmin: -7/6, xmax: 7/6, ymin: -7/6, ymax: 7/6 }, 1000000);
 
 ifs = makeGoldenDragonIfs();
-plot2('golden-multidragon.png', 512, 512, ifs, [rotate0, rotate90, rotate180, rotate270], { xmin: -7/6, xmax: 7/6, ymin: -7/6, ymax: 7/6 }, 1000000);
+plot2('golden-multidragon.png', 512, 512, ifs, [ rotate0, rotate90, rotate180, rotate270 ], { xmin: -7/6, xmax: 7/6, ymin: -7/6, ymax: 7/6 }, 1000000);

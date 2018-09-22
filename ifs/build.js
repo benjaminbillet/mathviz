@@ -1,5 +1,6 @@
 import { makeAffine2d } from '../utils/affine';
-import { compose2dFunctions } from '../utils/misc';
+import { compose2dFunctions, compose2dRandomizedFunctions } from '../utils/misc';
+import { randomIntegerWeighted } from '../utils/random';
 
 export const addAffineFunction = (ifs, coeffs, p) => {
   return addFunction(ifs, makeAffine2d(coeffs), p);
@@ -52,4 +53,8 @@ export const normalizeProbabilities = (ifs) => {
     functions: ifs.functions,
     probabilities: ifs.probabilities.map(x => x / sum),
   };
+};
+
+export const flattenIfs = ({ functions, probabilities }) => {
+  return compose2dRandomizedFunctions(functions, probabilities);
 };

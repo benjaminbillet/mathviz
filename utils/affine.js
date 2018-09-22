@@ -1,7 +1,6 @@
 import Complex from 'complex.js';
 import math, { matrix } from 'mathjs';
 
-
 export const applyAffine2dFromMatrix = (matrix, x, y) => {
   const a11 = matrix.get([ 0, 0 ]);
   const a12 = matrix.get([ 0, 1 ]);
@@ -33,6 +32,7 @@ export const identity = () => {
     [ 0, 0, 1 ],
   ]);
 };
+export const IDENTITY = identity();
 
 export const scale = (x = 1, y = 1) => {
   return matrix([
@@ -80,9 +80,16 @@ export const shear = (x = 0, y = 0) => {
   ]);
 };
 
-export const reflect = (x = true, y = true) => {
-  x = x ? -1 : 1;
-  y = y ? -1 : 1;
+export const reflect = (horizontal = true, vertical = true) => {
+  let x = 1;
+  let y = 1;
+  if (horizontal) {
+    x = 1;
+    y = -1;
+  } else if (vertical) {
+    x = -1;
+    y = 1;
+  }
   return matrix([
     [ y, 0, 0 ],
     [ 0, x, 0 ],

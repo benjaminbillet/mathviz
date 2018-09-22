@@ -64,7 +64,7 @@ export const makeKochFlakeIfs = () => {
   return makeIfs([ f1, f2, f3, f4, f5, f6, f7 ], [ 1/7, 1/7, 1/7, 1/7, 1/7, 1/7, 1/7 ]);
 };
 
-/* export const FLOWSNAKE_DOMAIN = { xmin: -0.1, xmax: 1.1, ymin: -0.3, ymax: 0.9}
+export const FLOWSNAKE_DOMAIN = { xmin: -0.1, xmax: 1.1, ymin: -0.3, ymax: 0.9 };
 export const makeFlowsnakeIfs = () => {
   const sqrt3 = Math.sqrt(3);
   const sqrt7 = Math.sqrt(7);
@@ -74,16 +74,44 @@ export const makeFlowsnakeIfs = () => {
   const rotation2 = rotation1 - (Math.PI * 2 / 3); // rotation - 120 degrees
   const rotation3 = rotation1 + (Math.PI * 2 / 3); // rotation + 120 degrees
 
-  const f1 = affine.makeAffine2dFromMatrix(applyScale(applyTranslation(applyRotation(AFFINE_IDENTITY, rotation2), 1/14, 3*sqrt3/14), scale, scale));
-  const f2 = affine.makeAffine2dFromMatrix(applyScale(applyTranslation(applyRotation(AFFINE_IDENTITY, rotation1), 1/14, 3*sqrt3/14), scale, scale));
-  const f3 = affine.makeAffine2dFromMatrix(applyScale(applyTranslation(applyRotation(AFFINE_IDENTITY, rotation1), 3/7, 2*sqrt3/7), scale, scale));
-  const f4 = affine.makeAffine2dFromMatrix(applyScale(applyTranslation(applyRotation(AFFINE_IDENTITY, rotation2), 11/14, 5*sqrt3/14), scale, scale));
-  const f5 = affine.makeAffine2dFromMatrix(applyScale(applyTranslation(applyRotation(AFFINE_IDENTITY, rotation1), 5/14, sqrt3/14), scale, scale));
-  const f6 = affine.makeAffine2dFromMatrix(applyScale(applyTranslation(applyRotation(AFFINE_IDENTITY, rotation3), 9/14, -sqrt3/14), scale, scale));
-  const f7 = affine.makeAffine2dFromMatrix(applyScale(applyTranslation(applyRotation(AFFINE_IDENTITY, rotation1), 9/14, -sqrt3/14), scale, scale));
+  const f1 = affine.makeAffine2dFromMatrix(affine.combine(
+    affine.translate(1/14, 3*sqrt3/14),
+    affine.reverseRotate(rotation2),
+    affine.scale(scale, scale),
+  ));
+  const f2 = affine.makeAffine2dFromMatrix(affine.combine(
+    affine.translate(1/14, 3*sqrt3/14),
+    affine.reverseRotate(rotation1),
+    affine.scale(scale, scale),
+  ));
+  const f3 = affine.makeAffine2dFromMatrix(affine.combine(
+    affine.translate(3/7, 2*sqrt3/7),
+    affine.reverseRotate(rotation1),
+    affine.scale(scale, scale),
+  ));
+  const f4 = affine.makeAffine2dFromMatrix(affine.combine(
+    affine.translate(11/14, 5*sqrt3/14),
+    affine.reverseRotate(rotation2),
+    affine.scale(scale, scale),
+  ));
+  const f5 = affine.makeAffine2dFromMatrix(affine.combine(
+    affine.translate(5/14, sqrt3/14),
+    affine.reverseRotate(rotation1),
+    affine.scale(scale, scale),
+  ));
+  const f6 = affine.makeAffine2dFromMatrix(affine.combine(
+    affine.translate(9/14, -sqrt3/14),
+    affine.reverseRotate(rotation3),
+    affine.scale(scale, scale),
+  ));
+  const f7 = affine.makeAffine2dFromMatrix(affine.combine(
+    affine.translate(9/14, -sqrt3/14),
+    affine.reverseRotate(rotation1),
+    affine.scale(scale, scale),
+  ));
 
   return makeIfs([ f1, f2, f3, f4, f5, f6, f7 ], [ 1/7, 1/7, 1/7, 1/7, 1/7, 1/7, 1/7 ]);
-};*/
+};
 
 
 export const KOCH_ANTIFLAKE_DOMAIN = { xmin: 0, xmax: 1, ymin: 0, ymax: 1 };

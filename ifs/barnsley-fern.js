@@ -63,6 +63,6 @@ export const makeFernIfs = (m = BARNSLEY_FERN_COEFFICIENTS, p = BARNSLEY_FERN_PR
   const f2 = (z) => new Complex(z.re * m[6]  + z.im * m[7]  + m[10], z.re * m[8]  + z.im * m[9]  + m[11]);
   const f3 = (z) => new Complex(z.re * m[12] + z.im * m[13] + m[16], z.re * m[14] + z.im * m[15] + m[17]);
   const f4 = (z) => new Complex(z.re * m[18] + z.im * m[19] + m[22], z.re * m[20] + z.im * m[21] + m[23]);
-  return makeIfs([f1, f2, f3, f4], p);
+  return makeIfs([ f1, f2, f3, f4 ], p);
 };
 

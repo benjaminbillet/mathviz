@@ -14,5 +14,5 @@ export const makeBinaryTree = (theta = Math.PI/3, r = 0.65) => {
     affine.scale(r, r),
   ));
   const f3 = (z) => z; // identity
-  return makeIfs([f1, f2, f3], [1/3, 1/3, 1/3]);
+  return makeIfs([ f1, f2, f3 ], [ 1/3, 1/3, 1/3 ]);
 };

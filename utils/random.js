@@ -6,6 +6,9 @@ export * from 'd3-random';
 export const randomScalar = (min = -1, max = 1) => {
   return Math.random() * (max - min) + min;
 };
+export const randomInteger = (min, max) => {
+  return Math.floor(Math.random() * (max - min) + min);
+};
 export const randomComplex = (reMin = -1, reMax = 1, imMin = -1, imMax = 1) => {
   return new Complex(randomScalar(reMin, reMax), randomScalar(imMin, imMax));
 };
@@ -24,8 +27,12 @@ export const pickRandom = (arr) => {
   return arr[Math.trunc(Math.random() * arr.length)];
 };
 
-export const randomInteger = (min, max) => {
-  return Math.floor(Math.random() * (max - min) + min);
+export const pickRandomSubset = (nb, arr) => {
+  return new Array(nb).fill(null).map(() => pickRandom(arr));
+};
+
+export const randomIntegerUniform = (min, max) => {
+  return () => randomInteger(min, max);
 };
 
 export const randomIntegerWeighted = (distribution, min = 0) => {
