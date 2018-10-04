@@ -97,8 +97,7 @@ export const makeGaussianKernel = (size = 3, sigma = null) => {
 
 export const normalizeKernel = (kern) => {
   const sum = kern.reduce((cur, x) => cur + x, 0);
-  const quantity = (sum - 1) / kern.length;
-  return kern.map(x => x - quantity);
+  return kern.map(x => x / sum);
 };
 
 export const convolve = (input, output, width, height, kern, divisor = 1, offset = 0) => {
