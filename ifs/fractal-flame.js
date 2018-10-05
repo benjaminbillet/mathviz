@@ -1,5 +1,5 @@
-import { compose2dFunctions } from '../utils/misc';
-import { pickRandom } from '../utils/random';
+import { compose2dFunctions, clampInt } from '../utils/misc';
+import { pickRandom, randomComplex } from '../utils/random';
 import { makeIdentity } from '../transform';
 import { mapDomainToPixel } from '../utils/picture';
 import { BI_UNIT_DOMAIN } from '../utils/domain';
@@ -13,6 +13,19 @@ export const generateTransformationSet = (nb, transformMakers, baseTransformMake
     }
     return makeTransform();
   });
+};
+
+export const makeBitmapColorSteal = (bitmap, bitmapWidth, bitmapHeight, domain = BI_UNIT_DOMAIN) => {
+  const normalized = new Float64Array(bitmapWidth * bitmapHeight * 4);
+  bitmap.forEach((x, i) => normalized[i] = x / 255);
+  return (x, y) => {
+    let [ px, py ] = mapDomainToPixel(x, y, domain, bitmapWidth, bitmapHeight);
+    px = clampInt(px, 0, bitmapWidth);
+    py = clampInt(py, 0, bitmapHeight);
+
+    const idx = (px + py * bitmapWidth) * 4;
+    return normalized.slice(idx, idx + 3);
+  };
 };
 
 export const plotFlame = (output, width, height, transforms, randomInt, colors, initialPointPicker = randomComplex, finalTransform = makeIdentity(), nbPoints = 1000, nbIterations = 10000, domain = BI_UNIT_DOMAIN) => {
@@ -60,8 +73,7 @@ export const plotFlame = (output, width, height, transforms, randomInt, colors, 
   }
 };
 
-
-export const plotFlameWithColorStealing = (output, width, height, transforms, randomInt, colorFunc, preFinalColor = true, initialPointPicker = randomComplex, finalTransform = makeIdentity(), nbPoints = 1000, nbIterations = 10000, domain = BI_UNIT_DOMAIN) => { 
+export const plotFlameWithColorStealing = (output, width, height, transforms, randomInt, colorFunc, preFinalColor = false, initialPointPicker = randomComplex, finalTransform = makeIdentity(), nbPoints = 1000, nbIterations = 10000, domain = BI_UNIT_DOMAIN) => { 
   for (let i = 0; i < nbPoints; i++) {
     let z = initialPointPicker(); // pick an initial point
     let pixelColor = [ 0, 0, 0 ];

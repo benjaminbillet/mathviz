@@ -94,7 +94,10 @@ export const pickColorMapValue = (x, map) => {
   return map[i];
 };
 
-export const makeColorMapFunction = (map) => {
+export const makeColorMapFunction = (map, scale = 1) => {
+  if (scale != 1) {
+    map = normalizeColorMap(map, scale);
+  }
   return x => pickColorMapValue(x, map);
 };
 
@@ -106,6 +109,10 @@ export const buildSteppedColorMap = (colors, positions, steps = 1024) => {
     }
     return colors[current];
   });
+};
+
+export const normalizeColorMap = (colormap, scale = 255) => {
+  return colormap.map(color => color.map(x => x / scale));
 };
 
 

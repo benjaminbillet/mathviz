@@ -117,6 +117,10 @@ export const expandPalette = (palette, nbColors) => {
   return palette;
 };
 
+export const normalizePalette = (palette, scale = 255) => {
+  return palette.map(color => color.map(x => x / scale));
+};
+
 /** Common palettes */
 export const FIRE = [ [ 161, 0, 0 ], [ 234, 35, 0 ], [ 255, 129, 0 ], [ 242, 85, 0 ], [ 216, 0, 0 ] ];
 export const BOAT = [ [ 62, 1, 35 ], [ 180, 0, 54 ], [ 237, 227, 222 ], [ 37, 121, 133 ], [ 13, 41, 58 ] ];
