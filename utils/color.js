@@ -1,6 +1,6 @@
 import * as D3Color from 'd3-color';
 import * as D3Interpolate from 'd3-interpolate';
-import { clamp } from './misc';
+import { clamp, clampInt } from './misc';
 
 
 const DISPLAY_LUMINANCE_MAX = 200;
@@ -42,6 +42,19 @@ export const applyGammaCorrection = (buffer, gamma = 0.45) => {
 
 export const getLuminance = (r, g, b) => {
   return r * 0.2126 + g * 0.7152 + b * 0.0722;
+};
+
+
+export const convertUnitToRGBA = (buffer) => {
+  let newBuffer = new Uint8Array(buffer.length);
+  buffer.forEach((x, i) => {
+    if ((i+1) % 4 === 0) {
+      newBuffer[i] = 255;
+    } else {
+      newBuffer[i] = clampInt(x * 255, 0, 255);
+    }
+  });
+  return newBuffer;
 };
 
 

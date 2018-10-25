@@ -3,6 +3,7 @@ import { pickRandom, randomComplex } from '../utils/random';
 import { makeIdentity } from '../transform';
 import { mapDomainToPixel } from '../utils/picture';
 import { BI_UNIT_DOMAIN } from '../utils/domain';
+import { makeColorMapFunction, buildColorMap } from '../utils/color';
 
 export const generateTransformationSet = (nb, transformMakers, baseTransformMakers = [ makeSimpleLinear ]) => {
   return new Array(nb).fill(null).map(() => {
@@ -28,7 +29,39 @@ export const makeBitmapColorSteal = (bitmap, bitmapWidth, bitmapHeight, domain =
   };
 };
 
-export const plotFlame = (output, width, height, transforms, randomInt, colors, initialPointPicker = randomComplex, finalTransform = makeIdentity(), nbPoints = 1000, nbIterations = 10000, domain = BI_UNIT_DOMAIN) => {
+export const makeDistanceColorSteal = (colors, maxDistance) => {
+  let colorFunc = colors;
+  if (Array.isArray(colors)) {
+    colorFunc = makeColorMapFunction(buildColorMap(colors), 255);
+  }
+  return (re, im) => {
+    const distance = Math.sqrt(re * re + im * im) / maxDistance;
+    return colorFunc(distance);
+  };
+};
+
+export const makeIterationColorSteal = (colors, maxIterations) => {
+  let colorFunc = colors;
+  if (Array.isArray(colors)) {
+    colorFunc = makeColorMapFunction(buildColorMap(colors), 255);
+  }
+  return (re, im, p, n) => {
+    return colorFunc(n / maxIterations);
+  };
+};
+
+export const makeMixedColorSteal = (colors, maxDistance, maxIterations, w1 = 0.5, w2 = 0.5) => {
+  let colorFunc = colors;
+  if (Array.isArray(colors)) {
+    colorFunc = makeColorMapFunction(buildColorMap(colors), 255);
+  }
+  return (re, im, p, n) => {
+    const distance = Math.sqrt(re * re + im * im) / maxDistance;
+    return colorFunc(w1 * distance + w2 * (n / maxIterations));
+  };
+};
+
+export const plotFlame = (output, width, height, transforms, randomInt, colors, initialPointPicker = randomComplex, finalTransform = makeIdentity(), nbPoints = 1000, nbIterations = 10000, domain = BI_UNIT_DOMAIN, resetIfOverflow = false) => {
   for (let i = 0; i < nbPoints; i++) {
     let z = initialPointPicker(); // pick an initial point
     let pixelColor = [ 0, 0, 0 ];
@@ -40,6 +73,7 @@ export const plotFlame = (output, width, height, transforms, randomInt, colors, 
 
       // at each iteration we apply one of the function...
       z = transform(z);
+
       // ... and a final transform that will not be part of the iteration...
       const fz = finalTransform(z);
 
@@ -48,7 +82,9 @@ export const plotFlame = (output, width, height, transforms, randomInt, colors, 
 
       // pixels outside the image are discarded and we jump to another point
       if (fx < 0 || fy < 0 || fx >= width || fy >= height) {
-        z = initialPointPicker();
+        if (resetIfOverflow) {
+          z = initialPointPicker();
+        }
         continue;
       }
 
@@ -73,7 +109,7 @@ export const plotFlame = (output, width, height, transforms, randomInt, colors, 
   }
 };
 
-export const plotFlameWithColorStealing = (output, width, height, transforms, randomInt, colorFunc, preFinalColor = false, initialPointPicker = randomComplex, finalTransform = makeIdentity(), nbPoints = 1000, nbIterations = 10000, domain = BI_UNIT_DOMAIN) => { 
+export const plotFlameWithColorStealing = (output, width, height, transforms, randomInt, colorFunc, preFinalColor = false, initialPointPicker = randomComplex, finalTransform = makeIdentity(), nbPoints = 1000, nbIterations = 10000, domain = BI_UNIT_DOMAIN, resetIfOverflow = false) => {
   for (let i = 0; i < nbPoints; i++) {
     let z = initialPointPicker(); // pick an initial point
     let pixelColor = [ 0, 0, 0 ];
@@ -93,16 +129,18 @@ export const plotFlameWithColorStealing = (output, width, height, transforms, ra
       // pixels that are outside the image are discarded
       // and we escape by jumping to another point
       if (fx < 0 || fy < 0 || fx >= width || fy >= height) {
-        z = initialPointPicker();
+        if (resetIfOverflow) {
+          z = initialPointPicker();
+        }
         continue;
       }
 
       // the color function takes a point and return the associated color
       let color = null;
       if (preFinalColor) {
-        color = colorFunc(z.re, z.im);
+        color = colorFunc(z.re, z.im, i, j);
       } else {
-        color = colorFunc(fz.re, fz.im);
+        color = colorFunc(fz.re, fz.im, i, j);
       }
 
       // each color contribute to the color of this iteration
@@ -124,4 +162,31 @@ export const plotFlameWithColorStealing = (output, width, height, transforms, ra
       output[idx + 3] += 1;
     }
   }
+};
+
+export const estimateFlameDomain = (transforms, randomInt, initialPointPicker = randomComplex, finalTransform = makeIdentity(), nbIterations = 10000) => {
+  let xmin = Number.MAX_SAFE_INTEGER;
+  let xmax = Number.MIN_SAFE_INTEGER;
+  let ymin = Number.MAX_SAFE_INTEGER;
+  let ymax = Number.MIN_SAFE_INTEGER;
+
+  let z = initialPointPicker();
+  for (let i = 0; i < nbIterations; i++) {
+    const transform = transforms[randomInt()];
+
+    z = transform(z);
+    const fz = finalTransform(z);
+
+    if (fz.re < xmin) {
+      xmin = fz.re;
+    } else if (fz.re > xmax) {
+      xmax = fz.re;
+    }
+    if (fz.im < ymin) {
+      ymin = fz.im;
+    } else if (fz.im > ymax) {
+      ymax = fz.im;
+    }
+  }
+  return { xmin, xmax, ymin, ymax };
 };

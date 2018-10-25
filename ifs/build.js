@@ -1,6 +1,5 @@
 import { makeAffine2d } from '../utils/affine';
 import { compose2dFunctions, compose2dRandomizedFunctions } from '../utils/misc';
-import { randomIntegerWeighted } from '../utils/random';
 
 export const addAffineFunction = (ifs, coeffs, p) => {
   return addFunction(ifs, makeAffine2d(coeffs), p);
