@@ -99,7 +99,7 @@ const TRANSFORMATIONS = {
   juliaScope: makeJuliaScopeFunction(5, 2),
   iteratedMandelbrot: makeIteratedMandelbrotFunction(5, 3),
   epicycloid: makeEpicycloidFunction(4),
-  epichotroid: makeEpitrochoidFunction(0.1, 0.3, 0.05),
+  epitrochoid: makeEpitrochoidFunction(0.1, 0.3, 0.05),
   hypocycloid: makeHypocycloidFunction(4),
   cardioid: makeCardioidFunction(0.5),
 };

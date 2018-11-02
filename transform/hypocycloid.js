@@ -13,8 +13,8 @@ export const makeHypocycloidFunction = (k) => {
     const x = r * (k * cosTheta + math.cos(k * theta));
     const y = r * (k * sinTheta - math.sin(k * theta));
 
-    const xSquared = z.re * z.re;
-    const ySquared = z.im * z.im;
+    const xSquared = (z.re * z.re) % 1; // modulo ensure that the cycloid doesn't overflow
+    const ySquared = (z.im * z.im) % 1; // modulo ensure that the cycloid doesn't overflow
     const r2 = math.sqrt((xSquared * (1 - 0.5 * ySquared) + ySquared * (1 - 0.5 * xSquared)) * (x * x + y * y));
     const theta2 = math.atan2(y, x);
 
