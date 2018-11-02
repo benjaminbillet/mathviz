@@ -1,7 +1,7 @@
 import { randomComplex } from '../utils/random';
 import { makeIdentity } from '../transform';
 import { BI_UNIT_DOMAIN } from '../utils/domain';
-import { plotFlame, plotFlameWithColorStealing } from '../ifs/fractal-flame';
+import { plotFlame, plotFlameWithColorStealing, estimateFlameDomain } from '../ifs/fractal-flame';
 
 
 export const plotAttractor = (output, width, height, f, color, initialPointPicker = randomComplex, finalTransform = makeIdentity(), nbIterations = 1000000, domain = BI_UNIT_DOMAIN, resetIfOverflow = false) => {

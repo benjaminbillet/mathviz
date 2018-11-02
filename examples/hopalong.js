@@ -36,5 +36,5 @@ const buildAndPlotAttractor = async (path, width, height, nbIterations) => {
   await saveImageBuffer(buffer, width, height, path);
 };
 
-// we use a huge number of iterations and a few points
+// we use a huge number of iterations
 buildAndPlotAttractor(`hopalong-${new Date().getTime()}.png`, 2048, 2048, 100000000);
