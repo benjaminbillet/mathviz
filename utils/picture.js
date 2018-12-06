@@ -1,4 +1,5 @@
 import PngImage from 'pngjs-image';
+import { clampInt } from './misc';
 
 export const createImage = (width, height, r = 0, g = 0, b = 0, a = 255) => {
   const image = PngImage.createImage(width, height);
@@ -36,15 +37,6 @@ export const readImage = async (path) => {
   });
 };
 
-export const transformImage = (buffer, f) => {
-  for (let i = 0; i < buffer.length; i += 4) {
-    const result = f(buffer[i], buffer[i + 1], buffer[i + 2], buffer[i + 3]);
-    buffer[i + 0] = result[0] != null ? result[0] : buffer[i + 0];
-    buffer[i + 1] = result[1] != null ? result[1] : buffer[i + 1];
-    buffer[i + 2] = result[2] != null ? result[2] : buffer[i + 2];
-    buffer[i + 3] = result[3] != null ? result[3] : buffer[i + 3];
-  }
-};
 
 export const mapPixelToDomain = (x, y, width, height, domain) => {
   const domainWidth = domain.xmax - domain.xmin;
@@ -111,4 +103,57 @@ export const fillPicture = (buffer, width, height, r = 0, g = 0, b = 0, a = 255)
       buffer[idx + 3] = a;
     }
   }
+};
+
+export const forEachPixel = (buffer, width, height, f) => {
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height; j++) {
+      const idx = (i + j * width) * 4;
+      f(buffer[idx + 0], buffer[idx + 1], buffer[idx + 2], buffer[idx + 3], i, j, idx, buffer);
+    }
+  }
+};
+
+
+export const normalizeBuffer = (buffer, width, height, factor = 1) => {
+  let min = Number.MAX_SAFE_INTEGER;
+  let max = Number.MIN_SAFE_INTEGER;
+  forEachPixel(buffer, width, height, (r, g, b) => {
+    min = Math.min(min, r, g, b);
+    max = Math.max(max, r, g, b);
+  });
+
+  forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => {
+    buffer[idx + 0] = ((r - min) / (max - min)) * factor;
+    buffer[idx + 1] = ((g - min) / (max - min)) * factor;
+    buffer[idx + 2] = ((b - min) / (max - min)) * factor;
+    buffer[idx + 3] = a;
+  });
+};
+
+export const clampBuffer = (buffer, width, height, min, max) => {
+  forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => {
+    buffer[idx + 0] = Math.max(min, Math.min(r, max));
+    buffer[idx + 1] = Math.max(min, Math.min(g, max));
+    buffer[idx + 2] = Math.max(min, Math.min(b, max));
+    buffer[idx + 3] = a;
+  });
+};
+
+export const getPixelValue = (buffer, width, height, x, y, offset) => {
+  const idx = (clampInt(x, 0, width - 1) + clampInt(y, 0, height - 1) * width) * 4 + offset;
+  return buffer[idx];
+};
+
+export const setPixelValue = (buffer, width, height, x, y, offset) => {
+  const idx = (clampInt(x, 0, width - 1) + clampInt(y, 0, height - 1) * width) * 4 + offset;
+  return buffer[idx];
+};
+
+export const setPixelValues = (buffer, width, height, x, y, r, g, b, a = 255) => {
+  const idx = (clampInt(x, 0, width - 1) + clampInt(y, 0, height - 1) * width) * 4;
+  buffer[idx + 0] = r;
+  buffer[idx + 1] = g;
+  buffer[idx + 2] = b;
+  buffer[idx + 3] = a;
 };
