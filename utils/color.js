@@ -1,6 +1,7 @@
 import * as D3Color from 'd3-color';
 import * as D3Interpolate from 'd3-interpolate';
 import { clamp, clampInt } from './misc';
+import { forEachPixel } from './picture';
 
 
 const DISPLAY_LUMINANCE_MAX = 200;
@@ -40,8 +41,31 @@ export const applyGammaCorrection = (buffer, gamma = 0.45) => {
   }
 };
 
+export const adjustHsl = (buffer, width, height, deltaHue = 0, deltaSat = 0) => {
+  forEachPixel(buffer, width, height, (r, g, b, a, x, y, idx) => {
+    const hsl = D3Color.hsl(D3Color.rgb(r, g, b));
+    hsl.h = (hsl.h + Math.floor(deltaHue * 360)) % 360;
+    hsl.s = clamp(hsl.s + deltaSat, 0, 1);
+    const rgb = D3Color.rgb(hsl);
+    buffer[idx + 0] = rgb.r;
+    buffer[idx + 1] = rgb.g;
+    buffer[idx + 2] = rgb.b;
+  });
+  return buffer;
+};
+
+// https://en.wikipedia.org/wiki/Relative_luminance ITU BT.709
 export const getLuminance = (r, g, b) => {
   return r * 0.2126 + g * 0.7152 + b * 0.0722;
+};
+
+// http://www.itu.int/rec/R-REC-BT.601 ITU BT.601 
+export const getLuminance2 = (r, g, b) => {
+  return r * 0.299 + g * 0.587 + b * 0.114;
+};
+
+export const getLuminance3 = (r, g, b) => {
+  return Math.sqrt(r * r * 0.299 + g * g * 0.587 + b * b * 0.114);
 };
 
 
@@ -126,6 +150,26 @@ export const buildSteppedColorMap = (colors, positions, steps = 1024) => {
 
 export const normalizeColorMap = (colormap, scale = 255) => {
   return colormap.map(color => color.map(x => x / scale));
+};
+
+export const toARGBInteger = (r, g, b, a) => {
+  return (a << 24) | (r << 16) | (g << 8) | b;
+};
+
+export const fromARGBInteger = (argb, output = null) => {
+  const r = (argb & (255 << 16)) >> 16;
+  const g = (argb & (255 << 8)) >> 8;
+  const b = (argb & (255));
+  const a = (argb & (255 << 24)) >>> 24; // >>> avoid overflows
+  if (output == null) {
+    return [ r, g, b, a ];
+  }
+  // optimization for reusing arrays instead of reallocating
+  output[0] = r;
+  output[1] = g;
+  output[2] = b;
+  output[3] = a;
+  return output;
 };
 
 
