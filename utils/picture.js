@@ -129,6 +129,7 @@ export const normalizeBuffer = (buffer, width, height, factor = 1) => {
     buffer[idx + 2] = ((b - min) / (max - min)) * factor;
     buffer[idx + 3] = a;
   });
+  return buffer;
 };
 
 export const clampBuffer = (buffer, width, height, min, max) => {
@@ -138,6 +139,7 @@ export const clampBuffer = (buffer, width, height, min, max) => {
     buffer[idx + 2] = Math.max(min, Math.min(b, max));
     buffer[idx + 3] = a;
   });
+  return buffer;
 };
 
 export const getPixelValue = (buffer, width, height, x, y, offset) => {

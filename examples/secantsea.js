@@ -1,8 +1,8 @@
 import Complex from 'complex.js';
 
-import { getPictureSize, mapPixelToDomain, createImage, saveImageBuffer } from '../utils/picture';
+import { getPictureSize, mapPixelToDomain, createImage, saveImageBuffer, normalizeBuffer } from '../utils/picture';
 import { secantSea, SECANT_SEA_DOMAIN } from '../fractalsets/secantsea';
-import { makeColorMapFunction, buildConstrainedColorMap, buildColorMap } from '../utils/color';
+import { makeColorMapFunction, buildConstrainedColorMap, buildColorMap, convertUnitToRGBA } from '../utils/color';
 import { downscale } from '../utils/downscale';
 import { CATERPILLAR } from '../utils/palette';
 import { performClahe } from '../utils/histogram';
@@ -49,8 +49,8 @@ export const plotFunction = async (path, width, height, f, domain) => {
   });
   await saveImageBuffer(bufferRaw, width, height, path + 'rawcolored.png');
 
-  let resizedBuffer = downscale(bufferRaw, width, height, 0.2);
-  await saveImageBuffer(resizedBuffer, Math.trunc(0.2 * width), Math.trunc(0.2 * height), path + 'rawcoloredsampled.png');
+  let resizedBuffer = downscale(normalizeBuffer(new Float32Array(bufferRaw)), width, height, 0.2);
+  await saveImageBuffer(convertUnitToRGBA(resizedBuffer), Math.trunc(0.2 * width), Math.trunc(0.2 * height), path + 'rawcoloredsampled.png');
 
 
   performClahe(input, width, height, input);
@@ -75,8 +75,8 @@ export const plotFunction = async (path, width, height, f, domain) => {
   });
   await saveImageBuffer(bufferClahe, width, height, path + 'clahecolored.png');
 
-  resizedBuffer = downscale(bufferClahe, width, height, 0.2);
-  await saveImageBuffer(resizedBuffer, Math.trunc(0.2 * width), Math.trunc(0.2 * height), path + 'clahecoloredsampled.png');
+  resizedBuffer = downscale(normalizeBuffer(new Float32Array(bufferClahe)), width, height, 0.2);
+  await saveImageBuffer(convertUnitToRGBA(resizedBuffer), Math.trunc(0.2 * width), Math.trunc(0.2 * height), path + 'clahecoloredsampled.png');
 };
 
 const plotSecantSea = async (c, bailoutSquared, maxIterations, domain) => {

@@ -41,11 +41,26 @@ export const applyGammaCorrection = (buffer, gamma = 0.45) => {
   }
 };
 
-export const adjustHsl = (buffer, width, height, deltaHue = 0, deltaSat = 0) => {
+export const hslAdd = (buffer, width, height, deltaHue = 0, deltaSat = 0, deltaLum = 0) => {
   forEachPixel(buffer, width, height, (r, g, b, a, x, y, idx) => {
     const hsl = D3Color.hsl(D3Color.rgb(r, g, b));
     hsl.h = (hsl.h + Math.floor(deltaHue * 360)) % 360;
     hsl.s = clamp(hsl.s + deltaSat, 0, 1);
+    hsl.s = clamp(hsl.l + deltaLum, 0, 1);
+    const rgb = D3Color.rgb(hsl);
+    buffer[idx + 0] = rgb.r;
+    buffer[idx + 1] = rgb.g;
+    buffer[idx + 2] = rgb.b;
+  });
+  return buffer;
+};
+
+export const hslMultiply = (buffer, width, height, factorHue = 1, factorSat = 1, factorLum = 1) => {
+  forEachPixel(buffer, width, height, (r, g, b, a, x, y, idx) => {
+    const hsl = D3Color.hsl(D3Color.rgb(r, g, b));
+    hsl.h = (hsl.h * factorHue) % 360;
+    hsl.s = clamp(hsl.s * factorSat, 0, 1);
+    hsl.l = clamp(hsl.l * factorLum, 0, 1);
     const rgb = D3Color.rgb(hsl);
     buffer[idx + 0] = rgb.r;
     buffer[idx + 1] = rgb.g;

@@ -1,5 +1,11 @@
-import { clamp, clampInt } from './misc';
+import { clampInt } from './misc';
 import { makeGaussian2d } from './random';
+
+export const Invert3x3Kernel = [
+  0,  0,  0,
+  0, -1,  0,
+  0,  0,  0,
+];
 
 export const Sharpen3x3Kernel = [
   0,  -1,  0,
@@ -13,22 +19,34 @@ export const AvgBlur3x3Kernel = [
   1/9, 1/9, 1/9,
 ];
 
-export const EnhanceEdges3x3Kernel = [
+export const HorizontalDerivative3x3Kernel = [
   0,  0, 0,
   -1, 1, 0,
   0,  0, 0,
 ];
 
-export const Outline3x3Kernel = [
-  -1, -1, -1,
-  -1,  8, -1,
-  -1, -1, -1,
+export const VerticalDerivative3x3Kernel = [
+  0, -1, 0,
+  0,  1, 0,
+  0,  0, 0,
 ];
 
 export const EdgeDetect3x3Kernel = [
   0,  1, 0,
   1, -4, 1,
   0,  1, 0,
+];
+
+export const SharpEdgeDetect3x3Kernel = [
+  1,  2,  1,
+  2, -12, 2,
+  1,  2,  1,
+];
+
+export const Outline3x3Kernel = [
+  -1, -1, -1,
+  -1,  8, -1,
+  -1, -1, -1,
 ];
 
 export const Emboss3x3Kernel = [
@@ -47,6 +65,18 @@ export const SobelHorizontal3x3Kernel = [
   -1, -2, -1,
   0,   0,  0,
   1,   2,  1,
+];
+
+export const PrewittVertical3x3Kernel = [
+  -1, 0, 1,
+  -1, 0, 1,
+  -1, 0, 1,
+];
+
+export const PrewittHorizontal3x3Kernel = [
+  -1, -1, -1,
+  0,   0,  0,
+  1,   1,  1,
 ];
 
 export const Lighten3x3Kernel = [
@@ -78,7 +108,7 @@ export const Darken3x3Kernel = [
 };*/
 
 export const makeGaussianKernel = (size = 3, sigma = null) => {
-  const kernel = new Array(size * size);
+  const kernel = new Float32Array(size * size);
   if (sigma == null) {
     sigma = size/3;
   }
@@ -112,8 +142,8 @@ export const convolve = (input, output, width, height, kern, divisor = 1, offset
 
       for (let kx = 0; kx < kernSize; kx++) {
         for (let ky = 0; ky < kernSize; ky++) {
-          const x2 = clamp(x + kx - kernHalfSize, 0, width - 1);
-          const y2 = clamp(y + ky - kernHalfSize, 0, height - 1);
+          const x2 = clampInt(x + kx - kernHalfSize, 0, width - 1);
+          const y2 = clampInt(y + ky - kernHalfSize, 0, height - 1);
           const idx2 = (x2 + y2 * width) * 4;
           const kidx = kx + (ky * kernSize);
 
@@ -123,9 +153,9 @@ export const convolve = (input, output, width, height, kern, divisor = 1, offset
         }
       }
 
-      output[idx + 0] = clampInt(r / divisor + offset, 0, 255);
-      output[idx + 1] = clampInt(g / divisor + offset, 0, 255);
-      output[idx + 2] = clampInt(b / divisor + offset, 0, 255);
+      output[idx + 0] = r / divisor + offset;
+      output[idx + 1] = g / divisor + offset;
+      output[idx + 2] = b / divisor + offset;
     }
   }
   return output;

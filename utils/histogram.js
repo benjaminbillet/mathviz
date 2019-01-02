@@ -4,7 +4,7 @@ export const makeHistogram = (input, width, height, nbBins = 256) => {
   const binSize = Math.trunc(256 / nbBins);
 
   return new Array(nbChannels).fill(null).map(() => {
-    const histogram = new Array(nbBins).fill(0);
+    const histogram = new Uint32Array(nbBins).fill(0);
     input.forEach((lum) => {
       const bin = Math.trunc(lum / binSize);
       histogram[bin]++;
@@ -19,7 +19,7 @@ export const makeRegionHistogram = (input, width, height, x1, y1, x2, y2, nbBins
   const binSize = Math.trunc(256 / nbBins);
 
   return new Array(nbChannels).fill(null).map(() => {
-    const histogram = new Array(nbBins).fill(0);
+    const histogram = new Uint32Array(nbBins).fill(0);
     for (let x = x1; x < x2; x++) {
       for (let y = y1; y < y2; y++) {
         let idx;

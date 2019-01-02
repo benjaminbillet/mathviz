@@ -47,3 +47,27 @@ export const minkowski = (a, b) => {
 export const minkowski2d = (x1, y1, x2, y2, p) => {
   return Math.pow(Math.pow(Math.abs(x1 - x2), p) + Math.pow(Math.abs(y1 - y2), p), 1/p);
 };
+
+
+export const discrete = (a, b) => {
+  if (a === b) {
+    return 0;
+  }
+  return 1;
+};
+
+export const discrete2d = (x1, y1, x2, y2) => {
+  return discrete(x1 - x2, y1 - y2);
+};
+
+
+export const britishRail = (a, b) => {
+  if (a === b) {
+    return 0;
+  }
+  return Math.abs(a) + Math.abs(b);
+};
+
+export const britishRail2d = (x1, y1, x2, y2) => {
+  return britishRail(x1 - x2, y1 - y2);
+};

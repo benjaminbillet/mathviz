@@ -3,6 +3,8 @@ import * as D3Random from 'd3-random';
 
 export * from 'd3-random';
 
+export const DefaultNormalDistribution = D3Random.randomNormal(0, 1);
+
 export const randomScalar = (min = -1, max = 1) => {
   return Math.random() * (max - min) + min;
 };
@@ -28,7 +30,7 @@ export const pickRandom = (arr) => {
 };
 
 export const pickRandomSubset = (nb, arr) => {
-  return new Array(nb).fill(null).map(() => pickRandom(arr));
+  return new Float32Array(nb).fill(null).map(() => pickRandom(arr));
 };
 
 export const randomIntegerUniform = (min, max) => {
@@ -53,7 +55,7 @@ export const randomIntegerWeighted = (distribution, min = 0) => {
 
 export const randomIntegerNormal = (min, max, mu = undefined, sigma = undefined) => {
   const length = max - min;
-  const weights = new Array(length);
+  const weights = new Float32Array(length);
   const normal = D3Random.randomNormal(mu, sigma);
   for (let i = 0; i < length; i++) {
     weights[i] = normal() * normal();
@@ -63,7 +65,7 @@ export const randomIntegerNormal = (min, max, mu = undefined, sigma = undefined)
 
 export const randomIntegerLogNormal = (min, max, mu = undefined, sigma = undefined) => {
   const length = max - min;
-  const weights = new Array(length);
+  const weights = new Float32Array(length);
   const logNormal = D3Random.randomLogNormal(mu, sigma);
   for (let i = 0; i < length; i++) {
     weights[i] = logNormal();
@@ -73,7 +75,7 @@ export const randomIntegerLogNormal = (min, max, mu = undefined, sigma = undefin
 
 export const randomIntegerExponential = (min, max, lambda) => {
   const length = max - min;
-  const weights = new Array(length);
+  const weights = new Float32Array(length);
   const exponential = D3Random.randomExponential(lambda);
   for (let i = 0; i < length; i++) {
     weights[i] = exponential();
@@ -83,7 +85,7 @@ export const randomIntegerExponential = (min, max, lambda) => {
 
 export const randomIntegerBates = (min, max, n) => {
   const length = max - min;
-  const weights = new Array(length);
+  const weights = new Float32Array(length);
   const bates = D3Random.randomBates(n);
   for (let i = 0; i < length; i++) {
     weights[i] = bates();
@@ -93,7 +95,7 @@ export const randomIntegerBates = (min, max, n) => {
 
 export const randomIntegerIrwinHall = (min, max, n) => {
   const length = max - min;
-  const weights = new Array(length);
+  const weights = new Float32Array(length);
   const irwinHall = D3Random.randomIrwinHall(n);
   for (let i = 0; i < length; i++) {
     weights[i] = irwinHall();
@@ -129,3 +131,15 @@ export const makeGaussian2d = (sigma = 1, xmu = 0, ymu = 0) => {
     return oneOverTwoPiSigmaSquared * Math.exp(-d / twoSigmaSquared);
   };
 };
+
+// a fast, seedable and not-that-bad PRNG
+export const makeMulberry32 = (seed) => {
+  return () => {
+    let t = (seed += 0x6D2B79F5);
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+};
+
+export const mulberry32 = makeMulberry32(new Date().getTime());

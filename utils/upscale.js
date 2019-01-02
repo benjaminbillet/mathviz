@@ -46,13 +46,13 @@ export const pixelBicubic = (buffer, width, height, x, y, offset) => {
   return bicubic(x - x1, y - y1, p00, p10, p20, p30, p01, p11, p21, p31, p02, p12, p22, p32, p03, p13, p23, p33);
 };
 
-const SAMPLERS = {
+export const UpscaleSamplers = {
   Bilinear: pixelBilinear,
   Bicubic: pixelBicubic,
   NearestNeighbor: pixelNearestNeighbor,
 };
 
-export const upscale = (input, width, height, scale, sampler = 'Bicubic') => {
+export const upscale = (input, width, height, scale, sampler = UpscaleSamplers.Bicubic) => {
   if (scale <= 1) {
     return input;
   }
@@ -62,19 +62,24 @@ export const upscale = (input, width, height, scale, sampler = 'Bicubic') => {
   return upscale2(input, width, height, outputWidth, outputHeight, sampler);
 };
 
-export const upscale2 = (input, width, height, outputWidth, outputHeight, sampler = 'Bicubic') => {
-  const output = new Float64Array(outputWidth * outputHeight * 4);
-  const samplerImpl = SAMPLERS[sampler];
+export const upscale2 = (input, width, height, outputWidth, outputHeight, sampler = UpscaleSamplers.Bicubic) => {
+  if (outputWidth === width && outputHeight === height) {
+    return input;
+  }
+  if (outputWidth < width || outputHeight < height) {
+    throw new Error('Upscale only');
+  }
 
+  const output = new Float64Array(outputWidth * outputHeight * 4);
   for (let x = 0; x < outputWidth; x++) {
     for (let y = 0; y < outputHeight; y++) {
       const px = x * (width - 1) / (outputWidth - 1);
       const py = y * (height - 1) / (outputHeight - 1);
 
       const idx = (x + y * outputWidth) * 4;
-      output[idx + 0] = samplerImpl(input, width, height, px, py, 0);
-      output[idx + 1] = samplerImpl(input, width, height, px, py, 1);
-      output[idx + 2] = samplerImpl(input, width, height, px, py, 2);
+      output[idx + 0] = sampler(input, width, height, px, py, 0);
+      output[idx + 1] = sampler(input, width, height, px, py, 1);
+      output[idx + 2] = sampler(input, width, height, px, py, 2);
       output[idx + 3] = 255;
     }
   }

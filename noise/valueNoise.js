@@ -1,10 +1,14 @@
-import * as D3Random from 'd3-random';
 import { forEachPixel } from '../utils/picture';
-import { upscale2 } from '../utils/upscale';
+import { upscale2, UpscaleSamplers } from '../utils/upscale';
+import { DefaultNormalDistribution } from '../utils/random';
 
-export const DEFAULT_NORMAL_DISTRIBUTION = D3Random.randomNormal(0, 1);
-export const makeValueNoise = (buffer, width, height, distribution = DEFAULT_NORMAL_DISTRIBUTION, bw = false) => {
-  forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => {
+// the value noise method consists into building a lattice of random values that are interpolated to form the final noise.
+
+export const makeValueNoise = (noiseWidth, noiseHeight, outputWidth, outputHeight, sampler = UpscaleSamplers.Bicubic, distribution = DefaultNormalDistribution, bw = false) => {
+  const buffer = new Float32Array(noiseWidth * noiseHeight * 4);
+
+  // we initialize a set of randomly-valued pixels
+  forEachPixel(buffer, noiseWidth, noiseHeight, (r, g, b, a, i, j, idx) => {
     if (bw === true) {
       r = g = b = distribution();
     } else {
@@ -17,11 +21,7 @@ export const makeValueNoise = (buffer, width, height, distribution = DEFAULT_NOR
     buffer[idx + 2] = b;
     buffer[idx + 3] = a;
   });
-  return buffer;
-};
 
-export const makeSampledValueNoise = (noiseWidth, noiseHeight, outputWidth, outputHeight, sampler = 'Bicubic', distribution = DEFAULT_NORMAL_DISTRIBUTION, bw = false) => {
-  const buffer = new Float32Array(noiseWidth * noiseHeight * 4);
-  makeValueNoise(buffer, noiseWidth, noiseHeight, distribution, bw);
+  // then upscale the picture using the given sampler for interpolation
   return upscale2(buffer, noiseWidth, noiseHeight, outputWidth, outputHeight, sampler);
 };
