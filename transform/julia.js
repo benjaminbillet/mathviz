@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 import { randomComplex } from '../utils/random';
 import math from '../utils/math';
@@ -17,7 +17,7 @@ export const makeJuliaFunction = (c) => {
     if (Math.random() >= 0.5) {
       omega = halfTheta + Math.PI;
     }
-    return new Complex(math.cos(omega) * sqrtOfR, math.sin(omega) * sqrtOfR);
+    return complex(math.cos(omega) * sqrtOfR, math.sin(omega) * sqrtOfR);
   };
 };
 

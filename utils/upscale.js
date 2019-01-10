@@ -70,7 +70,7 @@ export const upscale2 = (input, width, height, outputWidth, outputHeight, sample
     throw new Error('Upscale only');
   }
 
-  const output = new Float64Array(outputWidth * outputHeight * 4);
+  const output = new Float32Array(outputWidth * outputHeight * 4);
   for (let x = 0; x < outputWidth; x++) {
     for (let y = 0; y < outputHeight; y++) {
       const px = x * (width - 1) / (outputWidth - 1);

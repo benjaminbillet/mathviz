@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex, modulus, sub } from '../utils/complex';
 import { mapDomainToPixel } from '../utils/picture';
 
 export const makeBitmapTrap = (bitmap, bitmapWidth, bitmapHeight, trapWidth, trapHeight, x, y ) => {
@@ -10,21 +10,21 @@ export const makeBitmapTrap = (bitmap, bitmapWidth, bitmapHeight, trapWidth, tra
 
   const domain = { xmin, xmax, ymin, ymax };
   const interpolateTrap = (z) => {
-    const [bx, by] = mapDomainToPixel(z.re, z.im, domain, bitmapWidth, bitmapHeight);
+    const [ bx, by ] = mapDomainToPixel(z.re, z.im, domain, bitmapWidth, bitmapHeight);
     const idx = (bx + by * bitmapWidth) * 4;
     return bitmap.slice(idx, idx + 3);
-  }
+  };
 
   return {
     isTrapped,
     interpolateTrap,
-    untrappedValue: [0, 0, 0],
+    untrappedValue: [ 0, 0, 0 ],
   };
 };
 
 export const makeCircularBitmapTrap = (bitmap, bitmapWidth, bitmapHeight, trapRadius, x, y) => {
-  const center = new Complex(x, y);
-  const isTrapped = (z) => (z.sub(center).abs() <= trapRadius);
+  const center = complex(x, y);
+  const isTrapped = (z) => (modulus(sub(z, center)) <= trapRadius);
 
   const xmin = x - trapRadius;
   const xmax = x + trapRadius;
@@ -32,25 +32,25 @@ export const makeCircularBitmapTrap = (bitmap, bitmapWidth, bitmapHeight, trapRa
   const ymax = y + trapRadius;
   const domain = { xmin, xmax, ymin, ymax };
   const interpolateTrap = (z) => {
-    const [bx, by] = mapDomainToPixel(z.re, z.im, domain, bitmapWidth, bitmapHeight);
+    const [ bx, by ] = mapDomainToPixel(z.re, z.im, domain, bitmapWidth, bitmapHeight);
     const idx = (bx + by * bitmapWidth) * 4;
     return bitmap.slice(idx, idx + 3);
-  }
+  };
 
   return {
     isTrapped,
     interpolateTrap,
-    untrappedValue: [0, 0, 0],
+    untrappedValue: [ 0, 0, 0 ],
   };
 };
 
 export const makeCircularTrap = (trapRadius, x, y) => {
-  const center = new Complex(x, y);
-  const isTrapped = (z) => (z.sub(center).abs() <= trapRadius);
+  const center = complex(x, y);
+  const isTrapped = (z) => (modulus(sub(z, center)) <= trapRadius);
 
   const interpolateTrap = (z) => {
-    return z.sub(x, y).abs() / trapRadius;
-  }
+    return modulus(sub(z, center)) / trapRadius;
+  };
 
   return {
     isTrapped,

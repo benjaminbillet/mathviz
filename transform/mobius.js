@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 import { randomComplex } from '../utils/random';
 
@@ -11,7 +11,7 @@ export const makeMobiusFunction = (a, b, c, d) => {
     const denominatorIm = (z.re * c.im + z.im * c.re) + d.im;
 
     const divisor =  (denominatorRe * denominatorRe + denominatorIm * denominatorIm);
-    return new Complex(
+    return complex(
       (numeratorRe * denominatorRe + numeratorIm * denominatorIm) / divisor,
       (numeratorIm * denominatorRe - numeratorRe * denominatorIm) / divisor,
     );

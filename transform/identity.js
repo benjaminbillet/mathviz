@@ -1,5 +1,3 @@
-
-
 export const makeIdentityFunction = () => {
   return (z) => z;
 };

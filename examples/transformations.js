@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex, modulus } from '../utils/complex';
 
 import { createImage, saveImage, mapPixelToDomain, mapDomainToPixel } from '../utils/picture';
 import {
@@ -62,7 +62,7 @@ const TRANSFORMATIONS = {
   linear0: makeLinearFunction(1, 0, 0, 0, 1, 0),
   linear1: makeLinearFunction(0.8, 0.9, 0, 0, 0.8, 0),
   linear2: makeLinearFunction(0.7, -0.7, 0, 0.7, 0.7, 0),
-  mobius: makeMobiusFunction(new Complex(0.5, -0.8), new Complex(0.8, -0.2), new Complex(0.8, -0.5), new Complex(0.2, 0.1)),
+  mobius: makeMobiusFunction(complex(0.5, -0.8), complex(0.8, -0.2), complex(0.8, -0.5), complex(0.2, 0.1)),
   sinusoidal: makeSinusoidalFunction(),
   spherical: makeSphericalFunction(),
   magnify: makeMagnifyFunction(),
@@ -75,7 +75,7 @@ const TRANSFORMATIONS = {
   hyperbolic: makeHyperbolicFunction(),
   diamond: makeDiamondFunction(),
   ex: makeExFunction(),
-  julia: makeJuliaFunction(new Complex(-0.9, 0.4)),
+  julia: makeJuliaFunction(complex(-0.9, 0.4)),
   bent: makeBentFunction(),
   wave1: makeWaveFunction(0.5, 0.25, 0, 1),
   wave2: makeWaveFunction(0, 1, 0.5, 0.25),
@@ -117,7 +117,7 @@ const plotTransformedGrid = async (width, height, transformKey) => {
       const [ x, y ] = mapPixelToDomain(i, j, width, height, BI_UNIT_DOMAIN);
 
       // ... the transformation is then applied...
-      const z = new Complex(x, y);
+      const z = complex(x, y);
       const fz = transform(z);
 
       // ... then the transformed 2d value is re-mapped to the pixel domain
@@ -129,7 +129,7 @@ const plotTransformedGrid = async (width, height, transformKey) => {
       }
 
       // the pixel color will be based on the distance from the center to the non-transformed pixel (√2 is max.)
-      const color = pickColorMapValue(z.abs() / Math.SQRT2, RainbowColormap);
+      const color = pickColorMapValue(modulus(z) / Math.SQRT2, RainbowColormap);
 
       // the buffer is 1-dimensional and each pixel has 4 components (r, g, b, a)
       const idx = (fx + fy * width) * 4;

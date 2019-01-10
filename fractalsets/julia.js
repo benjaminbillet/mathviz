@@ -1,3 +1,5 @@
+import { modulus, powN, add } from '../utils/complex';
+
 // a complex number u=x+yi (x, y ∈ [-2, 2]) is in the julia set if:
 // - the sequence zₙ₊₁ = zₙ² + c converges to a complex number with a magnitude (= vector length) ≤ 2
 //  with z₀ = u and with c = a+bi a fixed complex number (a, b ∈ [-2, 2])
@@ -16,7 +18,8 @@ export const julia = (z0, c, d = 2, maxIterations = 100) => {
   // (it will avoid a costly square root)
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= 4 && iterations < maxIterations) {
-    zn = zn.pow(d).add(c);
+    zn = powN(zn, d, zn);
+    zn = add(zn, c, zn);
 
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;
@@ -33,7 +36,8 @@ export const continuousJulia = (z0, c, d = 2, maxIterations = 100) => {
   let iterations = 0;
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= 4 && iterations < maxIterations) {
-    zn = zn.pow(d).add(c);
+    zn = powN(zn, d, zn);
+    zn = add(zn, c, zn);
 
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;
@@ -45,7 +49,7 @@ export const continuousJulia = (z0, c, d = 2, maxIterations = 100) => {
 
   // the number of iterations is normalized to produce a continuous value
   // that will avoid the "banding" effect that appears when the coloring is based only on the iterations count
-  const quantity = (LOGLOG2 - Math.log(Math.log(zn.abs()))) / Math.log(d);
+  const quantity = (LOGLOG2 - Math.log(Math.log(modulus(zn)))) / Math.log(d);
   return (iterations + quantity) / maxIterations;
 };
 
@@ -54,7 +58,8 @@ export const orbitTrapJulia = (z0, c, trap, d = 2, maxIterations = 100) => {
   let iterations = 0;
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= 4 && iterations < maxIterations) {
-    zn = zn.pow(d).add(c);
+    zn = powN(zn, d, zn);
+    zn = add(zn, c, zn);
 
     // if the point is trapped, we return the interpolated value from the trap
     if (trap.isTrapped(zn)) {

@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 import { randomScalar } from '../utils/random';
 
@@ -8,7 +8,7 @@ export const makeCurlFunction = (a, b) => {
     const t1 = 1 + a * z.re + b * (z.re * z.re - z.im * z.im);
     const t2 = a * z.im + twoB * z.re * z.im;
     const factor = 1 / (t1 * t1 + t2 * t2);
-    return new Complex(factor * (t1 * z.re + t2 * z.im), factor * (t1 * z.im - t2 * z.re));
+    return complex(factor * (t1 * z.re + t2 * z.im), factor * (t1 * z.im - t2 * z.re));
   };
 };
 

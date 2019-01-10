@@ -8,6 +8,7 @@
     "arrow-body-style": "off",
     "arrow-parens": "off",
     "indent": ["error", 2],
-    "no-multi-spaces": "off"
+    "no-multi-spaces": "off",
+    "require-jsdoc": "off"
   }
 }

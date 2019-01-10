@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex, modulus, argument } from '../utils/complex';
 
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
@@ -6,9 +6,9 @@ import math from '../utils/math';
 export const makeBlobFunction = (high, low, waves) => {
   const halfDistance = (high - low) / 2;
   return (z) => {
-    const theta = math.atan2(z.im, z.re);
-    const factor = z.abs() * (low + halfDistance * (math.sin(waves * theta) + 1));
-    return new Complex(factor * math.cos(theta), factor * math.sin(theta));
+    const theta = argument(z);
+    const factor = modulus(z) * (low + halfDistance * (math.sin(waves * theta) + 1));
+    return complex(factor * math.cos(theta), factor * math.sin(theta));
   };
 };
 

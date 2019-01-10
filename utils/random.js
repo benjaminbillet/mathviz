@@ -1,5 +1,5 @@
-import Complex from 'complex.js';
 import * as D3Random from 'd3-random';
+import { complex } from './complex';
 
 export * from 'd3-random';
 
@@ -12,7 +12,7 @@ export const randomInteger = (min, max) => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 export const randomComplex = (reMin = -1, reMax = 1, imMin = -1, imMax = 1) => {
-  return new Complex(randomScalar(reMin, reMax), randomScalar(imMin, imMax));
+  return complex(randomScalar(reMin, reMax), randomScalar(imMin, imMax));
 };
 export const randomArray = (size, min = -1, max = 1) => {
   const arr = new Array(size);

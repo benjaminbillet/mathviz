@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex, modulus } from '../utils/complex';
 
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
@@ -14,8 +14,8 @@ export const makeNgonFunction = (power, sides, corners, circle) => {
       t2 = t1 - twoPiOverSides;
     }
 
-    const factor = (corners * ((1 / math.cos(t2)) - 1) + circle) / (Math.pow(z.abs(), power));
-    return new Complex(factor * z.re, factor * z.im);
+    const factor = (corners * ((1 / math.cos(t2)) - 1) + circle) / (Math.pow(modulus(z), power));
+    return complex(factor * z.re, factor * z.im);
   };
 };
 

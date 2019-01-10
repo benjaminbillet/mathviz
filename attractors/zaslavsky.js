@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 import math from '../utils/math';
 
 // https://www.researchgate.net/publication/257481524_Aesthetic_Patterns_from_the_Perturbed_Orbits_of_Discrete_Dynamical_Systems
@@ -11,6 +11,6 @@ export const makeZaslavsky = (k, q) => {
   const sinAlpha = math.sin(alpha);
   return (z) => {
     const kSinY = k * math.sin(z.im);
-    return new Complex((z.re + kSinY) * cosAlpha + z.im * sinAlpha, -(z.re + kSinY) * sinAlpha + z.im * cosAlpha);
+    return complex((z.re + kSinY) * cosAlpha + z.im * sinAlpha, -(z.re + kSinY) * sinAlpha + z.im * cosAlpha);
   };
 };

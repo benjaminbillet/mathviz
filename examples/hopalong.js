@@ -22,7 +22,7 @@ const buildAndPlotAttractor = async (path, width, height, nbIterations) => {
   const initialPointPicker = randomComplex;
 
   // we create a buffer and run the standard plotter
-  let buffer = new Float64Array(width * height * 4);
+  let buffer = new Float32Array(width * height * 4);
   plotAttractorWithColorStealing(buffer, width, height, f, colorFunc, false, initialPointPicker, finalTransform, nbIterations, domain);
 
   // we correct the generated image using the contrast-based scalefactor technique

@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
@@ -10,7 +10,7 @@ export const makeCardioidFunction = (a) => {
     const ySquared = (z.im * z.im) % 1; // modulo ensure that the cycloid doesn't overflow
     const cosTheta = math.cos(theta);
     const r = math.sqrt(xSquared * (1 - 0.5 * ySquared) + ySquared * (1 - 0.5 * xSquared)) - a * (1 - cosTheta);
-    return new Complex(r * cosTheta - a, r * math.sin(theta));
+    return complex(r * cosTheta - a, r * math.sin(theta));
   };
 };
 

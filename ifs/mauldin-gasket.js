@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 import { makeIfs } from './build';
 
 export const MAULDIN_GASKET_DOMAIN = { xmin: -1, xmax: 1, ymin: -1, ymax: 1 };
@@ -17,7 +17,7 @@ export const makeMauldinGasketIfs = (a = 3) => {
     const xc = xb * factor;
     const yc = -yb * factor;
 
-    return new Complex((xa * xc - ya * yc) * sqrt1p5, (xa * yc + xc * ya) * sqrt1p5);
+    return complex((xa * xc - ya * yc) * sqrt1p5, (xa * yc + xc * ya) * sqrt1p5);
   };
 
   const f1 = (z) => {

@@ -1,10 +1,9 @@
-import Complex from 'complex.js';
 
 import math from '../utils/math';
-
+import { complex } from '../utils/complex';
 
 export const makeSinusoidalFunction = () => {
-  return (z) => new Complex(math.sin(z.re), math.sin(z.im));
+  return (z) => complex(math.sin(z.re), math.sin(z.im));
 };
 
 export const makeSinusoidal = () => {

@@ -1,9 +1,7 @@
-import Complex from 'complex.js';
-
-import math from '../utils/math';
+import { complex, modulus, argument } from '../utils/complex';
 
 export const makePolarFunction = () => {
-  return (z) => new Complex(math.atan2(z.im, z.re) / Math.PI, z.abs() - 1);
+  return (z) => complex(argument(z) / Math.PI, modulus(z) - 1);
 };
 
 export const makePolar = () => {

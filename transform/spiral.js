@@ -1,12 +1,12 @@
-import Complex from 'complex.js';
+import { complex, modulus, argument } from '../utils/complex';
 
 import math from '../utils/math';
 
 export const makeSpiralFunction = () => {
   return (z) => {
-    const r = z.abs();
-    const theta = math.atan2(z.im, z.re);
-    return new Complex((math.cos(theta) + math.sin(r)) / r, (math.sin(theta) - math.cos(r)) / r);
+    const r = modulus(z);
+    const theta = argument(z);
+    return complex((math.cos(theta) + math.sin(r)) / r, (math.sin(theta) - math.cos(r)) / r);
   };
 };
 

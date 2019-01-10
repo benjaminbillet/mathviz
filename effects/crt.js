@@ -1,9 +1,9 @@
 import { normalizeBuffer } from '../utils/picture';
 import { hslAdd } from '../utils/color';
-import { randomScalar } from '../utils/random';
+import { randomScalar, DefaultNormalDistribution } from '../utils/random';
 import { upscale2, UpscaleSamplers } from '../utils/upscale';
 import { blendCosine, blendCosineCenter } from '../utils/blend';
-import { makeUpscaledValueNoise, DEFAULT_NORMAL_DISTRIBUTION } from '../noise/valueNoise';
+import { makeValueNoise } from '../noise/valueNoise';
 import { uniformMask } from '../utils/mask';
 import { refract } from './refract';
 
@@ -13,16 +13,16 @@ import { refract } from './refract';
 
 export const applyCrt = (input, width, height, distortionAmount = 0.25) => {
   // create a gradient for distortion
-  const distortion = makeUpscaledValueNoise(3, 3, width, height, UpscaleSamplers.Bicubic, DEFAULT_NORMAL_DISTRIBUTION, true);
+  const distortion = makeValueNoise(3, 3, width, height, UpscaleSamplers.Bicubic, DefaultNormalDistribution, true);
   normalizeBuffer(distortion, width, height);
 
   // refract a pixellated white noise using the gradient
-  const offsetedDistribution = () => DEFAULT_NORMAL_DISTRIBUTION() - 0.5;
-  let whiteNoise = makeUpscaledValueNoise(height * 0.75, height * 0.7, width, height, UpscaleSamplers.NearestNeighbor, offsetedDistribution, true);
+  const offsetedDistribution = () => DefaultNormalDistribution() - 0.5;
+  let whiteNoise = makeValueNoise(height * 0.75, height * 0.7, width, height, UpscaleSamplers.NearestNeighbor, offsetedDistribution, true);
   whiteNoise = refract(whiteNoise, distortion, width, height, distortionAmount);
 
   // blend the refracted noise with another noise
-  let whiteNoise2 = makeUpscaledValueNoise(width * 0.25, height * 0.5, width, height, UpscaleSamplers.Bicubic, DEFAULT_NORMAL_DISTRIBUTION, true);
+  let whiteNoise2 = makeValueNoise(width * 0.25, height * 0.5, width, height, UpscaleSamplers.Bicubic, DefaultNormalDistribution, true);
   normalizeBuffer(whiteNoise2, width, height);
   whiteNoise2 = blendCosineCenter(whiteNoise2, refract(whiteNoise2, distortion, width, height, distortionAmount), width, height);
 

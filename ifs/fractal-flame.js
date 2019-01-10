@@ -1,9 +1,10 @@
 import { compose2dFunctions, clampInt } from '../utils/misc';
-import { pickRandom, randomComplex } from '../utils/random';
+import { pickRandom, randomComplex, randomScalar } from '../utils/random';
 import { makeIdentity } from '../transform';
 import { mapDomainToPixel } from '../utils/picture';
 import { BI_UNIT_DOMAIN } from '../utils/domain';
 import { makeColorMapFunction, buildColorMap } from '../utils/color';
+import { complex } from '../utils/complex';
 
 export const generateTransformationSet = (nb, transformMakers, baseTransformMakers = [ makeSimpleLinear ]) => {
   return new Array(nb).fill(null).map(() => {
@@ -17,7 +18,7 @@ export const generateTransformationSet = (nb, transformMakers, baseTransformMake
 };
 
 export const makeBitmapColorSteal = (bitmap, bitmapWidth, bitmapHeight, domain = BI_UNIT_DOMAIN) => {
-  const normalized = new Float64Array(bitmapWidth * bitmapHeight * 4);
+  const normalized = new Float32Array(bitmapWidth * bitmapHeight * 4);
   bitmap.forEach((x, i) => normalized[i] = x / 255);
   return (x, y) => {
     let [ px, py ] = mapDomainToPixel(x, y, domain, bitmapWidth, bitmapHeight);

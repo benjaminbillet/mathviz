@@ -1,9 +1,9 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 import math from '../utils/math';
 
 export const makeTangentFunction = () => {
-  return (z) => new Complex(math.sin(z.re) / math.cos(z.im), math.tan(z.im));
+  return (z) => complex(math.sin(z.re) / math.cos(z.im), math.tan(z.im));
 };
 
 export const makeTangent = () => {

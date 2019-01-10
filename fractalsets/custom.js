@@ -1,3 +1,5 @@
+import { modulus } from '../utils/complex';
+
 export const makeCustom = (z0, f, bailoutRadiusSquared = 4, maxIterations = 100) => {
   let zn = z0;
 
@@ -34,7 +36,7 @@ export const makeContinuousCustom = (z0, f, d = 2, bailoutRadiusSquared = 4, max
 
   // the number of iterations is normalized to produce a continuous value
   // that will avoid the "banding" effect that appears when the coloring is based only on the iterations count
-  const quantity = (Math.log(Math.log(Math.sqrt(bailoutRadiusSquared))) - Math.log(Math.log(zn.abs()))) / Math.log(d);
+  const quantity = (Math.log(Math.log(Math.sqrt(bailoutRadiusSquared))) - Math.log(Math.log(modulus(zn)))) / Math.log(d);
   return (iterations + quantity) / maxIterations;
 };
 

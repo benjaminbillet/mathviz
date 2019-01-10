@@ -1,9 +1,9 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 import math from '../utils/math';
 
 export const makeCylinderFunction = () => {
-  return (z) => new Complex(math.sin(z.re), z.im);
+  return (z) => complex(math.sin(z.re), z.im);
 };
 
 export const makeCylinder = () => {

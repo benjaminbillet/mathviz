@@ -6,7 +6,7 @@
 // 3. apply fᵢ: zₖ₊₁ = fᵢ(zₖ)
 // 4. plot zₖ₊₁ and return to step 2
 
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 import { mapDomainToPixel } from '../utils/picture';
 import { randomIntegerWeighted } from '../utils/random';
@@ -19,7 +19,7 @@ export const simpleIfsChaosPlot = (buffer, width, height, ifs, finalTransform, d
   // create a function that will return a number between 0 and probabilities.length - 1, with the given probabilities
   const randomInt = randomIntegerWeighted(probabilities);
 
-  let zn = new Complex(0, 0); // z0
+  let zn = complex(0, 0); // z0
 
   for (let i = 0; i < iterations; i++) {
     // at each iteration we apply one of the function...

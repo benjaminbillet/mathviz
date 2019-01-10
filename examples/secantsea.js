@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 import { getPictureSize, mapPixelToDomain, createImage, saveImageBuffer, normalizeBuffer } from '../utils/picture';
 import { secantSea, SECANT_SEA_DOMAIN } from '../fractalsets/secantsea';
@@ -23,7 +23,7 @@ export const plotFunction = async (path, width, height, f, domain) => {
     for (let j = 0; j < height; j++) {
       const [ x, y ] = mapPixelToDomain(i, j, width, height, domain);
 
-      const intensity = f(new Complex(x, y));
+      const intensity = f(complex(x, y));
       const idx = (i + j * width);
       input[idx] = Math.trunc(intensity * 255);
     }
@@ -85,8 +85,8 @@ const plotSecantSea = async (c, bailoutSquared, maxIterations, domain) => {
   await plotFunction(`secantsea-c=${c.re}+${c.im}i.png`, width, height, configuredSecantSea, domain);
 };
 
-plotSecantSea(new Complex(0.102, -0.04), 10000, 100, SECANT_SEA_DOMAIN);
-plotSecantSea(new Complex(1.098, 1.402), 10000, 100, SECANT_SEA_DOMAIN);
-plotSecantSea(new Complex(9.984, 7.55), 10000, 100, SECANT_SEA_DOMAIN);
-plotSecantSea(new Complex(0.662, 1.086), 10000, 100, SECANT_SEA_DOMAIN);
-plotSecantSea(new Complex(-0.354, 0.162), 10000, 100, SECANT_SEA_DOMAIN);
+plotSecantSea(complex(0.102, -0.04), 10000, 100, SECANT_SEA_DOMAIN);
+plotSecantSea(complex(1.098, 1.402), 10000, 100, SECANT_SEA_DOMAIN);
+plotSecantSea(complex(9.984, 7.55), 10000, 100, SECANT_SEA_DOMAIN);
+plotSecantSea(complex(0.662, 1.086), 10000, 100, SECANT_SEA_DOMAIN);
+plotSecantSea(complex(-0.354, 0.162), 10000, 100, SECANT_SEA_DOMAIN);

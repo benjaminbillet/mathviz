@@ -7,6 +7,9 @@ const mathFull = {
   tan: Math.tan,
   atan2: Math.atan2,
   sqrt: Math.sqrt,
+  sign: Math.sign,
+  min: Math.min,
+  max: Math.max,
   random: mulberry32,
 };
 
@@ -16,6 +19,9 @@ const mathApprox = {
   tan: approx.tan,
   atan2: approx.atan2,
   sqrt: approx.sqrt,
+  sign: Math.sign,
+  min: Math.min,
+  max: Math.max,
   random: mulberry32,
 };
 

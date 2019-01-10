@@ -1,12 +1,12 @@
-import Complex from 'complex.js';
+import { complex, modulus, argument } from '../utils/complex';
 
 import math from '../utils/math';
 
 export const makeHandkerchiefFunction = () => {
   return (z) => {
-    const theta = math.atan2(z.im, z.re);
-    const r = z.abs();
-    return new Complex(math.sin(theta + r) * r, math.cos(theta - r) * r);
+    const theta = argument(z);
+    const r = modulus(z);
+    return complex(math.sin(theta + r) * r, math.cos(theta - r) * r);
   };
 };
 

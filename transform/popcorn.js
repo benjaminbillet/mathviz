@@ -1,10 +1,10 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
 
 export const makePopCornFunction = (a, b) => {
-  return (z) => new Complex(z.re + a * math.sin(math.tan(3 * z.im)), z.im + b * math.sin(math.tan(3 * z.re)));
+  return (z) => complex(z.re + a * math.sin(math.tan(3 * z.im)), z.im + b * math.sin(math.tan(3 * z.re)));
 };
 
 export const makePopCorn = () => {

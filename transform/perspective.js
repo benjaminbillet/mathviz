@@ -1,13 +1,14 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
+import math from '../utils/math';
 import { randomScalar } from '../utils/random';
 
 export const makePerspectiveFunction = (angle, depth) => {
-  const cosAngle = Math.cos(angle);
-  const sinAngle = Math.sin(angle);
+  const cosAngle = math.cos(angle);
+  const sinAngle = math.sin(angle);
   return (z) => {
     const factor = depth / (depth - z.im * sinAngle);
-    return new Complex(factor * z.re, factor * z.im * cosAngle);
+    return complex(factor * z.re, factor * z.im * cosAngle);
   };
 };
 

@@ -21,7 +21,7 @@ const plot = async (path, width, height, ifs, domain, iterations) => {
   for (let i = 0; i < width; i += 2) {
     for (let j = 0; j < height; j += 2) {
       // each pixel of the grid is mapped to the domain...
-      const [x, y] = mapPixelToDomain(i, j, width, height, domain);
+      const [ x, y ] = mapPixelToDomain(i, j, width, height, domain);
 
       // ... the transformation is then applied for each function in the ifs...
       const z = new Complex(x, y);

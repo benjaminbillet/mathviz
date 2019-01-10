@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex, argument, modulus } from '../utils/complex';
 
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
@@ -6,10 +6,10 @@ import math from '../utils/math';
 export const makeRingsFunction = (a) => {
   const aSquared = a * a;
   return (z) => {
-    const theta = math.atan2(z.im, z.re);
-    const r = z.abs();
+    const theta = argument(z);
+    const r = modulus(z);
     const factor = ((r + aSquared) % (2 * aSquared)) - aSquared + (r * (1 - aSquared));
-    return new Complex(factor * math.cos(theta), factor * math.sin(theta));
+    return complex(factor * math.cos(theta), factor * math.sin(theta));
   };
 };
 

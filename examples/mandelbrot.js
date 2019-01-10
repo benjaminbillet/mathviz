@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 import { readImage, getPictureSize, mapPixelToDomain, createImage, saveImage } from '../utils/picture';
 import { mandelbrot, MANDELBROT_DOMAIN, continuousMandelbrot, orbitTrapMandelbrot, MULTIBROT_DOMAIN } from '../fractalsets/mandelbrot';
@@ -6,8 +6,8 @@ import { makeBitmapTrap } from '../fractalsets/trap';
 import { makeColorMapFunction, buildConstrainedColorMap } from '../utils/color';
 
 const colormap = buildConstrainedColorMap(
-  [[0, 7, 100], [32, 107, 203], [237, 255, 255], [255, 170, 0], [0, 2, 0], [0, 7, 0]],
-  [0, 0.16, 0.42, 0.6425, 0.8575, 1],
+  [ [ 0, 7, 100 ], [ 32, 107, 203 ], [ 237, 255, 255 ], [ 255, 170, 0 ], [ 0, 2, 0 ], [ 0, 7, 0 ] ],
+  [ 0, 0.16, 0.42, 0.6425, 0.8575, 1 ],
 );
 const colorfunc = makeColorMapFunction(colormap);
 
@@ -17,9 +17,9 @@ export const plotFunction = async (path, width, height, f, domain) => {
 
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
-      const [x, y] = mapPixelToDomain(i, j, width, height, domain);
+      const [ x, y ] = mapPixelToDomain(i, j, width, height, domain);
 
-      let color = f(new Complex(x, y));
+      let color = f(complex(x, y));
       if (color.length == null) {
         color = colorfunc(color);
       }
@@ -36,13 +36,13 @@ export const plotFunction = async (path, width, height, f, domain) => {
 };
 
 const plotMandelbrot = async (d, maxIterations, domain) => {
-  const [width, height] = getPictureSize(1024, domain);
+  const [ width, height ] = getPictureSize(1024, domain);
   const configuredMandelbrot = (z) => mandelbrot(z, d, maxIterations);
   await plotFunction(`mandelbrot-d=${d}.png`, width, height, configuredMandelbrot, domain);
 };
 
 const plotContinuousMandelbrot = async (d, maxIterations, domain) => {
-  const [width, height] = getPictureSize(1024, domain);
+  const [ width, height ] = getPictureSize(1024, domain);
   const configuredMandelbrot = (z) => continuousMandelbrot(z, d, maxIterations);
   await plotFunction(`mandelbrot-d=${d}-continuous.png`, width, height, configuredMandelbrot, domain);
 };
@@ -51,7 +51,7 @@ const plotBitmapTrapMandelbrot = async (bitmapPath, trapSize, d, maxIterations, 
   const bitmap = await readImage(bitmapPath);
   const trap = makeBitmapTrap(bitmap.getImage().data, bitmap.getWidth(), bitmap.getHeight(), trapSize, trapSize, 0, 0);
 
-  const [width, height] = getPictureSize(1024, domain);
+  const [ width, height ] = getPictureSize(1024, domain);
   const configuredMandelbrot = (z) => orbitTrapMandelbrot(z, trap, d, maxIterations);
   await plotFunction(`mandelbrot-d=${d}-trap.png`, width, height, configuredMandelbrot, domain);
 };

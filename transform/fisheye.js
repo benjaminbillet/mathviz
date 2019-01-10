@@ -1,10 +1,9 @@
-import Complex from 'complex.js';
-
+import { complex, modulus } from '../utils/complex';
 
 export const makeFisheyeFunction = () => {
   return (z) => {
-    const factor = 2 / (z.abs() + 1);
-    return new Complex(factor * z.im, factor * z.re);
+    const factor = 2 / (modulus(z) + 1);
+    return complex(factor * z.im, factor * z.re);
   };
 };
 

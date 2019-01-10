@@ -2,8 +2,7 @@ import { pickRandom, randomIntegerNormal, randomComplex } from '../utils/random'
 import { makeSinusoidal, makeLinear } from '../transform';
 import { generateTransformationSet, plotFlame } from '../ifs/fractal-flame';
 import { expandPalette, getBigQualitativePalette } from '../utils/palette';
-import { applyContrastBasedScalefactor } from '../utils/color';
-import { clampInt } from '../utils/misc';
+import { applyContrastBasedScalefactor, convertUnitToRGBA } from '../utils/color';
 import { saveImageBuffer } from '../utils/picture';
 import { addFileLogger } from '../utils/log';
 
@@ -33,7 +32,7 @@ const buildAndPlotFlame = async (path, width, height, nbPoints, nbIterations) =>
   const initialPointPicker = randomComplex;
 
   // we create a buffer and run the standard plotter
-  let buffer = new Float64Array(width * height * 4);
+  let buffer = new Float32Array(width * height * 4);
   plotFlame(buffer, width, height, transforms, randomInt, colors, initialPointPicker, finalTransform, nbPoints, nbIterations);
 
   // we correct the generated image using the contrast-based scalefactor technique
@@ -41,16 +40,11 @@ const buildAndPlotFlame = async (path, width, height, nbPoints, nbIterations) =>
   applyContrastBasedScalefactor(buffer, width, height, averageHits);
 
   // we make sure that the colors are proper RGB
-  buffer = buffer.map((x, i) => {
-    if ((i+1) % 4 === 0) {
-      return 255;
-    }
-    return clampInt(x * 255, 0, 255);
-  });
+  buffer = convertUnitToRGBA(buffer, width, height);
 
   // and finally save the image
   await saveImageBuffer(buffer, width, height, path);
 };
 
 // the number of points and iterations is high, it can take more than 30-40 minutes to get a picture
-buildAndPlotFlame(`flame-${new Date().getTime()}.png`, 2048, 2048, 10000, 100000);
+buildAndPlotFlame(`flame-${new Date().getTime()}.png`, 2048, 2048, 1000, 10000);

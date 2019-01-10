@@ -1,11 +1,10 @@
-import Complex from 'complex.js';
-
+import { complex } from '../utils/complex';
 
 export const makeBubbleFunction = () => {
   return (z) => {
     const r2 = z.re * z.re + z.im * z.im;
     const factor = 4 / (r2 + 4);
-    return new Complex(factor * z.re, factor * z.im);
+    return complex(factor * z.re, factor * z.im);
   };
 };
 

@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 import { randomScalar } from '../utils/random';
 import math from '../utils/math';
@@ -16,7 +16,7 @@ export const makeEpitrochoidFunction = (r, R, d) => {
     const r2 = math.sqrt((xSquared * (1 - 0.5 * ySquared) + ySquared * (1 - 0.5 * xSquared)) * (x * x + y * y));
     const theta2 = math.atan2(y, x);
 
-    return new Complex(r2 * math.cos(theta2), r2 * math.sin(theta2));
+    return complex(r2 * math.cos(theta2), r2 * math.sin(theta2));
   };
 };
 

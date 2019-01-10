@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 
 // http://paulbourke.net/fractals/thorn
 
@@ -12,7 +12,7 @@ export const secantSea = (z0, c, squaredBailout = 10000, maxIterations = 100) =>
   // (it will avoid a costly square root)
   let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
   while (squaredMagnitude <= squaredBailout && iterations < maxIterations) {
-    zn = new Complex(zn.re / Math.cos(zn.im) + c.re, zn.im / Math.sin(zn.re) + c.im);
+    zn = complex(zn.re / Math.cos(zn.im) + c.re, zn.im / Math.sin(zn.re) + c.im);
 
     squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
     iterations++;

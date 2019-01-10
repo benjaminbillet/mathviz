@@ -1,13 +1,13 @@
-import Complex from 'complex.js';
+import { complex, modulus, argument } from '../utils/complex';
 
 import { randomScalar } from '../utils/random';
 
 export const makeShrinkFunction = (a, b) => {
   return (z) => {
-    const theta = Math.atan2(z.re, z.im);
-    let r = z.abs();
+    const theta = argument(z);
+    let r = modulus(z);
     r = Math.pow(r, b) / (b * a);
-    return new Complex(r * Math.sin(theta), r * Math.cos(theta));
+    return complex(r * Math.sin(theta), r * Math.cos(theta));
   };
 };
 

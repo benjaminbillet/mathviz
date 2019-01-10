@@ -1,12 +1,12 @@
-import Complex from 'complex.js';
+import { complex, argument, modulus } from '../utils/complex';
 
 import math from '../utils/math';
 
 export const makeDiskFunction = () => {
   return (z) => {
-    const thetabypi = math.atan2(z.im, z.re) / Math.PI;
-    const pir = Math.PI * z.abs();
-    return new Complex(math.sin(pir) * thetabypi, math.cos(pir) * thetabypi);
+    const thetabypi = argument(z) / Math.PI;
+    const pir = Math.PI * modulus(z);
+    return complex(math.sin(pir) * thetabypi, math.cos(pir) * thetabypi);
   };
 };
 

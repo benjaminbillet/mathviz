@@ -1,4 +1,4 @@
-import Complex from 'complex.js';
+import { complex } from '../utils/complex';
 import { makeIdentity } from '../transform';
 import { applyContrastBasedScalefactor, convertUnitToRGBA } from '../utils/color';
 import { saveImageBuffer } from '../utils/picture';
@@ -27,7 +27,7 @@ const buildAndPlotAttractor = async (path, width, height, nbIterations) => {
   const finalTransform = makeIdentity();
 
   // initial point is fixed
-  const initialPointPicker = () => new Complex(1, 1);
+  const initialPointPicker = () => complex(1, 1);
 
   // try to find the function domain automatically by pre-plotting all the points
   // (we can't just plot a few iterations, the size of the drawn attractor depends on the number of iterations)
@@ -39,7 +39,7 @@ const buildAndPlotAttractor = async (path, width, height, nbIterations) => {
   const colorFunc = makeMixedColorSteal(palette, domain.xmax / 2, nbIterations);
 
   // we create a buffer and run the standard plotter
-  let buffer = new Float64Array(width * height * 4);
+  let buffer = new Float32Array(width * height * 4);
   plotAttractorWithColorStealing(buffer, width, height, f, colorFunc, false, initialPointPicker, finalTransform, nbIterations, domain);
 
   // we correct the generated image using the contrast-based scalefactor technique
