@@ -21,14 +21,6 @@ export const compose2dRandomizedFunctions = (functions, randomIntFunction) => {
   return (z) => functions[randomIntFunction()](z);
 };
 
-export const toRadian = (degrees) => {
-  return degrees * Math.PI / 180;
-};
-
-export const toDegree = (radian) => {
-  return radian * 180 / Math.PI;
-};
-
 export const shuffleArray = (a) => {
   for (let i = a.length - 1; i > 0; i--) {
     let j = Math.trunc(Math.random() * (i + 1));
