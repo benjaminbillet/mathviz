@@ -18,6 +18,7 @@ const buildNoise = async (noiseFunction, size, outputPath) => {
 const buildNoises = async (size) => {
   await buildNoise(() => makeValueNoise(128, 128, size, size, UpscaleSamplers.NearestNeighbor), size, 'noise-value-nearestneighbor.png');
   await buildNoise(() => makeValueNoise(128, 128, size, size, UpscaleSamplers.Bilinear), size, 'noise-value-bilinear.png');
+  await buildNoise(() => makeValueNoise(128, 128, size, size, UpscaleSamplers.Bicosine), size, 'noise-value-bicosine.png');
   await buildNoise(() => makeValueNoise(128, 128, size, size, UpscaleSamplers.Bicubic), size, 'noise-value-bicubic.png');
 
   await buildNoise(() => makePerlinNoise(size, size), size, 'noise-perlin.png');

@@ -37,12 +37,44 @@ export const makeMitchellNetravali = () => makeSpline(1/3, 1/3);
 export const makeMitchellNetravali2 = () => makeSpline(0, 1/2);
 
 
+export const linear = (x, v1, v2) => {
+  return v1 * (1 - x) + v2 * x;
+};
+
 export const bilinear = (x, y, p00, p10, p01, p11) => {
+  /* const v1 = linear(x, p00, p10);
+  const v2 = linear(x, p01, p11);
+  return linear(y, v1, v2);*/
+
   const a00 = p00;
   const a10 = p10 - p00;
   const a01 = p01 - p00;
   const a11 = p11 + p00 - (p10 + p01);
   return a00 + a10 * x + a01 * y + a11 * x * y;
+};
+
+export const cosine = (x, v1, v2) => {
+  const v = (1 - Math.cos(Math.PI * x)) / 2;
+  return v1 * (1 - v) + v2 * v;
+};
+
+export const bicosine = (x, y, p00, p10, p01, p11) => {
+  /* const v1 = cosine(x, p00, p10);
+  const v2 = cosine(x, p01, p11);
+  return cosine(y, v1, v2);*/
+
+  x = (1 - Math.cos(Math.PI * x)) / 2;
+  y = (1 - Math.cos(Math.PI * y)) / 2;
+  return bilinear(x, y, p00, p10, p01, p11);
+};
+
+export const cubic = (x, v1, v2, v3, v4) => {
+  const xSquared = x * x;
+  const a0 = v3 - v2 - v0 + v1;
+  const a1 = v0 - v1 - a0;
+  const a2 = v2 - v0;
+  const a3 = v1;
+  return a0 * x * xSquared + a1 * xSquared + a2 * x + a3;
 };
 
 // TODO refactor to make clearer

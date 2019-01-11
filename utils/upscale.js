@@ -1,4 +1,4 @@
-import { bilinear, bicubic } from './interpolation';
+import { bilinear, bicubic, bicosine } from './interpolation';
 import { getPixelValue } from './picture';
 
 export const pixelNearestNeighbor = (buffer, width, height, x, y, offset) => {
@@ -17,6 +17,18 @@ export const pixelBilinear = (buffer, width, height, x, y, offset) => {
   const p11 = getPixelValue(buffer, width, height, x1 + 1, y1 + 1, offset);
 
   return bilinear(x - x1, y - y1, p00, p10, p01, p11);
+};
+
+export const pixelBicosine = (buffer, width, height, x, y, offset) => {
+  const x1 = Math.trunc(x);
+  const y1 = Math.trunc(y);
+
+  const p00 = getPixelValue(buffer, width, height, x1, y1, offset);
+  const p10 = getPixelValue(buffer, width, height, x1 + 1, y1, offset);
+  const p01 = getPixelValue(buffer, width, height, x1, y1 + 1, offset);
+  const p11 = getPixelValue(buffer, width, height, x1 + 1, y1 + 1, offset);
+
+  return bicosine(x - x1, y - y1, p00, p10, p01, p11);
 };
 
 export const pixelBicubic = (buffer, width, height, x, y, offset) => {
@@ -48,6 +60,7 @@ export const pixelBicubic = (buffer, width, height, x, y, offset) => {
 
 export const UpscaleSamplers = {
   Bilinear: pixelBilinear,
+  Bicosine: pixelBicosine,
   Bicubic: pixelBicubic,
   NearestNeighbor: pixelNearestNeighbor,
 };
@@ -80,7 +93,6 @@ export const upscale2 = (input, width, height, outputWidth, outputHeight, sample
       output[idx + 0] = sampler(input, width, height, px, py, 0);
       output[idx + 1] = sampler(input, width, height, px, py, 1);
       output[idx + 2] = sampler(input, width, height, px, py, 2);
-      output[idx + 3] = 255;
     }
   }
 
