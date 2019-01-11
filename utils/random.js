@@ -6,10 +6,10 @@ export * from 'd3-random';
 export const DefaultNormalDistribution = D3Random.randomNormal(0, 1);
 
 export const randomScalar = (min = -1, max = 1) => {
-  return Math.random() * (max - min) + min;
+  return random() * (max - min) + min;
 };
 export const randomInteger = (min, max) => {
-  return Math.floor(Math.random() * (max - min) + min);
+  return Math.floor(random() * (max - min) + min);
 };
 export const randomComplex = (reMin = -1, reMax = 1, imMin = -1, imMax = 1) => {
   return complex(randomScalar(reMin, reMax), randomScalar(imMin, imMax));
@@ -26,11 +26,11 @@ export const randomRgbColor = () => {
 };
 
 export const pickRandom = (arr) => {
-  return arr[Math.trunc(Math.random() * arr.length)];
+  return arr[Math.trunc(random() * arr.length)];
 };
 
 export const pickRandomSubset = (nb, arr) => {
-  return new Float32Array(nb).fill(null).map(() => pickRandom(arr));
+  return new Array(nb).fill(null).map(() => pickRandom(arr));
 };
 
 export const randomIntegerUniform = (min, max) => {
@@ -40,7 +40,7 @@ export const randomIntegerUniform = (min, max) => {
 export const randomIntegerWeighted = (distribution, min = 0) => {
   const weightSum = distribution.reduce((result, x) => result + x, 0);
   return () => {
-    const rand = Math.random() * weightSum;
+    const rand = random() * weightSum;
     let runningTotal = 0;
     for (let i = 0; i < distribution.length; i++) {
       runningTotal += distribution[i];
@@ -49,7 +49,7 @@ export const randomIntegerWeighted = (distribution, min = 0) => {
       }
     }
     console.warn('weighted distribution failed, fallbacking to uniform randomness');
-    return Math.trunc(Math.random() * distribution.length) + min;
+    return Math.trunc(random() * distribution.length) + min;
   };
 };
 
@@ -103,6 +103,13 @@ export const randomIntegerIrwinHall = (min, max, n) => {
   return randomIntegerWeighted(weights, min);
 };
 
+export const binomial = (p = 0.5) => {
+  if (random() < p) {
+    return 0;
+  }
+  return 1;
+};
+
 export const makeCumulative = (distribution) => {
   return distribution.reduce((result, x, i) => {
     if (i === 0) {
@@ -142,4 +149,14 @@ export const makeMulberry32 = (seed) => {
   };
 };
 
-export const mulberry32 = makeMulberry32(new Date().getTime());
+// a global shared mulberry32 generator
+let randomState = new Date().getTime();
+export const random = () => {
+  let t = (randomState += 0x6D2B79F5);
+  t = Math.imul(t ^ t >>> 15, t | 1);
+  t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+  return ((t ^ t >>> 14) >>> 0) / 4294967296;
+};
+export const setRandomSeed = (seed) => {
+  randomState = seed;
+};

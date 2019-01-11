@@ -1,5 +1,4 @@
 import * as approx from './approx';
-import { mulberry32, makeMulberry32 } from './random';
 
 const mathFull = {
   sin: Math.sin,
@@ -10,7 +9,6 @@ const mathFull = {
   sign: Math.sign,
   min: Math.min,
   max: Math.max,
-  random: mulberry32,
 };
 
 const mathApprox = {
@@ -22,7 +20,6 @@ const mathApprox = {
   sign: Math.sign,
   min: Math.min,
   max: Math.max,
-  random: mulberry32,
 };
 
 let currentMath = Object.assign({}, mathFull);
@@ -38,11 +35,6 @@ export const enableMathFull = () => {
   Object.keys(mathFull).forEach((key) => {
     currentMath[key] = mathFull[key];
   });
-};
-
-export const setRandomSeed = (seed) => {
-  mathFull.random = makeMulberry32(seed);
-  mathApprox.random = mathFull.random;
 };
 
 export const toRadian = (degrees) => {

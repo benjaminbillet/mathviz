@@ -1,4 +1,5 @@
 import { complex } from '../utils/complex';
+import { binomial } from '../utils/random';
 
 export const makeKrasnoselskijIterator = (f, lambda) => {
   const oneMinusLambda = 1 - lambda;
@@ -12,7 +13,7 @@ export const makeKrasnoselskijPicardIterator = (f, lambda) => {
   const oneMinusLambda = 1 - lambda;
   return (z) => {
     const fz = f(z);
-    if (Math.random() < 0.5) {
+    if (binomial() === 0) {
       return fz; // picard iteration
     }
     return complex(alpha * fz.re + oneMinusLambda * z.re, alpha * fz.im + oneMinusLambda * z.im);

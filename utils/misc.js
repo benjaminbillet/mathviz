@@ -1,4 +1,4 @@
-import { randomIntegerWeighted, randomIntegerUniform } from './random';
+import { randomIntegerWeighted, randomIntegerUniform, random } from './random';
 
 export const clamp = (x, min, max) => {
   return Math.max(min, Math.min(x, max));
@@ -23,7 +23,7 @@ export const compose2dRandomizedFunctions = (functions, randomIntFunction) => {
 
 export const shuffleArray = (a) => {
   for (let i = a.length - 1; i > 0; i--) {
-    let j = Math.trunc(Math.random() * (i + 1));
+    let j = Math.trunc(random() * (i + 1));
     let x = a[i];
     a[i] = a[j];
     a[j] = x;

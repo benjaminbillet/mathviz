@@ -1,10 +1,9 @@
-import { pickRandom, randomIntegerNormal, randomComplex } from '../utils/random';
+import { pickRandom, randomIntegerNormal, randomComplex, setRandomSeed } from '../utils/random';
 import { makeSinusoidal, makeLinear } from '../transform';
 import { generateTransformationSet, plotFlame } from '../ifs/fractal-flame';
 import { expandPalette, getBigQualitativePalette } from '../utils/palette';
 import { applyContrastBasedScalefactor, convertUnitToRGBA } from '../utils/color';
 import { saveImageBuffer } from '../utils/picture';
-import { addFileLogger } from '../utils/log';
 
 // we will get only one transformation used in this example
 const NON_LINEAR_TRANSFORMATIONS = [
@@ -12,9 +11,8 @@ const NON_LINEAR_TRANSFORMATIONS = [
 ];
 
 const buildAndPlotFlame = async (path, width, height, nbPoints, nbIterations) => {
-  // we will save all transformation parameters into this file
-  const configFile = `${path}.txt`;
-  addFileLogger(configFile);
+  // configure the PRNG
+  setRandomSeed(0);
 
   // we generate a set of transformations that will be picked according to a normal law
   const transforms = generateTransformationSet(20, NON_LINEAR_TRANSFORMATIONS, [ makeLinear ]);

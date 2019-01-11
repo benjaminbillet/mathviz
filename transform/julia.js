@@ -14,7 +14,7 @@ export const makeJuliaFunction = (c) => {
 
     // this transformation occupies half the space, so we make it symmetrical by randomly alternating periods
     let omega = halfTheta;
-    if (Math.random() >= 0.5) {
+    if (binomial() === 0) {
       omega = halfTheta + Math.PI;
     }
     return complex(math.cos(omega) * sqrtOfR, math.sin(omega) * sqrtOfR);
