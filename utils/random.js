@@ -1,9 +1,4 @@
-import * as D3Random from 'd3-random';
 import { complex } from './complex';
-
-export * from 'd3-random';
-
-export const DefaultNormalDistribution = D3Random.randomNormal(0, 1);
 
 export const randomScalar = (min = -1, max = 1) => {
   return random() * (max - min) + min;
@@ -33,10 +28,6 @@ export const pickRandomSubset = (nb, arr) => {
   return new Array(nb).fill(null).map(() => pickRandom(arr));
 };
 
-export const randomIntegerUniform = (min, max) => {
-  return () => randomInteger(min, max);
-};
-
 export const randomIntegerWeighted = (distribution, min = 0) => {
   const weightSum = distribution.reduce((result, x) => result + x, 0);
   return () => {
@@ -53,50 +44,97 @@ export const randomIntegerWeighted = (distribution, min = 0) => {
   };
 };
 
-export const randomIntegerNormal = (min, max, mu = undefined, sigma = undefined) => {
+export const randomUniform = () => {
+  return () => random();
+};
+export const randomIntegerUniform = (min, max) => {
+  return () => randomInteger(min, max);
+};
+
+// marsaglia polar method: https://en.wikipedia.org/wiki/Normal_distribution#Generating_values_from_normal_distribution
+export const randomNormal = (mu = 0, sigma = 1) => {
+  let u;
+  let v;
+  let s;
+  return () => {
+    // reuse one x every two random numbers
+    if (u != null) {
+      v = u;
+      u = null;
+    } else {
+      do {
+        u = random() * 2 - 1; // convert random() output to [-1, 1]
+        v = random() * 2 - 1;
+        s = u * u + v * v;
+      } while (s >= 1);
+    }
+    return mu + sigma * v * Math.sqrt(-2 * Math.log(s) / s);
+  };
+};
+export const randomIntegerNormal = (min, max, mu = 0, sigma = 1) => {
   const length = max - min;
   const weights = new Float32Array(length);
-  const normal = D3Random.randomNormal(mu, sigma);
+  const normal = randomScalarNormal(mu, sigma);
   for (let i = 0; i < length; i++) {
     weights[i] = normal() * normal();
   }
   return randomIntegerWeighted(weights, min);
 };
 
+export const randomLogNormal = (mu = 0, sigma = 1) => {
+  const normal = randomNormal(mu, sigma);
+  return () => Math.exp(normal());
+};
 export const randomIntegerLogNormal = (min, max, mu = undefined, sigma = undefined) => {
   const length = max - min;
   const weights = new Float32Array(length);
-  const logNormal = D3Random.randomLogNormal(mu, sigma);
+  const logNormal = randomLogNormal(mu, sigma);
   for (let i = 0; i < length; i++) {
     weights[i] = logNormal();
   }
   return randomIntegerWeighted(weights, min);
 };
 
-export const randomIntegerExponential = (min, max, lambda) => {
+export const randomExponential = (lambda = 1) => {
+  return () => -Math.log(1 - random()) / lambda;
+};
+export const randomIntegerExponential = (min, max, lambda = 1) => {
   const length = max - min;
   const weights = new Float32Array(length);
-  const exponential = D3Random.randomExponential(lambda);
+  const exponential = randomExponential(lambda);
   for (let i = 0; i < length; i++) {
     weights[i] = exponential();
   }
   return randomIntegerWeighted(weights, min);
 };
 
-export const randomIntegerBates = (min, max, n) => {
+export const randomBates = (n = 2) => {
+  const irwinHall = randomIrwinHall(n);
+  return () => irwinHall / n;
+};
+export const randomIntegerBates = (min, max, n = 2) => {
   const length = max - min;
   const weights = new Float32Array(length);
-  const bates = D3Random.randomBates(n);
+  const bates = randomBates(n);
   for (let i = 0; i < length; i++) {
     weights[i] = bates();
   }
   return randomIntegerWeighted(weights, min);
 };
 
-export const randomIntegerIrwinHall = (min, max, n) => {
+export const randomIrwinHall = (n = 2) => {
+  return () => {
+    let sum = 0;
+    for (let i = 0; i < n; i++) {
+      sum += random();
+    }
+    return sum;
+  };
+};
+export const randomIntegerIrwinHall = (min, max, n = 2) => {
   const length = max - min;
   const weights = new Float32Array(length);
-  const irwinHall = D3Random.randomIrwinHall(n);
+  const irwinHall = randomIrwinHall(n);
   for (let i = 0; i < length; i++) {
     weights[i] = irwinHall();
   }
@@ -160,3 +198,8 @@ export const random = () => {
 export const setRandomSeed = (seed) => {
   randomState = seed;
 };
+
+
+export const DefaultNormalDistribution = randomNormal(0, 1);
+export const DefaultUniformDistribution = randomUniform();
+export const DefaultExponentialDistribution = randomExponential(1);

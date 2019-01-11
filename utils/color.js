@@ -46,7 +46,7 @@ export const hslAdd = (buffer, width, height, deltaHue = 0, deltaSat = 0, deltaL
     const hsl = D3Color.hsl(D3Color.rgb(r, g, b));
     hsl.h = (hsl.h + Math.floor(deltaHue * 360)) % 360;
     hsl.s = clamp(hsl.s + deltaSat, 0, 1);
-    hsl.s = clamp(hsl.l + deltaLum, 0, 1);
+    hsl.l = clamp(hsl.l + deltaLum, 0, 1);
     const rgb = D3Color.rgb(hsl);
     buffer[idx + 0] = rgb.r;
     buffer[idx + 1] = rgb.g;

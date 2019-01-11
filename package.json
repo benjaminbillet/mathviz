@@ -16,7 +16,6 @@
   "dependencies": {
     "color": "3.0.0",
     "d3-interpolate": "1.2.0",
-    "d3-random": "1.1.0",
     "google-palette": "1.1.0",
     "mathjs": "5.1.0",
     "pngjs-image": "0.11.7",
