@@ -2,7 +2,7 @@ import math from '../utils/math';
 
 export const complex = (re = 0, im = 0, out = undefined) => {
   if (out == null) {
-    out = new Float32Array(2); // { re, im };
+    out = { re, im };
   }
   out.re = re;
   out.im = im;

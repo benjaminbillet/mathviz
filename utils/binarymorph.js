@@ -90,6 +90,9 @@ export const BottomRightCorner3x3Element = [
 
 
 export const makeStructureElementSquare = (size) => {
+  if (size % 2 === 0) {
+    size++;
+  }
   return new Uint8Array(size * size).fill(1);
 };
 
@@ -109,12 +112,30 @@ export const makeStructureElementCircle = (size) => {
   if (size % 2 === 0) {
     size++;
   }
-  const halfSize = size / 2;
+  const halfSize = Math.trunc(size / 2);
   const element = new Uint8Array(size * size).fill(0);
 
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
-      if (euclidean(i - halfSize, j - halfSize) / size < 0.5) {
+      if (euclidean(i - halfSize, j - halfSize) / size <= 0.5) {
+        element[i + j * size] = 1;
+      }
+    }
+  }
+
+  return element;
+};
+
+export const makeStructureElementEllipse = (size, ratioX = 1, ratioY = 0.5) => {
+  if (size % 2 === 0) {
+    size++;
+  }
+  const halfSize = Math.trunc(size / 2);
+  const element = new Uint8Array(size * size).fill(0);
+
+  for (let i = 0; i < size; i++) {
+    for (let j = 0; j < size; j++) {
+      if (euclidean((i - halfSize) / ratioX, (j - halfSize) / ratioY) / size <= 0.5) {
         element[i + j * size] = 1;
       }
     }
@@ -127,12 +148,12 @@ export const makeStructureElementNoisyCircle = (size) => {
   if (size % 2 === 0) {
     size++;
   }
-  const halfSize = size / 2;
+  const halfSize = Math.trunc(size / 2);
   const element = new Uint8Array(size * size).fill(0);
 
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
-      if (euclidean(i - halfSize + Math.cos(random() * 2 * Math.PI), j - halfSize + Math.sin(random() * 2 * Math.PI)) / size < 0.5) {
+      if (euclidean(i - halfSize + Math.cos(random() * 2 * Math.PI), j - halfSize + Math.sin(random() * 2 * Math.PI)) / size <= 0.5) {
         element[i + j * size] = 1;
       }
     }
@@ -216,12 +237,11 @@ export const dilate = (input, output, width, height, element = Square3x3Element)
   });
 };
 
-export const dilate2 = (input, output, width, height, element = Square3x3Element) => {
+export const dilate2 = (input, output, width, height, element = Square3x3Element, freq = 5) => {
   const elementSize = Math.trunc(Math.sqrt(element.length));
   const elementHalfSize = Math.trunc(elementSize / 2);
-  return morph(output, width, height, (x, y) => {
-    // x += 5 * Math.cos(random() * 2 * Math.PI);
-    // y += 5 * Math.sin(random() * 2 * Math.PI);
+
+  const operation = (x, y) => {
     for (let ex = 0; ex < elementSize; ex++) {
       for (let ey = 0; ey < elementSize; ey++) {
         const x2 = clampInt(x - elementHalfSize + ex, 0, width - 1);
@@ -237,7 +257,18 @@ export const dilate2 = (input, output, width, height, element = Square3x3Element
       }
     }
     return 0;
-  });
+  };
+
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      const idx = (x + y * width) * 4;
+      const result = operation(x + Math.cos(y / width * freq * 2 * Math.PI), y + Math.sin(x / height * freq * 2 * Math.PI), idx);
+      output[idx + 0] = result;
+      output[idx + 1] = result;
+      output[idx + 2] = result;
+    }
+  }
+  return output;
 };
 
 export const opening = (input, output, width, height, element = Square3x3Element) => {
