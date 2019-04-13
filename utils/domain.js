@@ -27,6 +27,16 @@ export const transformDomain = (domain, matrix = IDENTITY) => {
   };
 };
 
+export const zoomDomain = (domain, centerX = 0, centerY = 0, scale = 1) => {
+  const scaledRangeX = (domain.xmax - domain.xmin) / scale;
+  const scaledRangeY = (domain.ymax - domain.ymin) / scale;
+  return {
+    xmin: centerX - scaledRangeX / 2,
+    ymin: centerY - scaledRangeY / 2,
+    xmax: centerX + scaledRangeX / 2,
+    ymax: centerY + scaledRangeY / 2,
+  };
+};
 
 /* export const mapDomain = (x, y, sourceDomain, destinationDomain) => {
   const sourceDomainWidth = sourceDomain.xmax - sourceDomain.xmin;

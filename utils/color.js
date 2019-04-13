@@ -74,13 +74,18 @@ export const getLuminance = (r, g, b) => {
   return r * 0.2126 + g * 0.7152 + b * 0.0722;
 };
 
-// http://www.itu.int/rec/R-REC-BT.601 ITU BT.601 
+// http://www.itu.int/rec/R-REC-BT.601 ITU BT.601
 export const getLuminance2 = (r, g, b) => {
   return r * 0.299 + g * 0.587 + b * 0.114;
 };
 
 export const getLuminance3 = (r, g, b) => {
   return Math.sqrt(r * r * 0.299 + g * g * 0.587 + b * b * 0.114);
+};
+
+// see RGBtoHSB http://www.docjar.com/html/api/java/awt/Color.java.html
+export const getBrightness = (r, g, b) => {
+  return Math.max(r, g, b);
 };
 
 
