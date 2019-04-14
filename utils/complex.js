@@ -124,9 +124,9 @@ export const reciprocal = (z, out = undefined) => {
   if (out == null) {
     out = complex();
   }
-  const squaredModulus = squaredModulus(z);
-  out.re = z.re / squaredModulus;
-  out.im = - z.im / squaredModulus;
+  const rSquared = squaredModulus(z);
+  out.re = z.re / rSquared;
+  out.im = - z.im / rSquared;
   return out;
 };
 

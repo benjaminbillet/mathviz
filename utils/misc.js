@@ -30,3 +30,28 @@ export const shuffleArray = (a) => {
   }
   return a;
 };
+
+export const findAllSubsets = (arr) => {
+  const subsets = new Array(Math.pow(2, arr.length));
+  for (let i = 0; i < subsets.length; i++) {
+    subsets[i] = [];
+    for (let j = 0; j < arr.length; j++) {
+      // (1<<j) is a number with jth bit to 1, when we AND it with the subset number:
+      // - we get 0 if j is not in the current subset
+      // - or we get a positive number if j is in the current subset
+      if ((i & (1 << j)) > 0) {
+        subsets[i].push(arr[j]);
+      }
+    }
+  }
+  return subsets;
+};
+
+export const toParamsChainString = (obj) =>{
+  return Object.keys(obj).reduce((prev, curr, idx) => {
+    if (idx === 0) {
+      return `${curr}=${obj[curr]}`;
+    }
+    return `${prev}-${curr}=${obj[curr]}`;
+  }, null);
+};

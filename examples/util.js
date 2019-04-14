@@ -1,7 +1,11 @@
 import { mapPixelToDomain, saveImage, createImage } from '../utils/picture';
 import { complex } from '../utils/complex';
+import { simpleWalkChaosPlot } from '../ifs/chaos-game';
+import { BI_UNIT_DOMAIN } from '../utils/domain';
+import { withinPolygon } from '../utils/polygon';
+import { randomComplex } from '../utils/random';
 
-export const plotFunction = async (path, width, height, f, domain, colorfunc) => {
+export const plotFunction = async (path, width, height, f, domain = BI_UNIT_DOMAIN, colorfunc) => {
   const image = createImage(width, height);
   const buffer = image.getImage().data;
 
@@ -21,6 +25,32 @@ export const plotFunction = async (path, width, height, f, domain, colorfunc) =>
       buffer[idx + 3] = 255;
     }
   }
+
+  await saveImage(image, path);
+};
+
+export const plotWalk = async (path, width, height, walk, domain = BI_UNIT_DOMAIN, nbIterations = 10000) => {
+  const image = createImage(width, height);
+  const buffer = image.getImage().data;
+
+  simpleWalkChaosPlot(buffer, width, height, walk, null, domain, nbIterations);
+
+  await saveImage(image, path);
+};
+
+export const plotPolygon = async (path, width, height, polygon, domain = BI_UNIT_DOMAIN, nbIterations = 10000) => {
+  const image = createImage(width, height);
+  const buffer = image.getImage().data;
+
+  const walk = () => {
+    let zn = randomComplex();
+    while (withinPolygon(zn, polygon) === false) {
+      zn = randomComplex();
+    }
+    return zn;
+  };
+
+  simpleWalkChaosPlot(buffer, width, height, walk, null, domain, nbIterations);
 
   await saveImage(image, path);
 };

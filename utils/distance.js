@@ -1,3 +1,7 @@
+export const symmetriCircularDistance = (current, next, mod) => {
+  return Math.min(circularDistance(current, next, mod), circularDistance(next, current, mod));
+};
+
 export const circularDistance = (current, next, mod) => {
   if (next >= current) {
     return next - current;
@@ -29,7 +33,6 @@ export const euclidean = (a, b) => {
 export const euclidean2d = (x1, y1, x2, y2) => {
   return euclidean(x1 - x2, y1 - y2);
 };
-
 
 export const chebyshev = (a, b) => {
   return Math.max(Math.abs(a), Math.abs(b));

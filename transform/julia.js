@@ -1,6 +1,6 @@
 import { complex } from '../utils/complex';
 
-import { randomComplex } from '../utils/random';
+import { randomComplex, binomial } from '../utils/random';
 import math from '../utils/math';
 
 export const makeJuliaFunction = (c) => {
