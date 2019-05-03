@@ -2,14 +2,14 @@ import { complex } from '../utils/complex';
 import mathmatrix, { matrix } from 'mathjs';
 import math from '../utils/math';
 
-export const applyAffine2dFromMatrix = (matrix, x, y) => {
+export const applyAffine2dFromMatrix = (matrix, z) => {
   const a11 = matrix.get([ 0, 0 ]);
   const a12 = matrix.get([ 0, 1 ]);
   const a13 = matrix.get([ 0, 2 ]);
   const a21 = matrix.get([ 1, 0 ]);
   const a22 = matrix.get([ 1, 1 ]);
   const a23 = matrix.get([ 1, 2 ]);
-  return [ a11 * x + a12 * y + a13, a21 * x + a22 * y + a23 ];
+  return complex(a11 * z.re + a12 * z.im + a13, a21 * z.re + a22 * z.im + a23);
 };
 
 export const makeAffine2dFromCoeffs = (coeffs) => {
@@ -41,6 +41,10 @@ export const scale = (x = 1, y = 1) => {
     [ 0, y, 0 ],
     [ 0, 0, 1 ],
   ]);
+};
+
+export const homogeneousScale = (s = 1) => {
+  return scale(s, s);
 };
 
 export const rotate = (angle) => { // clockwise

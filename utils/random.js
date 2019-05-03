@@ -74,7 +74,7 @@ export const randomNormal = (mu = 0, sigma = 1) => {
 export const randomIntegerNormal = (min, max, mu = 0, sigma = 1) => {
   const length = max - min;
   const weights = new Float32Array(length);
-  const normal = randomScalarNormal(mu, sigma);
+  const normal = randomNormal(mu, sigma);
   for (let i = 0; i < length; i++) {
     weights[i] = normal() * normal();
   }

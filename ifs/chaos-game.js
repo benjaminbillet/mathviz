@@ -77,10 +77,10 @@ export const simpleWalkChaosPlot = (buffer, width, height, walk, finalTransform,
 
     // the buffer is 1-dimensional and each pixel has 4 components (r, g, b, a)
     const idx = (x + y * width) * 4;
-    buffer[idx + 0] = 255;
-    buffer[idx + 1] = 255;
-    buffer[idx + 2] = 255;
-    buffer[idx + 3] = 255;
+    buffer[idx + 0] = 1;
+    buffer[idx + 1] = 1;
+    buffer[idx + 2] = 1;
+    buffer[idx + 3] += 1;
   }
 
   return buffer;

@@ -114,6 +114,17 @@ export const forEachPixel = (buffer, width, height, f) => {
   }
 };
 
+export const reducePixels = (buffer, width, height, f, initialValue) => {
+  let current = initialValue;
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height; j++) {
+      const idx = (i + j * width) * 4;
+      current = f(current, buffer[idx + 0], buffer[idx + 1], buffer[idx + 2], buffer[idx + 3], i, j, idx, buffer);
+    }
+  }
+  return current;
+};
+
 
 export const normalizeBuffer = (buffer, width, height, factor = 1) => {
   let min = Number.MAX_SAFE_INTEGER;

@@ -1,7 +1,7 @@
 import * as D3Color from 'd3-color';
 import * as D3Interpolate from 'd3-interpolate';
 import { clamp, clampInt } from './misc';
-import { forEachPixel } from './picture';
+import { forEachPixel, reducePixels } from './picture';
 
 
 const DISPLAY_LUMINANCE_MAX = 200;
@@ -28,6 +28,21 @@ export const applyContrastBasedScalefactor = (buffer, width, height, luminanceMe
       buffer[i] = Math.max(buffer[i] * scalefactor / luminanceMean, 0); // apply scalefactor
     }
   }
+
+  applyGammaCorrection(buffer, gamma);
+  return buffer;
+};
+
+export const applyLinearScalefactor = (buffer, width, height, gamma = 0.45) => {
+  // find the maximum number of hits
+  const max = reducePixels(buffer, width, height, (max, r, g, b, a) => Math.max(max, a), Number.MIN_SAFE_INTEGER);
+
+  forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => {
+    const factor = a / max;
+    buffer[idx + 0] = r * factor;
+    buffer[idx + 1] = g * factor;
+    buffer[idx + 2] = b * factor;
+  });
 
   applyGammaCorrection(buffer, gamma);
   return buffer;

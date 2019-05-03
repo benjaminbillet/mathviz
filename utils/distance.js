@@ -1,16 +1,16 @@
-export const symmetriCircularDistance = (current, next, mod) => {
-  return Math.min(circularDistance(current, next, mod), circularDistance(next, current, mod));
+export const circularDistance = (current, next, mod) => {
+  return Math.min(forwardCircularDistance(current, next, mod), backwardCircularDistance(current, next, mod));
 };
 
-export const circularDistance = (current, next, mod) => {
+export const forwardCircularDistance = (current, next, mod) => {
   if (next >= current) {
     return next - current;
   }
   return next + mod - current;
 };
 
-export const circularCounterDistance = (current, next, mod) => {
-  return -1 * circularDistance(next, current, mod);
+export const backwardCircularDistance = (current, next, mod) => {
+  return forwardCircularDistance(next, current, mod);
 };
 
 export const manhattan = (a, b) => {

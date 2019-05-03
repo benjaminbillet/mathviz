@@ -4,7 +4,7 @@ https://community.wolfram.com/groups/-/m/t/1025180
 */
 
 import { add, complex, mul, reciprocal } from '../utils/complex';
-import { symmetriCircularDistance } from '../utils/distance';
+import { circularDistance } from '../utils/distance';
 import { BI_UNIT_DOMAIN, zoomDomain } from '../utils/domain';
 import { mkdirs } from '../utils/fs';
 import { findAllSubsets, toParamsChainString } from '../utils/misc';
@@ -39,6 +39,11 @@ plotWalk(`${OUTPUT_DIRECTORY}/walk-pentagon.png`, 1024, 1024, makePolygonRandomW
 plotWalk(`${OUTPUT_DIRECTORY}/walk-pentagon-jump=0.4.png`, 1024, 1024, makePolygonRandomWalk(makePolygon(5), 0.4), BI_UNIT_DOMAIN, 100000);
 plotWalk(`${OUTPUT_DIRECTORY}/walk-hexagon.png`, 1024, 1024, makePolygonRandomWalk(makePolygon(6)), BI_UNIT_DOMAIN, 100000);
 plotWalk(`${OUTPUT_DIRECTORY}/walk-hexagon-jump=0.4.png`, 1024, 1024, makePolygonRandomWalk(makePolygon(6), 0.4), BI_UNIT_DOMAIN, 100000);
+
+// create a right-angled triangle
+const triangle = makePolygon(3);
+triangle[0].re = triangle[1].re;
+plotWalk(`${OUTPUT_DIRECTORY}/walk-right-angled-triangle.png`, 1024, 1024, makePolygonRandomWalk(triangle), BI_UNIT_DOMAIN, 100000);
 
 
 const makeRestrictedPolygonRandomWalk = (polygon, allowedJumps, jumpLength = 0.5) => {
@@ -80,7 +85,7 @@ export const customWalk = (polygon, jumpLength = 0.5) => {
   return () => {
     let position = randomInteger(0, polygon.length);
     if (previousPosition === previousPreviousPosition) {
-      while (symmetriCircularDistance(previousPosition, position, polygon.length) === 1) {
+      while (circularDistance(previousPosition, position, polygon.length) === 1) {
         position = randomInteger(0, polygon.length);
       }
     }
@@ -94,9 +99,9 @@ export const customWalk = (polygon, jumpLength = 0.5) => {
   };
 };
 
-plotWalk(`${OUTPUT_DIRECTORY}/walk-custom-square.png`, 1024, 1024, customWalk(makePolygon(4)), BI_UNIT_DOMAIN, 1000000);
-plotWalk(`${OUTPUT_DIRECTORY}/walk-custom-pentagon.png`, 1024, 1024, customWalk(makePolygon(5)), BI_UNIT_DOMAIN, 1000000);
-plotWalk(`${OUTPUT_DIRECTORY}/walk-custom-hexagon.png`, 1024, 1024, customWalk(makePolygon(6)), BI_UNIT_DOMAIN, 1000000);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-custom-square.png`, 1024, 1024, customWalk(makePolygon(4)), BI_UNIT_DOMAIN, 10000000);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-custom-pentagon.png`, 1024, 1024, customWalk(makePolygon(5)), BI_UNIT_DOMAIN, 10000000);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-custom-hexagon.png`, 1024, 1024, customWalk(makePolygon(6)), BI_UNIT_DOMAIN, 10000000);
 
 
 export const customWalk2 = (polygon, jumpLength = 0.5) => {
@@ -108,7 +113,7 @@ export const customWalk2 = (polygon, jumpLength = 0.5) => {
   let previousPreviousPosition = 0;
   return () => {
     let position = randomInteger(0, polygon.length);
-    while (symmetriCircularDistance(previousPosition, position, polygon.length) === 1 || symmetriCircularDistance(previousPreviousPosition, position, polygon.length) === 1) {
+    while (circularDistance(previousPosition, position, polygon.length) === 1 || circularDistance(previousPreviousPosition, position, polygon.length) === 1) {
       position = randomInteger(0, polygon.length);
     }
 
