@@ -1,4 +1,4 @@
-import { randomIntegerWeighted, randomIntegerUniform, random } from './random';
+import { randomIntegerWeighted, randomIntegerUniform, random, randomInteger } from './random';
 
 export const clamp = (x, min, max) => {
   return Math.max(min, Math.min(x, max));
@@ -54,4 +54,23 @@ export const toParamsChainString = (obj) =>{
     }
     return `${prev}-${curr}=${obj[curr]}`;
   }, null);
+};
+
+export const makeReservoirSampler = (k, f) => {
+  const reservoir = [];
+  let count = 0;
+
+  return (...args) => {
+    const result = f(...args);
+    count++;
+    if (reservoir.length < k) {
+      reservoir.push(result);
+    } else {
+      const x = randomInteger(0, count);
+      if (x < reservoir.length) {
+        reservoir[x] = result;
+      }
+    }
+    return result;
+  };
 };

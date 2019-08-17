@@ -1,4 +1,4 @@
-# EditorConfig helps maintain consistent coding styles for multiple 
+# EditorConfig helps maintain consistent coding styles for multiple
 # developers working on the same project across various editors and IDEs
 # https://editorconfig.org
 
@@ -14,3 +14,6 @@ insert_final_newline = true
 
 [*.md]
 trim_trailing_whitespace = false
+
+[*.js]
+max_line_length = 200

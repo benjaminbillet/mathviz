@@ -3,9 +3,9 @@ import { pickRandom, randomComplex } from '../utils/random';
 import { makeIdentity } from '../transform';
 import { mapDomainToPixel, normalizeBuffer } from '../utils/picture';
 import { BI_UNIT_DOMAIN } from '../utils/domain';
-import { makeColorMapFunction, buildColorMap } from '../utils/color';
+import { makeColorMapFunction, buildColorMap, mixColorLinear } from '../utils/color';
 
-export const generateTransformationSet = (nb, transformMakers, baseTransformMakers = [ makeSimpleLinear ]) => {
+export const generateTransformationSet = (nb, transformMakers, baseTransformMakers = null) => {
   return new Array(nb).fill(null).map(() => {
     const makeTransform = pickRandom(transformMakers);
     if (baseTransformMakers != null) {
@@ -60,7 +60,22 @@ export const makeMixedColorSteal = (colors, maxDistance, maxIterations, w1 = 0.5
   };
 };
 
-export const plotFlame = (output, width, height, transforms, randomInt, colors, initialPointPicker = randomComplex, finalTransform = makeIdentity(), nbPoints = 1000, nbIterations = 10000, domain = BI_UNIT_DOMAIN, resetIfOverflow = false) => {
+export const plotFlame = (
+  output,
+  width,
+  height,
+  transforms,
+  randomInt,
+  colors,
+  initialPointPicker = randomComplex,
+  finalTransform = makeIdentity(),
+  nbPoints = 1000,
+  nbIterations = 10000,
+  domain = BI_UNIT_DOMAIN,
+  resetIfOverflow = false,
+  colorMerge = mixColorLinear,
+  additiveColors = true,
+) => {
   for (let i = 0; i < nbPoints; i++) {
     let z = initialPointPicker(); // pick an initial point
     let pixelColor = [ 0, 0, 0 ];
@@ -88,27 +103,45 @@ export const plotFlame = (output, width, height, transforms, randomInt, colors, 
       }
 
       // each selected function contribute to the color of this iteration
-      pixelColor = [
-        (color[0] + pixelColor[0]) * 0.5,
-        (color[1] + pixelColor[1]) * 0.5,
-        (color[2] + pixelColor[2]) * 0.5,
-      ];
+      pixelColor = colorMerge(color, pixelColor);
 
       // the buffer is 1-dimensional and each pixel has 4 components (r, g, b, a)
       const idx = (fx + fy * width) * 4;
 
-      // the iterated color is added to the current color; be careful, it means that you
-      // will need some postprocessing in order to get the actual colors
-      output[idx + 0] += pixelColor[0];
-      output[idx + 1] += pixelColor[1];
-      output[idx + 2] += pixelColor[2];
+      if (additiveColors) {
+        // the iterated color is added to the current color; be careful, it means that you
+        // will need some postprocessing in order to get the actual colors
+        output[idx + 0] += pixelColor[0];
+        output[idx + 1] += pixelColor[1];
+        output[idx + 2] += pixelColor[2];
+      } else {
+        output[idx + 0] = pixelColor[0];
+        output[idx + 1] = pixelColor[1];
+        output[idx + 2] = pixelColor[2];
+      }
       // the alpha channel is hacked to store how many times the pixel was drawn
       output[idx + 3] += 1;
     }
   }
 };
 
-export const plotFlameWithColorStealing = (output, width, height, transforms, randomInt, colorFunc, preFinalColor = false, initialPointPicker = randomComplex, finalTransform = makeIdentity(), nbPoints = 1000, nbIterations = 10000, domain = BI_UNIT_DOMAIN, resetIfOverflow = false) => {
+export const plotFlameWithColorStealing = (
+  output,
+  width,
+  height,
+  transforms,
+  randomInt,
+  colorFunc,
+  preFinalColor = false,
+  initialPointPicker = randomComplex,
+  finalTransform = makeIdentity(),
+  nbPoints = 1000,
+  nbIterations = 10000,
+  domain = BI_UNIT_DOMAIN,
+  resetIfOverflow = false,
+  colorMerge = mixColorLinear,
+  additiveColors = true,
+) => {
   for (let i = 0; i < nbPoints; i++) {
     let z = initialPointPicker(); // pick an initial point
     let pixelColor = [ 0, 0, 0 ];
@@ -143,20 +176,22 @@ export const plotFlameWithColorStealing = (output, width, height, transforms, ra
       }
 
       // each color contribute to the color of this iteration
-      pixelColor = [
-        (color[0] + pixelColor[0]) * 0.5,
-        (color[1] + pixelColor[1]) * 0.5,
-        (color[2] + pixelColor[2]) * 0.5,
-      ];
+      pixelColor = colorMerge(color, pixelColor);
 
       // the buffer is 1-dimensional and each pixel has 4 components (r, g, b, a)
       const idx = (fx + fy * width) * 4;
 
-      // the iterated color is added to the current color; be careful, it means that you
-      // will need some postprocessing in order to get the actual colors
-      output[idx + 0] += pixelColor[0];
-      output[idx + 1] += pixelColor[1];
-      output[idx + 2] += pixelColor[2];
+      if (additiveColors) {
+        // the iterated color is added to the current color; be careful, it means that you
+        // will need some postprocessing in order to get the actual colors
+        output[idx + 0] += pixelColor[0];
+        output[idx + 1] += pixelColor[1];
+        output[idx + 2] += pixelColor[2];
+      } else {
+        output[idx + 0] = pixelColor[0];
+        output[idx + 1] = pixelColor[1];
+        output[idx + 2] = pixelColor[2];
+      }
       // the alpha channel is hacked to store how many times the pixel was drawn
       output[idx + 3] += 1;
     }

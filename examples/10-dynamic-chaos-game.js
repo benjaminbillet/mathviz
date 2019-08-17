@@ -5,7 +5,7 @@ import { mkdirs } from '../utils/fs';
 import { makePolygon, withinPolygon } from '../utils/polygon';
 import { pickRandom, random, randomComplex } from '../utils/random';
 import { moveTowards } from '../utils/segment';
-import { plotWalk, plotWalkWithClahe } from './util';
+import { plotWalk, plotWalkClahe } from './util';
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/dynamic-chaos-game`;
 mkdirs(OUTPUT_DIRECTORY);
@@ -58,6 +58,7 @@ export const makePolygonTransformingRandomWalk = (polygon, transform = z => z, f
   let i = 0;
 
   // the walk function consists into jumping a given distance towards one of the vertex
+  // the vertices are tranformed over iterations
   return () => {
     let vertex = pickRandom(polygon);
     vertex = transform(vertex, Math.sin(i * freq * Math.PI / 180));
@@ -92,6 +93,7 @@ export const makePolygonJumpVariantRandomWalk = (polygon, minJump, maxJump, filt
   let i = 0;
 
   // the walk function consists into jumping a given distance towards one of the vertex
+  // the distance varies over iterations
   return () => {
     const vertex = pickRandom(polygon);
     zn = moveTowards(zn, vertex, filter(jumpLength));
@@ -116,24 +118,27 @@ export const makePolygonJumpVariantRandomWalk = (polygon, minJump, maxJump, filt
   };
 };
 
-plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-triangle.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 0.4, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
-plotWalkWithClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-triangle-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 0.4, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
-plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-1-1.6-triangle.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 1, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
 
-plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.5-1.6-square.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(4), 0.5, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
-plotWalkWithClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.5-1.6-square-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(4), 0.5, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
-plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-1-1.6-square.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(4), 1, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
+const DOMAIN = scaleDomain(BI_UNIT_DOMAIN, 2);
 
-plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.45-1.6-pentagon.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(5), 0.45, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
-plotWalkWithClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.45-1.6-pentagon-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(5), 0.45, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
-plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-1-1.6-pentagon.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(5), 1, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-triangle.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 0.4, 1.6), DOMAIN, 100000000);
+plotWalkClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-triangle-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 0.4, 1.6), DOMAIN, 100000000);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-1-1.6-triangle.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 1, 1.6), DOMAIN, 100000000);
 
-plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.45-1.6-hexagon.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(6), 0.45, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
-plotWalkWithClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.45-1.6-hexagon-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(6), 0.45, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
-plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-1-1.6-hexagon.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(6), 1, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.5-1.6-square.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(4), 0.5, 1.6), DOMAIN, 100000000);
+plotWalkClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.5-1.6-square-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(4), 0.5, 1.6), DOMAIN, 100000000);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-1-1.6-square.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(4), 1, 1.6), DOMAIN, 100000000);
 
-plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-hendecagon.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(11), 0.4, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
-plotWalkWithClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-hendecagon-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(11), 0.4, 1.6), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.45-1.6-pentagon.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(5), 0.45, 1.6), DOMAIN, 100000000);
+plotWalkClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.45-1.6-pentagon-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(5), 0.45, 1.6), DOMAIN, 100000000);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-1-1.6-pentagon.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(5), 1, 1.6), DOMAIN, 100000000);
+
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.45-1.6-hexagon.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(6), 0.45, 1.6), DOMAIN, 100000000);
+plotWalkClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.45-1.6-hexagon-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(6), 0.45, 1.6), DOMAIN, 100000000);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-1-1.6-hexagon.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(6), 1, 1.6), DOMAIN, 100000000);
+
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-hendecagon.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(11), 0.4, 1.6), DOMAIN, 100000000);
+plotWalkClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-hendecagon-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(11), 0.4, 1.6), DOMAIN, 100000000);
 
 
 const makeLowCutFilter = (threshold, low = 0) => {
@@ -146,6 +151,6 @@ const makeLowCutFilter = (threshold, low = 0) => {
 };
 
 const filter = makeLowCutFilter(1, 0.5);
-plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-triangle-lowcut.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 0.4, 1.6, filter), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
-plotWalkWithClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-triangle-lowcut-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 0.4, 1.6, filter), scaleDomain(BI_UNIT_DOMAIN, 2), 100000000);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-triangle-lowcut.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 0.4, 1.6, filter), DOMAIN, 100000000);
+plotWalkClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-triangle-lowcut-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 0.4, 1.6, filter), DOMAIN, 100000000);
 

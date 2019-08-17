@@ -1,11 +1,14 @@
-import { mapPixelToDomain, saveImage, createImage, saveImageBuffer, forEachPixel } from '../utils/picture';
-import { complex } from '../utils/complex';
 import { simpleWalkChaosPlot } from '../ifs/chaos-game';
+import { plotFlame } from '../ifs/fractal-flame';
+import { makeIdentity } from '../transform';
+import { applyContrastBasedScalefactor, applyLinearScalefactor, convertUnitToRGBA, mixColorLinear } from '../utils/color';
+import { complex } from '../utils/complex';
 import { BI_UNIT_DOMAIN } from '../utils/domain';
-import { withinPolygon } from '../utils/polygon';
-import { randomComplex } from '../utils/random';
-import { convertUnitToRGBA, applyLinearScalefactor } from '../utils/color';
 import { performClahe } from '../utils/histogram';
+import { createImage, forEachPixel, mapPixelToDomain, saveImage, saveImageBuffer } from '../utils/picture';
+import { withinPolygon } from '../utils/polygon';
+import { randomComplex, randomIntegerWeighted } from '../utils/random';
+import { expandPalette, getBigQualitativePalette } from '../utils/palette';
 
 export const plotFunction = async (path, width, height, f, domain = BI_UNIT_DOMAIN, colorfunc) => {
   const image = createImage(width, height);
@@ -42,7 +45,7 @@ export const plotWalk = async (path, width, height, walk, domain = BI_UNIT_DOMAI
   await saveImageBuffer(buffer, width, height, path);
 };
 
-export const plotWalkWithClahe = async (path, width, height, walk, domain = BI_UNIT_DOMAIN, nbIterations = 10000) => {
+export const plotWalkClahe = async (path, width, height, walk, domain = BI_UNIT_DOMAIN, nbIterations = 10000) => {
   let buffer = new Float32Array(width * height * 4);
 
   simpleWalkChaosPlot(buffer, width, height, walk, null, domain, nbIterations);
@@ -79,5 +82,77 @@ export const plotPolygon = async (path, width, height, polygon, domain = BI_UNIT
   simpleWalkChaosPlot(buffer, width, height, walk, null, domain, nbIterations);
 
   buffer = convertUnitToRGBA(buffer);
+  await saveImageBuffer(buffer, width, height, path);
+};
+
+export const plotIfsFlame = async (
+  path,
+  width,
+  height,
+  transforms,
+  randomInt,
+  colors,
+  initialPointPicker = randomComplex,
+  finalTransform = makeIdentity(),
+  nbPoints = 1000,
+  nbIterations = 10000,
+  domain = BI_UNIT_DOMAIN,
+  resetIfOverflow = false,
+  colorMerge = mixColorLinear,
+  additiveColors = true,
+) => {
+  // we create a buffer and run the standard plotter
+  let buffer = new Float32Array(width * height * 4);
+  plotFlame(buffer, width, height, transforms, randomInt, colors, initialPointPicker, finalTransform, nbPoints, nbIterations, domain, resetIfOverflow, colorMerge, additiveColors);
+
+  // we correct the generated image using the contrast-based scalefactor technique
+  let averageHits = 1;
+  if (additiveColors) {
+    averageHits = Math.max(1, (nbPoints * nbIterations) / (width * height));
+  }
+
+  buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
+  // buffer = applyLinearScalefactor(buffer, width, height);
+
+  // we make sure that the colors are proper RGB
+  buffer = convertUnitToRGBA(buffer, width, height);
+
+  // and finally save the image
+  await saveImageBuffer(buffer, width, height, path);
+};
+
+export const plotIfs = async (
+  path,
+  width,
+  height,
+  ifs,
+  nbPoints = 1000,
+  nbIterations = 10000,
+  finalTransform = makeIdentity(),
+  domain = BI_UNIT_DOMAIN,
+  initialPointPicker = randomComplex,
+  colors = null,
+) => {
+  const transforms = ifs.functions;
+  const randomInt = randomIntegerWeighted(ifs.probabilities);
+
+  if (colors == null) {
+    colors = expandPalette(getBigQualitativePalette(5), transforms.length);
+    colors = colors.map(([ r, g, b ]) => [ r / 255, g / 255, b / 255 ]);
+  }
+
+  // we create a buffer and run the standard plotter
+  let buffer = new Float32Array(width * height * 4);
+  plotFlame(buffer, width, height, transforms, randomInt, colors, initialPointPicker, finalTransform, nbPoints, nbIterations, domain);
+
+  // we correct the generated image using the contrast-based scalefactor technique
+  let averageHits =  Math.max(1, (nbPoints * nbIterations) / (width * height));
+  buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
+  // buffer = applyLinearScalefactor(buffer, width, height);
+
+  // we make sure that the colors are proper RGB
+  buffer = convertUnitToRGBA(buffer, width, height);
+
+  // and finally save the image
   await saveImageBuffer(buffer, width, height, path);
 };

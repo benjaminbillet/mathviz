@@ -207,6 +207,14 @@ export const fromARGBInteger = (argb, output = null) => {
   return output;
 };
 
+export const mixColorLinear = (color1, color2, amount = 0.5) => {
+  const reverseAmount = 1 - amount;
+  return [
+    (color1[0] * amount) + (color2[0] * reverseAmount),
+    (color1[1] * amount) + (color2[1] * reverseAmount),
+    (color1[2] * amount) + (color2[2] * reverseAmount),
+  ];
+};
 
 /** Common maps */
 export const RainbowColormap = buildColorMap([ [ 255, 0, 0 ], [ 0, 255, 0 ], [ 0, 0, 255 ] ]);
