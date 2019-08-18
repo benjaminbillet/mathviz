@@ -1,8 +1,7 @@
-import * as D3Random from 'd3-random';
-import { randomInteger, DefaultNormalDistribution } from '../utils/random';
+import { randomInteger, DefaultNormalDistribution, randomNormal } from '../utils/random';
 import { getLuminance } from '../utils/color';
 
-export const DefaultStrideDistribution = D3Random.randomNormal(1, 0.05);
+export const DefaultStrideDistribution = randomNormal(1, 0.05);
 
 export const ObedientBehavior = () => 0;
 export const CrosshatchBehavior = () => (Math.floor(DefaultNormalDistribution() * 100) % 2) * Math.PI / 2;

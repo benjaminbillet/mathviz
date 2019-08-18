@@ -1,6 +1,6 @@
 import { forEachPixel } from '../utils/picture';
 
-export const applyPosterize = (input, width, height, levels = 24) => {
+export const applyPosterize = (input, width, height, levels = 6) => {
   const offset = 1 / levels * 0.5;
   const output = new Float32Array(width * height * 4);
   forEachPixel(input, width, height, (r, g, b, a, i, j, idx) => {

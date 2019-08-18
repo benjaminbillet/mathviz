@@ -35,25 +35,25 @@ export const pixelBicubic = (buffer, width, height, x, y, offset) => {
   const x1 = Math.trunc(x);
   const y1 = Math.trunc(y);
 
-  let p00 = getPixelValue(buffer, width, height, x1 - 1, y1 - 1, offset);
-  let p01 = getPixelValue(buffer, width, height, x1 - 1, y1, offset);
-  let p02 = getPixelValue(buffer, width, height, x1 - 1, y1 + 1, offset);
-  let p03 = getPixelValue(buffer, width, height, x1 - 1, y1 + 2, offset);
+  const p00 = getPixelValue(buffer, width, height, x1 - 1, y1 - 1, offset);
+  const p01 = getPixelValue(buffer, width, height, x1 - 1, y1, offset);
+  const p02 = getPixelValue(buffer, width, height, x1 - 1, y1 + 1, offset);
+  const p03 = getPixelValue(buffer, width, height, x1 - 1, y1 + 2, offset);
 
-  let p10 = getPixelValue(buffer, width, height, x1, y1 - 1, offset);
-  let p11 = getPixelValue(buffer, width, height, x1, y1, offset);
-  let p12 = getPixelValue(buffer, width, height, x1, y1 + 1, offset);
-  let p13 = getPixelValue(buffer, width, height, x1, y1 + 2, offset);
+  const p10 = getPixelValue(buffer, width, height, x1, y1 - 1, offset);
+  const p11 = getPixelValue(buffer, width, height, x1, y1, offset);
+  const p12 = getPixelValue(buffer, width, height, x1, y1 + 1, offset);
+  const p13 = getPixelValue(buffer, width, height, x1, y1 + 2, offset);
 
-  let p20 = getPixelValue(buffer, width, height, x1 + 1, y1 - 1, offset);
-  let p21 = getPixelValue(buffer, width, height, x1 + 1, y1, offset);
-  let p22 = getPixelValue(buffer, width, height, x1 + 1, y1 + 1, offset);
-  let p23 = getPixelValue(buffer, width, height, x1 + 1, y1 + 2, offset);
+  const p20 = getPixelValue(buffer, width, height, x1 + 1, y1 - 1, offset);
+  const p21 = getPixelValue(buffer, width, height, x1 + 1, y1, offset);
+  const p22 = getPixelValue(buffer, width, height, x1 + 1, y1 + 1, offset);
+  const p23 = getPixelValue(buffer, width, height, x1 + 1, y1 + 2, offset);
 
-  let p30 = getPixelValue(buffer, width, height, x1 + 2, y1 - 1, offset);
-  let p31 = getPixelValue(buffer, width, height, x1 + 2, y1, offset);
-  let p32 = getPixelValue(buffer, width, height, x1 + 2, y1 + 1, offset);
-  let p33 = getPixelValue(buffer, width, height, x1 + 2, y1 + 2, offset);
+  const p30 = getPixelValue(buffer, width, height, x1 + 2, y1 - 1, offset);
+  const p31 = getPixelValue(buffer, width, height, x1 + 2, y1, offset);
+  const p32 = getPixelValue(buffer, width, height, x1 + 2, y1 + 1, offset);
+  const p33 = getPixelValue(buffer, width, height, x1 + 2, y1 + 2, offset);
 
   return bicubic(x - x1, y - y1, p00, p10, p20, p30, p01, p11, p21, p31, p02, p12, p22, p32, p03, p13, p23, p33);
 };

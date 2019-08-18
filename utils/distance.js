@@ -43,12 +43,16 @@ export const chebyshev2d = (x1, y1, x2, y2) => {
 };
 
 
-export const minkowski = (a, b) => {
-  return Math.abs(a - b);
+export const minkowski = (x, y, p) => {
+  return Math.pow(Math.pow(Math.abs(x), p) + Math.pow(Math.abs(y), p), 1 / p);
+};
+
+export const makeMinkowski = (p) => {
+  return (x, y) => minkowski(x, y, p);
 };
 
 export const minkowski2d = (x1, y1, x2, y2, p) => {
-  return Math.pow(Math.pow(Math.abs(x1 - x2), p) + Math.pow(Math.abs(y1 - y2), p), 1/p);
+  return Math.pow(Math.pow(Math.abs(x1 - x2), p) + Math.pow(Math.abs(y1 - y2), p), 1 / p);
 };
 
 export const makeMinkowski2d = (p) => {
@@ -71,8 +75,16 @@ export const karlsruhe2d = (x1, y1, x2, y2) => {
   return r1 + r2;
 };
 
-export const akritean2d = (x1, y1, x2, y2, a) => {
+export const akritean = (x, y, a = 0.5) => {
+  return euclidean(x, y) * (1 - a) + manhattan(x, y) * a;
+};
+
+export const akritean2d = (x1, y1, x2, y2, a = 0.5) => {
   return euclidean2d(x1, y1, x2, y2) * (1 - a) + manhattan2d(x1, y1, x2, y2) * a;
+};
+
+export const makeAkritean = (a) => {
+  return (x, y) => akritean(x, y, a);
 };
 
 export const makeAkritean2d = (a) => {
