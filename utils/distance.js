@@ -51,6 +51,34 @@ export const minkowski2d = (x1, y1, x2, y2, p) => {
   return Math.pow(Math.pow(Math.abs(x1 - x2), p) + Math.pow(Math.abs(y1 - y2), p), 1/p);
 };
 
+export const makeMinkowski2d = (p) => {
+  return (x1, y1, x2, y2) => minkowski2d(x1, y1, x2, y2, p);
+};
+
+export const karlsruhe2d = (x1, y1, x2, y2) => {
+  const r1 = euclidean(x1, y1);
+  const r2 = euclidean(x2, y2);
+
+  const phi1 = Math.atan2(y1, x1);
+  const phi2 = Math.atan2(y2, x2);
+
+  const deltaPhi = Math.abs(phi1 - phi2);
+  const delta = Math.min(deltaPhi, 2 * Math.PI - deltaPhi);
+
+  if (delta >= 0 && delta <= 2) {
+    return Math.min(r1, r2) * deltaPhi + Math.abs(r1 - r2);
+  }
+  return r1 + r2;
+};
+
+export const akritean2d = (x1, y1, x2, y2, a) => {
+  return euclidean2d(x1, y1, x2, y2) * (1 - a) + manhattan2d(x1, y1, x2, y2) * a;
+};
+
+export const makeAkritean2d = (a) => {
+  return (x1, y1, x2, y2) => akritean2d(x1, y1, x2, y2, a);
+};
+
 
 export const discrete = (a, b) => {
   if (a === b) {
@@ -74,3 +102,4 @@ export const britishRail = (a, b) => {
 export const britishRail2d = (x1, y1, x2, y2) => {
   return britishRail(x1 - x2, y1 - y2);
 };
+

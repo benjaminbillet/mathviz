@@ -146,7 +146,7 @@ export const plotIfs = async (
   plotFlame(buffer, width, height, transforms, randomInt, colors, initialPointPicker, finalTransform, nbPoints, nbIterations, domain);
 
   // we correct the generated image using the contrast-based scalefactor technique
-  let averageHits =  Math.max(1, (nbPoints * nbIterations) / (width * height));
+  const averageHits =  Math.max(1, (nbPoints * nbIterations) / (width * height));
   buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
   // buffer = applyLinearScalefactor(buffer, width, height);
 
@@ -155,4 +155,10 @@ export const plotIfs = async (
 
   // and finally save the image
   await saveImageBuffer(buffer, width, height, path);
+};
+
+export const plotNoise = async (noiseFunction, size, outputPath) => {
+  const noise = noiseFunction();
+  const output = convertUnitToRGBA(noise);
+  await saveImageBuffer(output, size, size, outputPath);
 };
