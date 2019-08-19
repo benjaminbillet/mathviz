@@ -8,7 +8,7 @@ import { applyDensityMap } from '../effects/densityMap';
 import { applyDerivative, applySobelDerivative, applyPrewittDerivative } from '../effects/derivative';
 import { applyInterference } from '../effects/interference';
 import { applyPosterize } from '../effects/posterize';
-import { setRandomSeed, DefaultNormalDistribution } from '../utils/random';
+import { setRandomSeed } from '../utils/random';
 import { applyVhs } from '../effects/vhs';
 import { applyVoronoid } from '../effects/voronoid';
 import { applyVoroshard } from '../effects/voroshard';
@@ -16,9 +16,20 @@ import { applyVortex } from '../effects/vortex';
 import { applyWormhole } from '../effects/wormhole';
 import { applyThreads, DefaultStrideDistribution, ChaoticBehavior, UnrulyBehavior, CrosshatchBehavior } from '../effects/threads';
 import { applyAgate } from '../effects/agate';
-import { manhattan2d, akritean2d, makeAkritean2d, makeMinkowski2d, manhattan, makeAkritean, makeMinkowski, euclidean2d } from '../utils/distance';
+import { manhattan2d, makeAkritean2d, makeMinkowski2d, manhattan, makeAkritean, makeMinkowski, euclidean2d } from '../utils/distance';
+import { applyColorSampling } from '../effects/colorSampling';
+import { applyIcification } from '../effects/icification';
+import { applyGlowingEdges } from '../effects/glowingEdges';
+import { applyBloom } from '../effects/bloom';
+import { applySoup1, applySoup2, applySoup3, applySoup4 } from '../effects/soup';
+import { applyWarp } from '../effects/warp';
+import { applyNormalMap } from '../effects/normalMap';
+import { applyHypersat } from '../effects/hypersat';
+import { applyRasteroid } from '../effects/rasteroid';
 
-const applyEffect = async (effect, sourcePath, outputPath) => {
+const applyEffect = async (effect, sourcePath, outputPath, seed = 10) => {
+  setRandomSeed(seed); // make sure all effects use the same random generation sequence
+
   const image = await readImage(sourcePath);
   const width = image.getWidth();
   const height = image.getHeight();
@@ -40,8 +51,6 @@ const OUTPUT_DIRECTORY = `${__dirname}/../output/effects`;
 mkdirs(OUTPUT_DIRECTORY);
 
 const sourcePath = `${__dirname}/ada-big.png`;
-
-setRandomSeed(10);
 
 
 applyEffect(applyScanlineError, sourcePath, `${OUTPUT_DIRECTORY}/effect-scanlineerror.png`);
@@ -81,3 +90,21 @@ applyEffect(applyAgate, sourcePath, `${OUTPUT_DIRECTORY}/effect-agate-euclidean.
 applyEffect(configureEffect(applyAgate, manhattan), sourcePath, `${OUTPUT_DIRECTORY}/effect-agate-manhattan.png`);
 applyEffect(configureEffect(applyAgate, makeAkritean(0.5)), sourcePath, `${OUTPUT_DIRECTORY}/effect-agate-akritean.png`);
 applyEffect(configureEffect(applyAgate, makeMinkowski(0.7)), sourcePath, `${OUTPUT_DIRECTORY}/effect-agate-minkowski.png`);
+
+applyEffect(applyColorSampling, sourcePath, `${OUTPUT_DIRECTORY}/effect-colorsampling.png`);
+applyEffect(applyGlowingEdges, sourcePath, `${OUTPUT_DIRECTORY}/effect-glowingedges.png`);
+applyEffect(applyBloom, sourcePath, `${OUTPUT_DIRECTORY}/effect-bloom.png`);
+applyEffect(applyIcification, sourcePath, `${OUTPUT_DIRECTORY}/effect-icification.png`);
+applyEffect(configureEffect(applyWarp, 1, 5, 2), sourcePath, `${OUTPUT_DIRECTORY}/effect-warp.png`);
+applyEffect(applyNormalMap, sourcePath, `${OUTPUT_DIRECTORY}/effect-normalmap.png`);
+applyEffect(applyHypersat, sourcePath, `${OUTPUT_DIRECTORY}/effect-hypersat.png`);
+
+applyEffect(applySoup1, sourcePath, `${OUTPUT_DIRECTORY}/effect-soup1.png`);
+applyEffect(applySoup2, sourcePath, `${OUTPUT_DIRECTORY}/effect-soup2.png`);
+applyEffect(applySoup3, sourcePath, `${OUTPUT_DIRECTORY}/effect-soup3.png`);
+applyEffect(applySoup4, sourcePath, `${OUTPUT_DIRECTORY}/effect-soup4.png`);
+
+applyEffect(applyRasteroid, sourcePath, `${OUTPUT_DIRECTORY}/effect-rasteroid-euclidian.png`);
+applyEffect(configureEffect(applyRasteroid, manhattan), sourcePath, `${OUTPUT_DIRECTORY}/effect-rasteroid-manhattan.png`);
+applyEffect(configureEffect(applyRasteroid, makeAkritean(0.5)), sourcePath, `${OUTPUT_DIRECTORY}/effect-rasteroid-akritean.png`);
+applyEffect(configureEffect(applyRasteroid, makeMinkowski(0.7)), sourcePath, `${OUTPUT_DIRECTORY}/effect-rasteroid-minkowski.png`);

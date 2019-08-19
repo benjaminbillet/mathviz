@@ -13,7 +13,7 @@ export const applyNormalMap = (input, width, height) => {
   const verticalDerivative = convolve(luminanceMap, new Float32Array(input.length), width, height, SobelVertical3x3Kernel);
   normalizeBuffer(verticalDerivative, width, height);
 
-  let output = input.map((_, i) => euclidean(horizontalDerivative[i], verticalDerivative[i]));
+  const output = input.map((_, i) => euclidean(horizontalDerivative[i], verticalDerivative[i]));
   normalizeBuffer(output, width, height);
 
   forEachPixel(output, width, height, (r, g, b, a, i, j, idx) => {
