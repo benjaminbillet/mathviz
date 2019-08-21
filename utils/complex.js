@@ -67,13 +67,20 @@ export const mul = (z1, z2, out = undefined) => {
   if (out == null) {
     out = complex();
   }
+
   if (z2.re == null) { // treat as real
     out.re = z1.re * z2;
     out.im = z1.im * z2;
     return out;
   }
-  out.re = z1.re * z2.re - z1.im * z2.im;
-  out.im = z1.re * z2.im + z1.im * z2.re;
+
+  const r1 = z1.re;
+  const i1 = z1.im;
+  const r2 = z2.re;
+  const i2 = z2.im;
+
+  out.re = r1 * r2 - i1 * i2;
+  out.im = r1 * i2 + i1 * r2;
   return out;
 };
 
@@ -141,9 +148,14 @@ export const div = (z1, z2, out = undefined) => {
     return out;
   }
 
+  const r1 = z1.re;
+  const i1 = z1.im;
+  const r2 = z2.re;
+  const i2 = z2.im;
+
   const inverseSquaredModulus = 1 / squaredModulus(z2);
-  out.re = inverseSquaredModulus * (z1.re * z2.re + z1.im * z2.im);
-  out.im = inverseSquaredModulus * (z1.re * z2.im - z1.im * z2.re);
+  out.re = inverseSquaredModulus * (r1 * r2 + i1 * i2);
+  out.im = inverseSquaredModulus * (r1 * i2 - i1 * r2);
   return out;
 };
 
@@ -152,8 +164,11 @@ export const sqrt = (z, out = undefined) => {
     out = complex();
   }
   const modulus = modulus(z);
-  out.re = math.sqrt((z.re + modulus) / 2);
-  out.im = math.sign(z.im) * math.sqrt((modulus - z.re) / 2);
+  const r = z.re;
+  const i = z.im;
+
+  out.re = math.sqrt((r + modulus) / 2);
+  out.im = math.sign(i) * math.sqrt((modulus - r) / 2);
   return out;
 };
 

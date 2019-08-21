@@ -9,7 +9,7 @@ export const makeSymmetricIcon = (lambda, alpha, beta, gamma, omega, degree) => 
     const r = lambda + alpha * (z.re * z.re + z.im * z.im) + beta * zn.re;
     return new Complex(r, omega).mul(z).add(zn2.mul(gamma));*/
 
-    const zn = powN(z, degrees);
+    const zn = powN(z, degree);
     const r = lambda + alpha * (z.re * z.re + z.im * z.im) + beta * zn.re;
 
     let zn2 = complex(z.re, -z.im);
@@ -33,15 +33,15 @@ export const makeSymmetricIconWithNpTerm = (lambda, alpha, beta, gamma, delta, d
     const r = lambda + alpha * (z.re * z.re + z.im * z.im) + beta * zn.re + delta * mag * zn3.re;
     return new Complex(r * z.re, r * z.im).add(zn2.mul(gamma));*/
 
-    const zn = powN(z, degrees);
+    const zn = powN(z, degree);
     const mag = modulus(z);
 
     let zn2 = conjugate(z);
-    zn2 = powN(zn2, degrees - 1, zn2);
+    zn2 = powN(zn2, degree - 1, zn2);
     zn2 = mul(zn2, gamma, zn2);
 
     let zn3 = div(z, mag);
-    zn3 = powN(zn3, degrees * p, zn3);
+    zn3 = powN(zn3, degree * p, zn3);
 
     const r = lambda + alpha * (z.re * z.re + z.im * z.im) + beta * zn.re + delta * mag * zn3.re;
 

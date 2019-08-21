@@ -1,5 +1,5 @@
 import { simpleWalkChaosPlot } from '../ifs/chaos-game';
-import { plotFlame } from '../ifs/fractal-flame';
+import { plotFlame, plotFlameWithColorStealing } from '../ifs/fractal-flame';
 import { makeIdentity } from '../transform';
 import { applyContrastBasedScalefactor, applyLinearScalefactor, convertUnitToRGBA, mixColorLinear } from '../utils/color';
 import { complex } from '../utils/complex';
@@ -8,7 +8,7 @@ import { performClahe } from '../utils/histogram';
 import { createImage, forEachPixel, mapPixelToDomain, saveImage, saveImageBuffer } from '../utils/picture';
 import { withinPolygon } from '../utils/polygon';
 import { randomComplex, randomIntegerWeighted } from '../utils/random';
-import { expandPalette, getBigQualitativePalette } from '../utils/palette';
+import { expandPalette, getBigQualitativePalette, CATERPILLAR } from '../utils/palette';
 
 export const plotFunction = async (path, width, height, f, domain = BI_UNIT_DOMAIN, colorfunc) => {
   const image = createImage(width, height);
@@ -53,7 +53,7 @@ export const plotWalkClahe = async (path, width, height, walk, domain = BI_UNIT_
   buffer = applyLinearScalefactor(buffer, width, height);
 
   // convert into a single channel grayscale picture
-  let newBuffer = new Uint8Array(width * height);
+  const newBuffer = new Uint8Array(width * height);
   forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => newBuffer[idx / 4] = r * 255);
 
   performClahe(newBuffer, width, height, newBuffer, 16, 16, 256, 4);
@@ -161,4 +161,29 @@ export const plotNoise = async (noiseFunction, size, outputPath) => {
   const noise = noiseFunction();
   const output = convertUnitToRGBA(noise);
   await saveImageBuffer(output, size, size, outputPath);
+};
+
+export const plotAttractor = async (
+  path,
+  width,
+  height,
+  attractor,
+  initialPointPicker = () => complex(0, 0),
+  colorFunc = () => CATERPILLAR[0],
+  nbIterations = 1000000,
+  domain = BI_UNIT_DOMAIN,
+) => {
+  // we create a buffer and run the standard plotter
+  let buffer = new Float32Array(width * height * 4);
+  plotFlameWithColorStealing(buffer, width, height, [ attractor ], () => 0, colorFunc, false, initialPointPicker, makeIdentity(), 1, nbIterations, domain);
+
+  // we correct the generated image using the contrast-based scalefactor technique
+  const averageHits =  Math.max(1, nbIterations / (width * height));
+  buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
+
+  // we make sure that the colors are proper RGB
+  buffer = convertUnitToRGBA(buffer, width, height);
+
+  // and finally save the image
+  await saveImageBuffer(buffer, width, height, path);
 };
