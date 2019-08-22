@@ -110,7 +110,7 @@ export const getTonePalette = (baseRgb, paletteSize) => {
 };
 
 export const expandPalette = (palette, nbColors) => {
-  let start = palette.length;
+  const start = palette.length;
   for (let i = start; i < nbColors; i++) {
     palette.push(palette[i % start]);
   }

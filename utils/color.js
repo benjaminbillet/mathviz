@@ -49,6 +49,9 @@ export const applyLinearScalefactor = (buffer, width, height, gamma = 0.45) => {
 };
 
 export const applyGammaCorrection = (buffer, gamma = 0.45) => {
+  if (gamma === 1) {
+    return;
+  }
   for (let i = 0; i < buffer.length; i++) {
     if ((i + 1) % 4 !== 0) {
       buffer[i] = Math.pow(buffer[i], gamma);

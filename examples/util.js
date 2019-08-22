@@ -169,7 +169,7 @@ export const plotAttractor = async (
   height,
   attractor,
   initialPointPicker = () => complex(0, 0),
-  colorFunc = () => CATERPILLAR[0],
+  colorFunc = () => [ 1, 1, 1 ],
   nbIterations = 1000000,
   domain = BI_UNIT_DOMAIN,
 ) => {
