@@ -1,14 +1,15 @@
 import { simpleWalkChaosPlot } from '../ifs/chaos-game';
-import { plotFlame, plotFlameWithColorStealing } from '../ifs/fractal-flame';
+import { plotFlame, plotFlameWithColorStealing, makeMixedColorSteal } from '../ifs/fractal-flame';
 import { makeIdentity } from '../transform';
 import { applyContrastBasedScalefactor, applyLinearScalefactor, convertUnitToRGBA, mixColorLinear } from '../utils/color';
 import { complex } from '../utils/complex';
-import { BI_UNIT_DOMAIN } from '../utils/domain';
+import { BI_UNIT_DOMAIN, scaleDomain } from '../utils/domain';
 import { performClahe } from '../utils/histogram';
 import { createImage, forEachPixel, mapPixelToDomain, saveImage, saveImageBuffer } from '../utils/picture';
 import { withinPolygon } from '../utils/polygon';
 import { randomComplex, randomIntegerWeighted } from '../utils/random';
-import { expandPalette, getBigQualitativePalette, CATERPILLAR } from '../utils/palette';
+import { expandPalette, getBigQualitativePalette, MAVERICK } from '../utils/palette';
+import { estimateAttractorDomain } from '../attractors/plot';
 
 export const plotFunction = async (path, width, height, f, domain = BI_UNIT_DOMAIN, colorfunc) => {
   const image = createImage(width, height);
@@ -200,4 +201,26 @@ export const plotAttractorMultipoint = async (
 
   // and finally save the image
   await saveImageBuffer(buffer, width, height, path);
+};
+
+export const plotAutoscaledAttractor = async (
+  path,
+  width,
+  height,
+  attractor,
+  initialPointPicker = () => complex(0, 0),
+  palette = MAVERICK,
+  nbIterations = 1000000,
+  autoScaleIterations = 100000,
+  zoomAfterAutoscale = 1.2,
+) => {
+  // we compute automatically the domain of the attractor
+  const domain = scaleDomain(estimateAttractorDomain(attractor, initialPointPicker, makeIdentity(), autoScaleIterations), zoomAfterAutoscale);
+  console.log('Estimated domain', domain);
+
+  // we create a color function that will apply the palette depending on the location of the point and the number of iterations
+  const colorFunc = makeMixedColorSteal(palette, domain.xmax / 2, nbIterations, 0.5, 0.5);
+
+  // and we plot
+  plotAttractor(path, width, height, attractor, initialPointPicker, colorFunc, nbIterations, domain);
 };

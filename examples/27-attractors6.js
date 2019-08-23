@@ -12,8 +12,6 @@ import { makeThreePly } from '../attractors/hopalong';
 const OUTPUT_DIRECTORY = `${__dirname}/../output/attractors`;
 mkdirs(OUTPUT_DIRECTORY);
 
-setRandomSeed(6000);
-
 const THREE_PLY_COEFFS = [
   [ 55,    -10,    -42.1,    1 ],
   [ -92,   -55,    -35,      1 ],
