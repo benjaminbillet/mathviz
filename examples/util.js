@@ -173,9 +173,23 @@ export const plotAttractor = async (
   nbIterations = 1000000,
   domain = BI_UNIT_DOMAIN,
 ) => {
+  plotAttractorMultipoint(path, width, height, attractor, initialPointPicker, colorFunc, 1, nbIterations, domain);
+};
+
+export const plotAttractorMultipoint = async (
+  path,
+  width,
+  height,
+  attractor,
+  initialPointPicker = () => complex(0, 0),
+  colorFunc = () => [ 1, 1, 1 ],
+  nbPoints = 10,
+  nbIterations = 1000000,
+  domain = BI_UNIT_DOMAIN,
+) => {
   // we create a buffer and run the standard plotter
   let buffer = new Float32Array(width * height * 4);
-  plotFlameWithColorStealing(buffer, width, height, [ attractor ], () => 0, colorFunc, false, initialPointPicker, makeIdentity(), 1, nbIterations, domain);
+  plotFlameWithColorStealing(buffer, width, height, [ attractor ], () => 0, colorFunc, false, initialPointPicker, makeIdentity(), nbPoints, nbIterations, domain);
 
   // we correct the generated image using the contrast-based scalefactor technique
   const averageHits =  Math.max(1, nbIterations / (width * height));
