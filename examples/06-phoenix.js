@@ -2,50 +2,64 @@ import { buildConstrainedColorMap, makeColorMapFunction } from '../utils/color';
 import { mkdirs } from '../utils/fs';
 import { plotFunction } from './util';
 import { readImage, getPictureSize } from '../utils/picture';
-import { phoenix, PHOENIX_DOMAIN, continuousPhoenix, orbitTrapPhoenix } from '../fractalsets/phoenix';
+import { PHOENIX_DOMAIN, makePhoenix, makeContinuousPhoenix, makeOrbitTrapPhoenix, makeStripeAveragePhoenixLinear } from '../fractalsets/phoenix';
 import { makeBitmapTrap } from '../fractalsets/trap';
 import { complex } from '../utils/complex';
 import { zoomDomain } from '../utils/domain';
+import { MANDELBROT } from '../utils/palette';
 
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/phoenix`;
 mkdirs(OUTPUT_DIRECTORY);
 
-const TRAP_IMAGE = `${__dirname}/ada.png`;
+const TRAP_IMAGE = `${__dirname}/ada-big.png`;
 
 
 const colormap = buildConstrainedColorMap(
-  [ [ 0, 7, 100 ], [ 32, 107, 203 ], [ 237, 255, 255 ], [ 255, 170, 0 ], [ 0, 2, 0 ], [ 0, 7, 0 ] ],
+  MANDELBROT,
   [ 0, 0.16, 0.42, 0.6425, 0.8575, 1 ],
 );
-const colorfunc = makeColorMapFunction(colormap);
+const colorfunc = makeColorMapFunction(colormap, 255);
+
+const size = 2048;
 
 
-const plotPhoenix = async (c, p, d, maxIterations, domain, suffix = '') => {
-  const [ width, height ] = getPictureSize(1024, domain);
-  const configuredPhoenix = (z) => phoenix(z, c, p, d, maxIterations);
+const plotPhoenix = async (c, p, d, bailout, maxIterations, domain, suffix = '') => {
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredPhoenix = makePhoenix(c, p, d, bailout, maxIterations);
   await plotFunction(`${OUTPUT_DIRECTORY}/phoenix-c=${c.re}+${c.im}i-p=${p.re}+${p.im}i-d=${d}${suffix}.png`, width, height, configuredPhoenix, domain, colorfunc);
 };
 
-const plotContinuousPhoenix = async (c, p, d, maxIterations, domain, suffix = '') => {
-  const [ width, height ] = getPictureSize(1024, domain);
-  const configuredPhoenix = (z) => continuousPhoenix(z, c, p, d, maxIterations);
+const plotContinuousPhoenix = async (c, p, d, bailout, maxIterations, domain, suffix = '') => {
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredPhoenix = makeContinuousPhoenix(c, p, d, bailout, maxIterations);
   await plotFunction(`${OUTPUT_DIRECTORY}/phoenix-c=${c.re}+${c.im}i-d=${d}${suffix}-continuous.png`, width, height, configuredPhoenix, domain, colorfunc);
 };
 
-const plotBitmapTrapPhoenix = async (bitmapPath, trapSize, c, p, d, maxIterations, domain, suffix = '') => {
-  const bitmap = await readImage(bitmapPath);
-  const trap = makeBitmapTrap(bitmap.getImage().data, bitmap.getWidth(), bitmap.getHeight(), trapSize, trapSize, 0, 0);
-
-  const [ width, height ] = getPictureSize(1024, domain);
-  const configuredPhoenix = (z) => orbitTrapPhoenix(z, c, p, trap, d, maxIterations);
-  await plotFunction(`${OUTPUT_DIRECTORY}/phoenix-c=${c.re}+${c.im}i-d=${d}${suffix}-trap.png`, width, height, configuredPhoenix, domain, colorfunc);
+const plotAverageStripePhoenix = async (c, p, d, bailout, maxIterations, stripeDensity, domain, suffix = '') => {
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredJulia = makeStripeAveragePhoenixLinear(c, p, d, bailout, maxIterations, stripeDensity);
+  await plotFunction(`${OUTPUT_DIRECTORY}/phoenix-c=${c.re}+${c.im}i-d=${d}${suffix}-stripe.png`, width, height, configuredJulia, domain, colorfunc);
 };
 
-plotPhoenix(complex(0.5667), complex(-0.5), 2, 100, PHOENIX_DOMAIN);
-plotPhoenix(complex(0.5667), complex(-0.5), 2, 100, zoomDomain(PHOENIX_DOMAIN, 0, -0.4, 8), '-zoom');
+const plotBitmapTrapPhoenix = async (bitmapPath, trapSize, c, p, d, bailout, maxIterations, domain, suffix = '') => {
+  const bitmap = await readImage(bitmapPath);
+  const bitmapBuffer = new Float32Array(bitmap.getWidth() * bitmap.getHeight() * 4);
+  bitmap.getImage().data.forEach((x, i) => bitmapBuffer[i] = x / 255);
+  const trap = makeBitmapTrap(bitmapBuffer, bitmap.getWidth(), bitmap.getHeight(), trapSize, trapSize, 0, 0);
 
-plotContinuousPhoenix(complex(0.5667), complex(-0.5), 2, 100, PHOENIX_DOMAIN);
-plotContinuousPhoenix(complex(0.5667), complex(-0.5), 2, 100, zoomDomain(PHOENIX_DOMAIN, 0, -0.4, 8), '-zoom');
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredPhoenix = makeOrbitTrapPhoenix(c, p, trap, d, bailout, maxIterations);
+  await plotFunction(`${OUTPUT_DIRECTORY}/phoenix-c=${c.re}+${c.im}i-d=${d}${suffix}-trap.png`, width, height, configuredPhoenix, domain);
+};
 
-plotBitmapTrapPhoenix(TRAP_IMAGE, 0.5, complex(0.5667), complex(-0.5), 2, 100, PHOENIX_DOMAIN);
+plotPhoenix(complex(0.5667), complex(-0.5), 2, 2, 100, PHOENIX_DOMAIN);
+plotPhoenix(complex(0.5667), complex(-0.5), 2, 2, 100, zoomDomain(PHOENIX_DOMAIN, 0, -0.4, 8), '-zoom');
+
+plotContinuousPhoenix(complex(0.5667), complex(-0.5), 2, 10, 100, PHOENIX_DOMAIN);
+plotContinuousPhoenix(complex(0.5667), complex(-0.5), 2, 10, 100, zoomDomain(PHOENIX_DOMAIN, 0, -0.4, 8), '-zoom');
+
+plotAverageStripePhoenix(complex(0.5667), complex(-0.5), 2, 100, 100, 10, PHOENIX_DOMAIN);
+plotAverageStripePhoenix(complex(0.5667), complex(-0.5), 2, 100, 100, 10, zoomDomain(PHOENIX_DOMAIN, 0, -0.4, 8), '-zoom');
+
+plotBitmapTrapPhoenix(TRAP_IMAGE, 0.5, complex(0.5667), complex(-0.5), 2, 2, 100, PHOENIX_DOMAIN);
