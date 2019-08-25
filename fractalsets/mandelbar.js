@@ -8,72 +8,85 @@
 
 import { complex, powN, add, conjugate, modulus } from '../utils/complex';
 
-export const mandelbar = (u, d = 2, maxIterations = 100) => {
-  let zn = complex(0, 0);
+export const makeMandelbar = (d = 3, bailout = 2, maxIterations = 100) => {
+  const squaredBailout = bailout * bailout;
 
-  // we analyze the behavior of zₙ only for a maximum number of iterations
-  let iterations = 0;
+  return (u) => {
+    let zn = complex(0, 0);
 
-  // we will compare the squared magnitude to the squared bailout radius
-  // (it will avoid a costly square root)
-  let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
-  while (squaredMagnitude <= 4 && iterations < maxIterations) {
-    zn = conjugate(zn, zn);
-    zn = powN(zn, d, zn);
-    zn = add(zn, u, zn);
+    // we analyze the behavior of zₙ only for a maximum number of iterations
+    let iterations = 0;
 
-    squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
-    iterations++;
-  }
+    // we will compare the squared magnitude to the squared bailout radius
+    // (it will avoid a costly square root)
+    let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
+    while (squaredMagnitude <= squaredBailout && iterations < maxIterations) {
+      zn = conjugate(zn, zn);
+      zn = powN(zn, d, zn);
+      zn = add(zn, u, zn);
 
-  // the number of iterations represent the "speed" at which the magnitude of the zₙ
-  // sequence exceeds the bailout radius
-  return iterations / maxIterations;
-};
-
-const LOGLOG2 = Math.log(Math.log(2));
-export const continuousMandelbar = (u, d = 3, maxIterations = 100) => {
-  let zn = complex(0, 0);
-  let iterations = 0;
-  let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
-  while (squaredMagnitude <= 4 && iterations < maxIterations) {
-    zn = conjugate(zn, zn);
-    zn = powN(zn, d, zn);
-    zn = add(zn, u, zn);
-
-    squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
-    iterations++;
-  }
-
-  if (iterations === maxIterations) {
-    return 1;
-  }
-
-  // the number of iterations is normalized to produce a continuous value
-  // that will avoid the "banding" effect that appears when the coloring is based only on the iterations count
-  const quantity = (LOGLOG2 - Math.log(Math.log(modulus(zn)))) / Math.log(d);
-  return (iterations + quantity) / maxIterations;
-};
-
-export const orbitTrapMandelbar = (u, trap, d = 3, maxIterations = 100) => {
-  let zn = complex(0, 0);
-  let iterations = 0;
-  let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
-  while (squaredMagnitude <= 4 && iterations < maxIterations) {
-    zn = conjugate(zn, zn);
-    zn = powN(zn, d, zn);
-    zn = add(zn, u, zn);
-
-    // if the point is trapped, we return the interpolated value from the trap
-    if (trap.isTrapped(zn)) {
-      return trap.interpolateTrap(zn);
+      squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
+      iterations++;
     }
 
-    squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
-    iterations++;
-  }
+    // the number of iterations represent the "speed" at which the magnitude of the zₙ
+    // sequence exceeds the bailout radius
+    return iterations / maxIterations;
+  };
+};
 
-  return trap.untrappedValue;
+export const makeContinousMandelbar = (d = 3, bailout = 2, maxIterations = 100) => {
+  const invLogD = 1 / Math.log(d);
+  const logBailout = Math.log(bailout);
+  const squaredBailout = bailout * bailout;
+
+  return (u) => {
+    let zn = complex(0, 0);
+    let iterations = 0;
+    let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
+    while (squaredMagnitude <= squaredBailout && iterations < maxIterations) {
+      zn = conjugate(zn, zn);
+      zn = powN(zn, d, zn);
+      zn = add(zn, u, zn);
+
+      squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
+      iterations++;
+    }
+
+    if (iterations === maxIterations) {
+      return 1;
+    }
+
+    // the number of iterations is normalized to produce a continuous value
+    // that will avoid the "banding" effect that appears when the coloring is based only on the iterations count
+    const quantity = 1 + invLogD * Math.log(logBailout / Math.log(modulus(zn)));
+    return (iterations + quantity) / maxIterations;
+  };
+};
+
+export const makeOrbitTrapMandelbar = (trap, d = 3, bailout = 2, maxIterations = 100) => {
+  const squaredBailout = bailout * bailout;
+
+  return (u) => {
+    let zn = complex(0, 0);
+    let iterations = 0;
+    let squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
+    while (squaredMagnitude <= squaredBailout && iterations < maxIterations) {
+      zn = conjugate(zn, zn);
+      zn = powN(zn, d, zn);
+      zn = add(zn, u, zn);
+
+      // if the point is trapped, we return the interpolated value from the trap
+      if (trap.isTrapped(zn)) {
+        return trap.interpolateTrap(zn);
+      }
+
+      squaredMagnitude = zn.re*zn.re + zn.im*zn.im;
+      iterations++;
+    }
+
+    return trap.untrappedValue;
+  };
 };
 
 export const MANDELBAR_DOMAIN = {

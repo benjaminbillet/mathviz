@@ -37,6 +37,15 @@ export const readImage = async (path) => {
   });
 };
 
+export const readImageBuffer = async (path, scale = 1) => {
+  const image = await readImage(path).getImage().data;
+  if (scale === 1) {
+    return image;
+  }
+  const buffer = new Float32Array(image.length);
+  image.forEach((x, i) => buffer[i] = x / scale);
+};
+
 
 export const mapPixelToDomain = (x, y, width, height, domain) => {
   const domainWidth = domain.xmax - domain.xmin;
@@ -133,6 +142,10 @@ export const normalizeBuffer = (buffer, width, height, factor = 1) => {
     min = Math.min(min, r, g, b);
     max = Math.max(max, r, g, b);
   });
+
+  if (min === max) {
+    return buffer;
+  }
 
   forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => {
     buffer[idx + 0] = ((r - min) / (max - min)) * factor;

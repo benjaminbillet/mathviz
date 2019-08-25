@@ -2,52 +2,67 @@ import { buildConstrainedColorMap, makeColorMapFunction } from '../utils/color';
 import { mkdirs } from '../utils/fs';
 import { plotFunction } from './util';
 import { readImage, getPictureSize } from '../utils/picture';
-import { mandelbrot, MANDELBROT_DOMAIN, continuousMandelbrot, orbitTrapMandelbrot, MULTIBROT_DOMAIN } from '../fractalsets/mandelbrot';
+import { MANDELBROT_DOMAIN, MULTIBROT_DOMAIN, makeStripeAverageMandelbrotLinear, makeContinousMandelbrot, makeMandelbrot, makeOrbitTrapMandelbrot } from '../fractalsets/mandelbrot';
 import { makeBitmapTrap } from '../fractalsets/trap';
 import { zoomDomain } from '../utils/domain';
+import { MANDELBROT } from '../utils/palette';
 
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/mandelbrot`;
 mkdirs(OUTPUT_DIRECTORY);
 
-const TRAP_IMAGE = `${__dirname}/ada.png`;
+const TRAP_IMAGE = `${__dirname}/ada-big.png`;
 
 
 const colormap = buildConstrainedColorMap(
-  [ [ 0, 7, 100 ], [ 32, 107, 203 ], [ 237, 255, 255 ], [ 255, 170, 0 ], [ 0, 2, 0 ], [ 0, 7, 0 ] ],
+  MANDELBROT,
   [ 0, 0.16, 0.42, 0.6425, 0.8575, 1 ],
 );
-const colorfunc = makeColorMapFunction(colormap);
+const colorfunc = makeColorMapFunction(colormap, 255);
+
+const size = 2048;
 
 
-const plotMandelbrot = async (d, maxIterations, domain, suffix = '') => {
-  const [ width, height ] = getPictureSize(1024, domain);
-  const configuredMandelbrot = (z) => mandelbrot(z, d, maxIterations);
+const plotMandelbrot = async (d, bailout, maxIterations, domain, suffix = '') => {
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredMandelbrot = makeMandelbrot(d, bailout, maxIterations);
   await plotFunction(`${OUTPUT_DIRECTORY}/mandelbrot-d=${d}${suffix}.png`, width, height, configuredMandelbrot, domain, colorfunc);
 };
 
-const plotContinuousMandelbrot = async (d, maxIterations, domain, suffix = '') => {
-  const [ width, height ] = getPictureSize(1024, domain);
-  const configuredMandelbrot = (z) => continuousMandelbrot(z, d, maxIterations);
+const plotContinuousMandelbrot = async (d, bailout, maxIterations, domain, suffix = '') => {
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredMandelbrot = makeContinousMandelbrot(d, bailout, maxIterations);
   await plotFunction(`${OUTPUT_DIRECTORY}/mandelbrot-d=${d}${suffix}-continuous.png`, width, height, configuredMandelbrot, domain, colorfunc);
 };
 
-const plotBitmapTrapMandelbrot = async (bitmapPath, trapSize, d, maxIterations, domain, suffix = '') => {
-  const bitmap = await readImage(bitmapPath);
-  const trap = makeBitmapTrap(bitmap.getImage().data, bitmap.getWidth(), bitmap.getHeight(), trapSize, trapSize, 0, 0);
-
-  const [ width, height ] = getPictureSize(1024, domain);
-  const configuredMandelbrot = (z) => orbitTrapMandelbrot(z, trap, d, maxIterations);
-  await plotFunction(`${OUTPUT_DIRECTORY}/mandelbrot-d=${d}${suffix}-trap.png`, width, height, configuredMandelbrot, domain, colorfunc);
+const plotAverageStripeMandelbrot = async (d, bailout, maxIterations, stripeDensity, domain, suffix = '') => {
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredMandelbrot = makeStripeAverageMandelbrotLinear(d, bailout, maxIterations, stripeDensity);
+  await plotFunction(`${OUTPUT_DIRECTORY}/mandelbrot-d=${d}${suffix}-stripe.png`, width, height, configuredMandelbrot, domain, colorfunc);
 };
 
-plotMandelbrot(2, 100, MANDELBROT_DOMAIN);
-plotMandelbrot(2, 100, zoomDomain(MANDELBROT_DOMAIN, -1.41, 0, 128), '-zoom');
-plotMandelbrot(4, 100, MULTIBROT_DOMAIN);
+const plotBitmapTrapMandelbrot = async (bitmapPath, trapSize, d, bailout, maxIterations, domain, suffix = '') => {
+  const bitmap = await readImage(bitmapPath);
+  const bitmapBuffer = new Float32Array(bitmap.getWidth() * bitmap.getHeight() * 4);
+  bitmap.getImage().data.forEach((x, i) => bitmapBuffer[i] = x / 255);
+  const trap = makeBitmapTrap(bitmapBuffer, bitmap.getWidth(), bitmap.getHeight(), trapSize, trapSize, 0, 0);
 
-plotContinuousMandelbrot(2, 100, MANDELBROT_DOMAIN);
-plotContinuousMandelbrot(2, 100, zoomDomain(MANDELBROT_DOMAIN, -1.41, 0, 128), '-zoom');
-plotContinuousMandelbrot(4, 100, MULTIBROT_DOMAIN);
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredMandelbrot = makeOrbitTrapMandelbrot(trap, d, bailout, maxIterations);
+  await plotFunction(`${OUTPUT_DIRECTORY}/mandelbrot-d=${d}${suffix}-trap.png`, width, height, configuredMandelbrot, domain);
+};
 
-plotBitmapTrapMandelbrot(TRAP_IMAGE, 0.5, 2, 100, MANDELBROT_DOMAIN);
-plotBitmapTrapMandelbrot(TRAP_IMAGE, 1, 4, 100, MULTIBROT_DOMAIN);
+plotMandelbrot(2, 2, 100, MANDELBROT_DOMAIN);
+plotMandelbrot(2, 2, 100, zoomDomain(MANDELBROT_DOMAIN, -1.41, 0, 128), '-zoom');
+plotMandelbrot(4, 2, 100, MULTIBROT_DOMAIN);
+
+plotContinuousMandelbrot(2, 10, 100, MANDELBROT_DOMAIN);
+plotContinuousMandelbrot(2, 10, 100, zoomDomain(MANDELBROT_DOMAIN, -1.41, 0, 128), '-zoom');
+plotContinuousMandelbrot(4, 10, 100, MULTIBROT_DOMAIN);
+
+plotAverageStripeMandelbrot(2, 100, 1000, 10, MANDELBROT_DOMAIN);
+plotAverageStripeMandelbrot(2, 100, 1000, 10, zoomDomain(MANDELBROT_DOMAIN, -0.743644, 0.131826, 1000), '-zoom');
+plotAverageStripeMandelbrot(2, 100, 1000, 10, zoomDomain(MANDELBROT_DOMAIN, -0.743644, 0.131826, 300000), '-zoom2');
+
+plotBitmapTrapMandelbrot(TRAP_IMAGE, 0.5, 2, 2, 100, MANDELBROT_DOMAIN);
+plotBitmapTrapMandelbrot(TRAP_IMAGE, 1, 4, 2, 100, MULTIBROT_DOMAIN);

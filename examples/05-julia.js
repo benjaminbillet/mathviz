@@ -2,54 +2,73 @@ import { buildConstrainedColorMap, makeColorMapFunction } from '../utils/color';
 import { mkdirs } from '../utils/fs';
 import { plotFunction } from './util';
 import { readImage, getPictureSize } from '../utils/picture';
-import { julia, JULIA_DOMAIN, continuousJulia, orbitTrapJulia } from '../fractalsets/julia';
+import { JULIA_DOMAIN, makeJulia, makeOrbitTrapJulia, makeContinousJulia, makeStripeAverageJuliaLinear } from '../fractalsets/julia';
 import { makeBitmapTrap } from '../fractalsets/trap';
 import { complex } from '../utils/complex';
 import { zoomDomain } from '../utils/domain';
+import { MANDELBROT } from '../utils/palette';
 
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/julia`;
 mkdirs(OUTPUT_DIRECTORY);
 
-const TRAP_IMAGE = `${__dirname}/ada.png`;
+const TRAP_IMAGE = `${__dirname}/ada-big.png`;
 
 
 const colormap = buildConstrainedColorMap(
-  [ [ 0, 7, 100 ], [ 32, 107, 203 ], [ 237, 255, 255 ], [ 255, 170, 0 ], [ 0, 2, 0 ], [ 0, 7, 0 ] ],
+  MANDELBROT,
   [ 0, 0.16, 0.42, 0.6425, 0.8575, 1 ],
 );
-const colorfunc = makeColorMapFunction(colormap);
+const colorfunc = makeColorMapFunction(colormap, 255);
+
+const size = 2048;
 
 
-const plotJulia = async (c, d, maxIterations, domain, suffix = '') => {
-  const [ width, height ] = getPictureSize(1024, domain);
-  const configuredJulia = (z) => julia(z, c, d, maxIterations);
+const plotJulia = async (c, d, bailout, maxIterations, domain, suffix = '') => {
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredJulia = makeJulia(c, d, bailout, maxIterations);
   await plotFunction(`${OUTPUT_DIRECTORY}/julia-c=${c.re}+${c.im}i-d=${d}${suffix}.png`, width, height, configuredJulia, domain, colorfunc);
 };
 
-const plotContinuousJulia = async (c, d, maxIterations, domain, suffix = '') => {
-  const [ width, height ] = getPictureSize(1024, domain);
-  const configuredJulia = (z) => continuousJulia(z, c, d, maxIterations);
+const plotContinuousJulia = async (c, d, bailout, maxIterations, domain, suffix = '') => {
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredJulia = makeContinousJulia(c, d, bailout, maxIterations);
   await plotFunction(`${OUTPUT_DIRECTORY}/julia-c=${c.re}+${c.im}i-d=${d}${suffix}-continuous.png`, width, height, configuredJulia, domain, colorfunc);
 };
 
-const plotBitmapTrapJulia = async (bitmapPath, trapSize, c, d, maxIterations, domain, suffix = '') => {
-  const bitmap = await readImage(bitmapPath);
-  const trap = makeBitmapTrap(bitmap.getImage().data, bitmap.getWidth(), bitmap.getHeight(), trapSize, trapSize, 0, 0);
-
-  const [ width, height ] = getPictureSize(1024, domain);
-  const configuredJulia = (z) => orbitTrapJulia(z, c, trap, d, maxIterations);
-  await plotFunction(`${OUTPUT_DIRECTORY}/julia-c=${c.re}+${c.im}i-d=${d}${suffix}-trap.png`, width, height, configuredJulia, domain, colorfunc);
+const plotAverageStripeJulia = async (c, d, bailout, maxIterations, stripeDensity, domain, suffix = '') => {
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredJulia = makeStripeAverageJuliaLinear(c, d, bailout, maxIterations, stripeDensity);
+  await plotFunction(`${OUTPUT_DIRECTORY}/julia-c=${c.re}+${c.im}i-d=${d}${suffix}-stripe.png`, width, height, configuredJulia, domain, colorfunc);
 };
 
-plotJulia(complex(-0.761, 0.15), 2, 100, JULIA_DOMAIN);
-plotJulia(complex(-0.761, 0.15), 2, 200, zoomDomain(JULIA_DOMAIN, -0.5, 0.25, 128), '-zoom');
-plotJulia(complex(-0.584, 0.488), 3, 100, JULIA_DOMAIN);
+const plotBitmapTrapJulia = async (bitmapPath, trapSize, c, d, bailout, maxIterations, domain, suffix = '') => {
+  const bitmap = await readImage(bitmapPath);
+  const bitmapBuffer = new Float32Array(bitmap.getWidth() * bitmap.getHeight() * 4);
+  bitmap.getImage().data.forEach((x, i) => bitmapBuffer[i] = x / 255);
+  const trap = makeBitmapTrap(bitmapBuffer, bitmap.getWidth(), bitmap.getHeight(), trapSize, trapSize, 0, 0);
 
-plotContinuousJulia(complex(-0.761, 0.15), 2, 100, JULIA_DOMAIN);
-plotContinuousJulia(complex(-0.761, 0.15), 2, 200, zoomDomain(JULIA_DOMAIN, -0.5, 0.25, 128), '-zoom');
-plotContinuousJulia(complex(-0.584, 0.488), 3, 100, JULIA_DOMAIN);
+  const [ width, height ] = getPictureSize(size, domain);
+  const configuredJulia = makeOrbitTrapJulia(c, trap, d, bailout, maxIterations);
+  await plotFunction(`${OUTPUT_DIRECTORY}/julia-c=${c.re}+${c.im}i-d=${d}${suffix}-trap.png`, width, height, configuredJulia, domain);
+};
 
-plotBitmapTrapJulia(TRAP_IMAGE, 0.5, complex(-0.761, 0.15), 2, 100, JULIA_DOMAIN);
-plotBitmapTrapJulia(TRAP_IMAGE, 1, complex(-0.584, 0.488), 3, 100, JULIA_DOMAIN);
+plotJulia(complex(-0.761, 0.15), 2, 2, 100, JULIA_DOMAIN);
+plotJulia(complex(-0.761, 0.15), 2, 2, 200, zoomDomain(JULIA_DOMAIN, -0.5, 0.25, 128), '-zoom');
+plotJulia(complex(0.355, 0.355), 2, 2, 500, JULIA_DOMAIN);
+plotJulia(complex(0.355534, -0.337292), 2, 2, 1000, JULIA_DOMAIN);
+plotJulia(complex(-0.584, 0.488), 3, 2, 100, JULIA_DOMAIN);
+
+plotContinuousJulia(complex(-0.761, 0.15), 2, 10, 100, JULIA_DOMAIN);
+plotContinuousJulia(complex(-0.761, 0.15), 2, 10, 200, zoomDomain(JULIA_DOMAIN, -0.5, 0.25, 128), '-zoom');
+plotContinuousJulia(complex(-0.584, 0.488), 3, 10, 100, JULIA_DOMAIN);
+
+plotAverageStripeJulia(complex(-0.761, 0.15), 2, 100, 1000, 10, JULIA_DOMAIN);
+plotAverageStripeJulia(complex(-0.761, 0.15), 2, 100, 1000, 10,  zoomDomain(JULIA_DOMAIN, -0.5, 0.25, 128), '-zoom');
+plotAverageStripeJulia(complex(0.355, 0.355), 2, 100, 1000, 10, zoomDomain(JULIA_DOMAIN, -0.13, 0.48, 4), '-zoom');
+// note: this one is very long to compute, because a lot of points are divergent
+plotAverageStripeJulia(complex(0.355534, -0.337292), 2, 100, 5000, 10, zoomDomain(JULIA_DOMAIN, 0.14, -0.46, 4), '-zoom');
+
+plotBitmapTrapJulia(TRAP_IMAGE, 0.5, complex(-0.761, 0.15), 2, 2, 100, JULIA_DOMAIN);
+plotBitmapTrapJulia(TRAP_IMAGE, 1, complex(-0.584, 0.488), 3, 2, 100, JULIA_DOMAIN);
 
