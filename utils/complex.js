@@ -172,6 +172,27 @@ export const sqrt = (z, out = undefined) => {
   return out;
 };
 
+export const sin = (z, out = undefined) => {
+  if (out == null) {
+    out = complex();
+  }
+  const re = z.re;
+  const im = z.im;
+  out.re = Math.sin(re) * Math.cosh(im);
+  out.im = Math.cos(re) * Math.sinh(im);
+  return out;
+};
+
+export const cos = (z, out = undefined) => {
+  if (out == null) {
+    out = complex();
+  }
+  const re = z.re;
+  const im = z.im;
+  out.re = Math.cos(re) * Math.cosh(im);
+  out.im = Math.sin(re) * Math.sinh(im);
+  return out;
+};
 
 export class ImmutableComplex {
   constructor(re, im) {

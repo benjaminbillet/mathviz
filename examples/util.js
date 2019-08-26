@@ -5,15 +5,16 @@ import { applyContrastBasedScalefactor, applyLinearScalefactor, convertUnitToRGB
 import { complex } from '../utils/complex';
 import { BI_UNIT_DOMAIN, scaleDomain } from '../utils/domain';
 import { performClahe } from '../utils/histogram';
-import { forEachPixel, mapPixelToDomain, saveImageBuffer, normalizeBuffer } from '../utils/picture';
+import { forEachPixel, mapPixelToDomain, saveImageBuffer, readImage, normalizeBuffer } from '../utils/picture';
 import { withinPolygon } from '../utils/polygon';
 import { randomComplex, randomIntegerWeighted } from '../utils/random';
 import { expandPalette, getBigQualitativePalette, MAVERICK } from '../utils/palette';
 import { estimateAttractorDomain } from '../attractors/plot';
+import { downscale } from '../utils/downscale';
 
 
-export const plotFunction = async (path, width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null) => {
-  let buffer = new Float32Array(width * height * 4);
+export const plotFunctionBuffer = (width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null) => {
+  const buffer = new Float32Array(width * height * 4);
 
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
@@ -44,9 +45,33 @@ export const plotFunction = async (path, width, height, f, domain = BI_UNIT_DOMA
     });
   }
 
-  buffer = convertUnitToRGBA(buffer);
+  return buffer;
+};
 
+export const plotFunction = async (path, width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null) => {
+  let buffer = plotFunctionBuffer(width, height, f, domain, colorfunc);
+  buffer = convertUnitToRGBA(buffer);
   await saveImageBuffer(buffer, width, height, path);
+};
+
+export const plotFunctionClahe = async (path, width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null) => {
+  const buffer = plotFunctionBuffer(width, height, f, domain);
+
+  // convert into a single channel grayscale picture
+  const newBuffer = new Uint8Array(width * height);
+  forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => newBuffer[idx / 4] = r * 255);
+
+  performClahe(newBuffer, width, height, newBuffer, 16, 16, 256, 128);
+
+  // convert back into a colorized rgba image
+  await saveImageBuffer(newBuffer.reduce((result, val, i) => {
+    const color = colorfunc(val / 255);
+    result[i * 4 + 0] = color[0] * 255;
+    result[i * 4 + 1] = color[1] * 255;
+    result[i * 4 + 2] = color[2] * 255;
+    result[i * 4 + 3] = 255;
+    return result;
+  }, new Uint8Array(width * height * 4)), width, height, path);
 };
 
 export const plotWalk = async (path, width, height, walk, domain = BI_UNIT_DOMAIN, nbIterations = 10000) => {
@@ -237,4 +262,17 @@ export const plotAutoscaledAttractor = async (
 
   // and we plot
   plotAttractor(path, width, height, attractor, initialPointPicker, colorFunc, nbIterations, domain);
+};
+
+export const downsampleImage = async (inputPath, outputPath, factor = 1) => {
+  const inputImage = await readImage(inputPath);
+  const input = new Float32Array(inputImage.getWidth() * inputImage.getHeight() * 4);
+  inputImage.getImage().data.forEach((x, i) => input[i] = x / 255);
+
+  const downscaleFactor = 1 / factor;
+  const outputWidth = Math.trunc(downscaleFactor * inputImage.getWidth());
+  const outputHeight = Math.trunc(downscaleFactor * inputImage.getHeight());
+
+  const resizedBuffer = downscale(input, inputImage.getWidth(), inputImage.getHeight(), downscaleFactor);
+  await saveImageBuffer(convertUnitToRGBA(resizedBuffer), outputWidth, outputHeight, outputPath);
 };
