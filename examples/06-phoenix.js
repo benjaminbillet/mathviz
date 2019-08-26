@@ -38,8 +38,8 @@ const plotContinuousPhoenix = async (c, p, d, bailout, maxIterations, domain, su
 
 const plotAverageStripePhoenix = async (c, p, d, bailout, maxIterations, stripeDensity, domain, suffix = '') => {
   const [ width, height ] = getPictureSize(size, domain);
-  const configuredJulia = makeStripeAveragePhoenixLinear(c, p, d, bailout, maxIterations, stripeDensity);
-  await plotFunction(`${OUTPUT_DIRECTORY}/phoenix-c=${c.re}+${c.im}i-d=${d}${suffix}-stripe.png`, width, height, configuredJulia, domain, colorfunc);
+  const configuredPhoenix = makeStripeAveragePhoenixLinear(c, p, d, bailout, maxIterations, stripeDensity);
+  await plotFunction(`${OUTPUT_DIRECTORY}/phoenix-c=${c.re}+${c.im}i-d=${d}${suffix}-stripe.png`, width, height, configuredPhoenix, domain, colorfunc);
 };
 
 const plotBitmapTrapPhoenix = async (bitmapPath, trapSize, c, p, d, bailout, maxIterations, domain, suffix = '') => {

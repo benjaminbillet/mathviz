@@ -38,8 +38,8 @@ const plotContinuousRationalMap = async (c, lambda, p, q, bailout, maxIterations
 
 const plotAverageStripeRationalMap = async (c, lambda, p, q, bailout, maxIterations, stripeDensity, domain, suffix = '') => {
   const [ width, height ] = getPictureSize(size, domain);
-  const configuredJulia = makeStripeAverageRationalMapLinear(c, lambda, p, q, bailout, maxIterations, stripeDensity);
-  await plotFunction(`${OUTPUT_DIRECTORY}/rationalmap-c=${c.re}+${c.im}i-λ=${lambda.re}+${lambda.im}i-p=${p}-q=${q}${suffix}-stripe.png`, width, height, configuredJulia, domain, colorfunc);
+  const configuredRationalMap = makeStripeAverageRationalMapLinear(c, lambda, p, q, bailout, maxIterations, stripeDensity);
+  await plotFunction(`${OUTPUT_DIRECTORY}/rationalmap-c=${c.re}+${c.im}i-λ=${lambda.re}+${lambda.im}i-p=${p}-q=${q}${suffix}-stripe.png`, width, height, configuredRationalMap, domain, colorfunc);
 };
 
 const plotBitmapTrapRationalMap = async (bitmapPath, trapSize, c, lambda, p, q, bailout, maxIterations, domain, suffix = '') => {
