@@ -4,6 +4,8 @@ import { plotIfs } from './util';
 import { makeHeighwayDragonIfs, HEIGHWAY_DRAGON_DOMAIN, GOLDEN_DRAGON_DOMAIN, FUDGEFLAKE_DOMAIN, TERDRAGON_DOMAIN, TWIN_DRAGON_DOMAIN, makeTwinDragonIfs, makeTerdragonIfs, makeFudgeFlake, makeGoldenDragonIfs } from '../ifs/heighway-dragon';
 import * as affine from '../utils/affine';
 import { compose2dRandomizedFunctions, compose2dFunctions } from '../utils/misc';
+import { TWONDRAGON_DOMAIN, makeTwondragon } from '../ifs/twondragon';
+import { scaleDomain } from '../utils/domain';
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/ifs`;
 mkdirs(OUTPUT_DIRECTORY);
@@ -14,6 +16,11 @@ plotIfs(`${OUTPUT_DIRECTORY}/twin-dragon.png`, 2048, 2048, makeTwinDragonIfs(), 
 plotIfs(`${OUTPUT_DIRECTORY}/terdragon.png`, 2048, 2048, makeTerdragonIfs(), 10000, 10000, makeIdentity(), TERDRAGON_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/fudgeflake.png`, 2048, 2048, makeFudgeFlake(), 10000, 10000, makeIdentity(), FUDGEFLAKE_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/golden-dragon.png`, 2048, 2048, makeGoldenDragonIfs(), 10000, 10000, makeIdentity(), GOLDEN_DRAGON_DOMAIN);
+
+for (let i = 2; i <= 5; i++) {
+  plotIfs(`${OUTPUT_DIRECTORY}/twondragon-s=${i}.png`, 2048, 2048, makeTwondragon(i), 10000, 10000, makeIdentity(), TWONDRAGON_DOMAIN);
+}
+plotIfs(`${OUTPUT_DIRECTORY}/twondragon-mandelbrot4-s=3.png`, 2048, 2048, makeTwondragon(3), 10000, 10000, makeIteratedMandelbrotFunction(4, 5), scaleDomain(TWONDRAGON_DOMAIN, 0.5));
 
 
 // compose 4 rotations into a single transformation
