@@ -43,10 +43,8 @@ const plotAverageStripeRationalMap = async (c, lambda, p, q, bailout, maxIterati
 };
 
 const plotBitmapTrapRationalMap = async (bitmapPath, trapSize, c, lambda, p, q, bailout, maxIterations, domain, suffix = '') => {
-  const bitmap = await readImage(bitmapPath);
-  const bitmapBuffer = new Float32Array(bitmap.getWidth() * bitmap.getHeight() * 4);
-  bitmap.getImage().data.forEach((x, i) => bitmapBuffer[i] = x / 255);
-  const trap = makeBitmapTrap(bitmapBuffer, bitmap.getWidth(), bitmap.getHeight(), trapSize, trapSize, 0, 0);
+  const bitmap = await readImage(bitmapPath, 255);
+  const trap = makeBitmapTrap(bitmap.buffer, bitmap.width, bitmap.height, trapSize, trapSize, 0, 0);
 
   const [ width, height ] = getPictureSize(size, domain);
   const configuredRationalMap = makeOrbitTrapRationalMap(c, lambda, trap, p, q, bailout, maxIterations);

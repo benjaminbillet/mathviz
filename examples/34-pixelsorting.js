@@ -1,4 +1,4 @@
-import { saveImageBuffer, readImage2, forEachPixel } from '../utils/picture';
+import { saveImageBuffer, readImage, forEachPixel } from '../utils/picture';
 import { convertUnitToRGBA, getLuminance, getLuminance2, getLuminance3 } from '../utils/color';
 import { mkdirs } from '../utils/fs';
 import { applyPixelARGBSortingBitmap, applyPixelARGBSortingLuminance, applyPixelARGBSortingWhite, applyPixelARGBSortingBlack, SortMode } from '../effects/pixelsorting';
@@ -7,7 +7,7 @@ import { random, setRandomSeed } from '../utils/random';
 
 const applyEffect = async (effect, sourcePath, outputPath, seed = 10) => {
   setRandomSeed(seed); // make sure all effects use the same random generation sequence
-  const { width, height, buffer } = await readImage2(sourcePath, 255);
+  const { width, height, buffer } = await readImage(sourcePath, 255);
   const output = convertUnitToRGBA(effect(buffer, width, height));
   saveImageBuffer(output, width, height, outputPath);
 };

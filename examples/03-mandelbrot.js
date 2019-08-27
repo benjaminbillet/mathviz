@@ -1,7 +1,7 @@
 import { buildConstrainedColorMap, makeColorMapFunction } from '../utils/color';
 import { mkdirs } from '../utils/fs';
 import { plotFunction } from './util';
-import { readImage, getPictureSize } from '../utils/picture';
+import { getPictureSize, readImage } from '../utils/picture';
 import { MANDELBROT_DOMAIN, MULTIBROT_DOMAIN, makeStripeAverageMandelbrotLinear, makeContinousMandelbrot, makeMandelbrot, makeOrbitTrapMandelbrot } from '../fractalsets/mandelbrot';
 import { makeBitmapTrap } from '../fractalsets/trap';
 import { zoomDomain } from '../utils/domain';
@@ -42,10 +42,8 @@ const plotAverageStripeMandelbrot = async (d, bailout, maxIterations, stripeDens
 };
 
 const plotBitmapTrapMandelbrot = async (bitmapPath, trapSize, d, bailout, maxIterations, domain, suffix = '') => {
-  const bitmap = await readImage(bitmapPath);
-  const bitmapBuffer = new Float32Array(bitmap.getWidth() * bitmap.getHeight() * 4);
-  bitmap.getImage().data.forEach((x, i) => bitmapBuffer[i] = x / 255);
-  const trap = makeBitmapTrap(bitmapBuffer, bitmap.getWidth(), bitmap.getHeight(), trapSize, trapSize, 0, 0);
+  const bitmap = await readImage(bitmapPath, 255);
+  const trap = makeBitmapTrap(bitmap.buffer, bitmap.width, bitmap.height, trapSize, trapSize, 0, 0);
 
   const [ width, height ] = getPictureSize(size, domain);
   const configuredMandelbrot = makeOrbitTrapMandelbrot(trap, d, bailout, maxIterations);

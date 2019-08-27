@@ -265,14 +265,12 @@ export const plotAutoscaledAttractor = async (
 };
 
 export const downsampleImage = async (inputPath, outputPath, factor = 1) => {
-  const inputImage = await readImage(inputPath);
-  const input = new Float32Array(inputImage.getWidth() * inputImage.getHeight() * 4);
-  inputImage.getImage().data.forEach((x, i) => input[i] = x / 255);
+  const inputImage = await readImage(inputPath, 255);
 
   const downscaleFactor = 1 / factor;
-  const outputWidth = Math.trunc(downscaleFactor * inputImage.getWidth());
-  const outputHeight = Math.trunc(downscaleFactor * inputImage.getHeight());
+  const outputWidth = Math.trunc(downscaleFactor * inputImage.width);
+  const outputHeight = Math.trunc(downscaleFactor * inputImage.height);
 
-  const resizedBuffer = downscale(input, inputImage.getWidth(), inputImage.getHeight(), downscaleFactor);
+  const resizedBuffer = downscale(inputImage.buffer, inputImage.width, inputImage.height, downscaleFactor);
   await saveImageBuffer(convertUnitToRGBA(resizedBuffer), outputWidth, outputHeight, outputPath);
 };

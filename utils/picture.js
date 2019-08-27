@@ -25,19 +25,7 @@ export const saveImageBuffer = async (buffer, width, height, path) => {
   await saveImage(image, path);
 };
 
-export const readImage = async (path) => {
-  return new Promise((resolve, reject) => {
-    PngImage.readImage(path, (err, image) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(image);
-      }
-    });
-  });
-};
-
-export const readImage2 = async (path, scale = 1) => {
+export const readImage = async (path, scale = 1) => {
   return new Promise((resolve, reject) => {
     PngImage.readImage(path, (err, image) => {
       if (err) {
@@ -58,15 +46,6 @@ export const readImage2 = async (path, scale = 1) => {
       }
     });
   });
-};
-
-export const readImageBuffer = async (path, scale = 1) => {
-  const image = await readImage(path).getImage().data;
-  if (scale === 1) {
-    return image;
-  }
-  const buffer = new Float32Array(image.length);
-  image.forEach((x, i) => buffer[i] = x / scale);
 };
 
 

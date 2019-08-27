@@ -1,4 +1,4 @@
-import { readImage, saveImageBuffer, normalizeBuffer } from '../utils/picture';
+import { saveImageBuffer, readImage } from '../utils/picture';
 import { convertUnitToRGBA } from '../utils/color';
 import { mkdirs } from '../utils/fs';
 import { applyScanlineError } from '../effects/scanlineError';
@@ -29,17 +29,8 @@ import { applyRasteroid } from '../effects/rasteroid';
 
 const applyEffect = async (effect, sourcePath, outputPath, seed = 10) => {
   setRandomSeed(seed); // make sure all effects use the same random generation sequence
-
-  const image = await readImage(sourcePath);
-  const width = image.getWidth();
-  const height = image.getHeight();
-  let input = image.getImage().data;
-
-  // create a normalized copy of the input image
-  input = new Float32Array(input);
-  normalizeBuffer(input, width, height);
-
-  const output = convertUnitToRGBA(effect(input, width, height));
+  const { width, height, buffer } = await readImage(sourcePath, 255);
+  const output = convertUnitToRGBA(effect(buffer, width, height));
   await saveImageBuffer(output, width, height, outputPath);
 };
 
