@@ -37,6 +37,29 @@ export const readImage = async (path) => {
   });
 };
 
+export const readImage2 = async (path, scale = 1) => {
+  return new Promise((resolve, reject) => {
+    PngImage.readImage(path, (err, image) => {
+      if (err) {
+        reject(err);
+      } else {
+        const width = image.getWidth();
+        const height = image.getHeight();
+        const imageData = image.getImage().data;
+
+        let buffer = imageData;
+        if (scale != 1) {
+          buffer = new Float32Array(imageData.length);
+          imageData.forEach((x, i) => buffer[i] = x / scale);
+        }
+
+        const result = { width, height, buffer };
+        resolve(result);
+      }
+    });
+  });
+};
+
 export const readImageBuffer = async (path, scale = 1) => {
   const image = await readImage(path).getImage().data;
   if (scale === 1) {
