@@ -108,7 +108,7 @@ export const getBrightness = (r, g, b) => {
 
 
 export const convertUnitToRGBA = (buffer) => {
-  let newBuffer = new Uint8Array(buffer.length);
+  const newBuffer = new Uint8Array(buffer.length);
   buffer.forEach((x, i) => {
     if ((i+1) % 4 === 0) {
       newBuffer[i] = 255;
