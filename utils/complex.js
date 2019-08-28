@@ -127,6 +127,18 @@ export const pow = (z1, z2, out = undefined) => {
   return out;
 };
 
+export const log = (z, out = undefined) => {
+  if (out == null) {
+    out = complex();
+  }
+  const logr = logModulus(z);
+  const arg = math.atan2(z.im, z.re);
+
+  out.re = logr;
+  out.im = arg;
+  return out;
+};
+
 export const reciprocal = (z, out = undefined) => {
   if (out == null) {
     out = complex();
