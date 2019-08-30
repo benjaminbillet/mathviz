@@ -38,6 +38,41 @@ export const zoomDomain = (domain, centerX = 0, centerY = 0, scale = 1) => {
   };
 };
 
+export const symmetrizeDomain = (domain) => {
+  let { xmin, xmax, ymin, ymax } = domain;
+  //if ((xmin > 0 && xmax < 0) || (xmin < 0 && xmax > 0)) {
+    xmax = Math.max(Math.abs(xmin), xmax);
+    xmin = -xmax;
+  //}
+
+  //if ((ymin > 0 && ymax < 0) || (ymin < 0 && ymax > 0)) {
+    ymax = Math.max(Math.abs(ymin), ymax);
+    ymin = -ymax;
+  //}
+  return { xmin, ymin, xmax, ymax };
+};
+
+export const adjustDomainRatio = (domain, expectedRatio) => {
+  const width = domain.xmax - domain.xmin;
+  const height = domain.ymax - domain.ymin;
+  const currentRatio = width / height;
+  const delta = expectedRatio / currentRatio;
+  if (width > height) {
+    return {
+      ...domain,
+      ymin: domain.ymin * delta,
+      ymax: domain.ymax * delta,
+    };
+  } else if (width < height) {
+    return {
+      ...domain,
+      xmin: domain.xmin * delta,
+      xmax: domain.xmax * delta,
+    };
+  }
+  return domain;
+};
+
 /* export const mapDomain = (x, y, sourceDomain, destinationDomain) => {
   const sourceDomainWidth = sourceDomain.xmax - sourceDomain.xmin;
   const sourceDomainHeight = sourceDomain.ymax - sourceDomain.ymin;

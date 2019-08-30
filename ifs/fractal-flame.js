@@ -61,20 +61,16 @@ export const makeMixedColorSteal = (colors, maxDistance, maxIterations, w1 = 0.5
 };
 
 export const plotFlame = (
-  output,
-  width,
-  height,
   transforms,
   randomInt,
   colors,
+  plotter,
   initialPointPicker = randomComplex,
   finalTransform = makeIdentity(),
   nbPoints = 1000,
   nbIterations = 10000,
-  domain = BI_UNIT_DOMAIN,
   resetIfOverflow = false,
   colorMerge = mixColorLinear,
-  additiveColors = true,
 ) => {
   for (let i = 0; i < nbPoints; i++) {
     let z = initialPointPicker(); // pick an initial point
@@ -91,56 +87,33 @@ export const plotFlame = (
       // ... and a final transform that will not be part of the iteration...
       const fz = finalTransform(z);
 
-      // ... then the transformed value is mapped to the pixel domain
-      const [ fx, fy ] = mapDomainToPixel(fz.re, fz.im, domain, width, height);
-
-      // pixels outside the image are discarded and we jump to another point
-      if (fx < 0 || fy < 0 || fx >= width || fy >= height) {
-        if (resetIfOverflow) {
-          z = initialPointPicker();
-        }
-        continue;
-      }
-
       // each selected function contribute to the color of this iteration
       pixelColor = colorMerge(color, pixelColor);
 
-      // the buffer is 1-dimensional and each pixel has 4 components (r, g, b, a)
-      const idx = (fx + fy * width) * 4;
+      // we draw the pixel (the returned value is the pixel coordinate array)
+      const mapped = plotter(fz, pixelColor);
 
-      if (additiveColors) {
-        // the iterated color is added to the current color; be careful, it means that you
-        // will need some postprocessing in order to get the actual colors
-        output[idx + 0] += pixelColor[0];
-        output[idx + 1] += pixelColor[1];
-        output[idx + 2] += pixelColor[2];
-      } else {
-        output[idx + 0] = pixelColor[0];
-        output[idx + 1] = pixelColor[1];
-        output[idx + 2] = pixelColor[2];
+      // pixels that are outside the image (i.e., the plotter returned null) are not plotted
+      // and we escape by jumping to another point
+      if (mapped == null && resetIfOverflow) {
+        z = initialPointPicker();
       }
-      // the alpha channel is hacked to store how many times the pixel was drawn
-      output[idx + 3] += 1;
     }
   }
 };
 
 export const plotFlameWithColorStealing = (
-  output,
-  width,
-  height,
   transforms,
   randomInt,
   colorFunc,
+  plotter,
   preFinalColor = false,
   initialPointPicker = randomComplex,
   finalTransform = makeIdentity(),
   nbPoints = 1000,
   nbIterations = 10000,
-  domain = BI_UNIT_DOMAIN,
   resetIfOverflow = false,
   colorMerge = mixColorLinear,
-  additiveColors = true,
 ) => {
   for (let i = 0; i < nbPoints; i++) {
     let z = initialPointPicker(); // pick an initial point
@@ -155,18 +128,6 @@ export const plotFlameWithColorStealing = (
       // ... and a final transform that will not be part of the iteration...
       const fz = finalTransform(z);
 
-      // ... then the transformed value is mapped to the pixel domain
-      const [ fx, fy ] = mapDomainToPixel(fz.re, fz.im, domain, width, height);
-
-      // pixels that are outside the image are discarded
-      // and we escape by jumping to another point
-      if (fx < 0 || fy < 0 || fx >= width || fy >= height) {
-        if (resetIfOverflow) {
-          z = initialPointPicker();
-        }
-        continue;
-      }
-
       // the color function takes a point and return the associated color
       let color = null;
       if (preFinalColor) {
@@ -178,22 +139,14 @@ export const plotFlameWithColorStealing = (
       // each color contribute to the color of this iteration
       pixelColor = colorMerge(color, pixelColor);
 
-      // the buffer is 1-dimensional and each pixel has 4 components (r, g, b, a)
-      const idx = (fx + fy * width) * 4;
+      // we draw the pixel (the returned value is the pixel coordinate array)
+      const mapped = plotter(fz, pixelColor);
 
-      if (additiveColors) {
-        // the iterated color is added to the current color; be careful, it means that you
-        // will need some postprocessing in order to get the actual colors
-        output[idx + 0] += pixelColor[0];
-        output[idx + 1] += pixelColor[1];
-        output[idx + 2] += pixelColor[2];
-      } else {
-        output[idx + 0] = pixelColor[0];
-        output[idx + 1] = pixelColor[1];
-        output[idx + 2] = pixelColor[2];
+      // pixels that are outside the image (i.e., the plotter returned null) are not plotted
+      // and we escape by jumping to another point
+      if (mapped == null && resetIfOverflow) {
+        z = initialPointPicker();
       }
-      // the alpha channel is hacked to store how many times the pixel was drawn
-      output[idx + 3] += 1;
     }
   }
 };

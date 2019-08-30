@@ -102,6 +102,17 @@ export const reflect = (horizontal = true, vertical = true) => {
   ]);
 };
 
+export const reflectAlong = (angle) => {
+  const m = math.tan(angle - Math.PI / 2);
+  const mm = m * m;
+  const c = 1 / (1 + mm);
+  return matrix([
+    [ c * (1 - mm), c * ( 2 * m), 0 ],
+    [ c * (2 * m),  c * (mm - 1), 0 ],
+    [ 0,            0,            1 ],
+  ]);
+};
+
 export const combine = (...matrices) => {
   return matrices.reduce((result, m) => mathmatrix.multiply(result, m), identity(3));
 };

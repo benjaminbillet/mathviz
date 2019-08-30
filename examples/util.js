@@ -11,6 +11,7 @@ import { randomComplex, randomIntegerWeighted } from '../utils/random';
 import { expandPalette, getBigQualitativePalette, MAVERICK } from '../utils/palette';
 import { estimateAttractorDomain } from '../attractors/plot';
 import { downscale } from '../utils/downscale';
+import { makeAdditiveBufferPlotter } from '../utils/plotter';
 
 
 export const plotFunctionBuffer = (width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null) => {
@@ -140,15 +141,25 @@ export const plotIfsFlame = async (
   resetIfOverflow = false,
   colorMerge = mixColorLinear,
   additiveColors = true,
+  wrapPlotter = null,
 ) => {
-  // we create a buffer and run the standard plotter
+  // we create a buffer and a standard plotter
   let buffer = new Float32Array(width * height * 4);
-  plotFlame(buffer, width, height, transforms, randomInt, colors, initialPointPicker, finalTransform, nbPoints, nbIterations, domain, resetIfOverflow, colorMerge, additiveColors);
+  let plotter = makeAdditiveBufferPlotter(buffer, width, height, domain);
+  if (additiveColors === false) {
+    plotter = makeBufferPlotter(buffer, width, height, domain);
+  }
+  if (wrapPlotter != null) {
+    plotter = wrapPlotter(plotter);
+  }
+
+  plotFlame(transforms, randomInt, colors, plotter, initialPointPicker, finalTransform, nbPoints, nbIterations, resetIfOverflow, colorMerge);
 
   // we correct the generated image using the contrast-based scalefactor technique
   let averageHits = 1;
   if (additiveColors) {
-    averageHits = Math.max(1, (nbPoints * nbIterations) / (width * height));
+    // averageHits = Math.max(1, (nbPoints * nbIterations) / (width * height));
+    averageHits = getAverageHits(buffer, width, height);
   }
 
   buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
@@ -172,6 +183,7 @@ export const plotIfs = async (
   domain = BI_UNIT_DOMAIN,
   initialPointPicker = randomComplex,
   colors = null,
+  wrapPlotter = null,
 ) => {
   const transforms = ifs.functions;
   const randomInt = randomIntegerWeighted(ifs.probabilities);
@@ -181,12 +193,18 @@ export const plotIfs = async (
     colors = colors.map(([ r, g, b ]) => [ r / 255, g / 255, b / 255 ]);
   }
 
-  // we create a buffer and run the standard plotter
+  // we create a buffer and a standard plotter
   let buffer = new Float32Array(width * height * 4);
-  plotFlame(buffer, width, height, transforms, randomInt, colors, initialPointPicker, finalTransform, nbPoints, nbIterations, domain);
+  let plotter = makeAdditiveBufferPlotter(buffer, width, height, domain);
+  if (wrapPlotter != null) {
+    plotter = wrapPlotter(plotter);
+  }
+
+  plotFlame(transforms, randomInt, colors, plotter, initialPointPicker, finalTransform, nbPoints, nbIterations);
 
   // we correct the generated image using the contrast-based scalefactor technique
-  const averageHits =  Math.max(1, (nbPoints * nbIterations) / (width * height));
+  // const averageHits =  Math.max(1, (nbPoints * nbIterations) / (width * height));
+  const averageHits = getAverageHits(buffer, width, height);
   buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
   // buffer = applyLinearScalefactor(buffer, width, height);
 
@@ -212,8 +230,9 @@ export const plotAttractor = async (
   colorFunc = () => [ 1, 1, 1 ],
   nbIterations = 1000000,
   domain = BI_UNIT_DOMAIN,
+  wrapPlotter = null,
 ) => {
-  plotAttractorMultipoint(path, width, height, attractor, initialPointPicker, colorFunc, 1, nbIterations, domain);
+  plotAttractorMultipoint(path, width, height, attractor, initialPointPicker, colorFunc, 1, nbIterations, domain, wrapPlotter);
 };
 
 export const plotAttractorMultipoint = async (
@@ -226,13 +245,20 @@ export const plotAttractorMultipoint = async (
   nbPoints = 10,
   nbIterations = 1000000,
   domain = BI_UNIT_DOMAIN,
+  wrapPlotter = null,
 ) => {
-  // we create a buffer and run the standard plotter
+  // we create a buffer and the standard plotter
   let buffer = new Float32Array(width * height * 4);
-  plotFlameWithColorStealing(buffer, width, height, [ attractor ], () => 0, colorFunc, false, initialPointPicker, makeIdentity(), nbPoints, nbIterations, domain);
+  let plotter = makeAdditiveBufferPlotter(buffer, width, height, domain);
+  if (wrapPlotter != null) {
+    plotter = wrapPlotter(plotter);
+  }
+
+  plotFlameWithColorStealing([ attractor ], () => 0, colorFunc, plotter, false, initialPointPicker, makeIdentity(), nbPoints, nbIterations);
 
   // we correct the generated image using the contrast-based scalefactor technique
-  const averageHits =  Math.max(1, nbIterations / (width * height));
+  // const averageHits = Math.max(1, nbIterations / (width * height));
+  const averageHits = getAverageHits(buffer, width, height);
   buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
 
   // we make sure that the colors are proper RGB
@@ -273,4 +299,14 @@ export const downsampleImage = async (inputPath, outputPath, factor = 1) => {
 
   const resizedBuffer = downscale(inputImage.buffer, inputImage.width, inputImage.height, downscaleFactor);
   await saveImageBuffer(convertUnitToRGBA(resizedBuffer), outputWidth, outputHeight, outputPath);
+};
+
+const getAverageHits = (buffer, width, height) => {
+  const sum = buffer.reduce((prev, cur, i) => {
+    if ((i + 1) % 4 === 0) {
+      return prev + cur;
+    }
+    return prev;
+  }, 0);
+  return Math.max(1, sum / (width * height));
 };
