@@ -1,4 +1,4 @@
-import { randomInteger, DefaultNormalDistribution, randomNormal } from '../utils/random';
+import { randomInteger, DefaultNormalDistribution, randomNormal, randomScalar } from '../utils/random';
 import { getLuminance } from '../utils/color';
 
 export const DefaultStrideDistribution = randomNormal(1, 0.05);
@@ -97,6 +97,52 @@ export const applyThreads2 = (input, width, height, density = 4, length = 4, per
 
       particles[i].x = x;
       particles[i].y = y;
+    }
+  }
+  return output;
+};
+
+export const applyCurlyThreads = (input, width, height, density = 4, length = 4, period = 1, strideDistribution = DefaultStrideDistribution) => {
+  const output = new Float32Array(input.length).fill(0);
+
+  const nbParticles = Math.max(width, height) * density;
+  const iterations = Math.trunc(Math.sqrt(Math.min(width, height)) * length);
+  for (let i = 0; i < nbParticles; i++) {
+    let x = randomInteger(0, width - 1);
+    let y = randomInteger(0, height - 1);
+    const stride = strideDistribution();
+
+    let idx = (x + y * width) * 4;
+    const r = input[idx + 0];
+    const g = input[idx + 1];
+    const b = input[idx + 2];
+
+    let theta = randomScalar(0, Math.PI * 2);
+    let thetaDecay = 0;
+    const thetaDecayDecay = randomScalar(0.00001, 0.001);
+
+    for (let j = 0; j < iterations; j++) {
+      // linear gradient [ 0 .. 1 .. 0 ] for path coloring
+      const exposure = 1 - Math.abs(1 - j / (iterations - 1) * 2);
+      output[idx + 0] += exposure * r;
+      output[idx + 1] += exposure * g;
+      output[idx + 2] += exposure * b;
+
+      // compute the luminance and introduce chaos
+      let luminance = getLuminance(input[idx + 0], input[idx + 1], input[idx + 2]);
+      luminance = luminance * Math.PI * 2 * period + theta;
+
+      // update orbit
+      theta += thetaDecay;
+      thetaDecay += thetaDecayDecay;
+
+      // modulo + negative number correction
+      x = (x + Math.sin(luminance) * stride) % width;
+      x = (x + width) % width;
+      y = (y + Math.cos(luminance) * stride) % height;
+      y = (y + height) % height;
+
+      idx = (Math.trunc(x) + Math.trunc(y) * width) * 4;
     }
   }
   return output;

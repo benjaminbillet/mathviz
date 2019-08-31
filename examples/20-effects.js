@@ -14,7 +14,7 @@ import { applyVoronoid } from '../effects/voronoid';
 import { applyVoroshard } from '../effects/voroshard';
 import { applyVortex } from '../effects/vortex';
 import { applyWormhole } from '../effects/wormhole';
-import { applyThreads, DefaultStrideDistribution, ChaoticBehavior, UnrulyBehavior, CrosshatchBehavior } from '../effects/threads';
+import { applyThreads, DefaultStrideDistribution, ChaoticBehavior, UnrulyBehavior, CrosshatchBehavior, applyCurlyThreads } from '../effects/threads';
 import { applyAgate } from '../effects/agate';
 import { manhattan2d, makeAkritean2d, makeMinkowski2d, manhattan, makeAkritean, makeMinkowski, euclidean2d } from '../utils/distance';
 import { applyColorSampling } from '../effects/colorSampling';
@@ -76,6 +76,7 @@ applyEffect(applyThreads, sourcePath, `${OUTPUT_DIRECTORY}/effect-threads-obedie
 applyEffect(configureEffect(applyThreads, 4, 4, 1, DefaultStrideDistribution, CrosshatchBehavior), sourcePath, `${OUTPUT_DIRECTORY}/effect-threads-crosshatch.png`);
 applyEffect(configureEffect(applyThreads, 4, 4, 1, DefaultStrideDistribution, ChaoticBehavior), sourcePath, `${OUTPUT_DIRECTORY}/effect-threads-chaotic.png`);
 applyEffect(configureEffect(applyThreads, 4, 4, 1, DefaultStrideDistribution, UnrulyBehavior), sourcePath, `${OUTPUT_DIRECTORY}/effect-threads-unruly.png`);
+applyEffect(applyCurlyThreads, sourcePath, `${OUTPUT_DIRECTORY}/effect-threads-curly.png`);
 
 applyEffect(applyAgate, sourcePath, `${OUTPUT_DIRECTORY}/effect-agate-euclidean.png`);
 applyEffect(configureEffect(applyAgate, manhattan), sourcePath, `${OUTPUT_DIRECTORY}/effect-agate-manhattan.png`);
