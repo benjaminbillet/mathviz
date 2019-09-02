@@ -26,6 +26,8 @@ import {
   AUTUMN,
   WOOD,
   BLUE_MOON,
+  SIERRA,
+  SKY,
 } from '../utils/palette';
 import { mkdirs } from '../utils/fs';
 
@@ -83,6 +85,8 @@ plotPalette(OPAL, 'opal');
 plotPalette(AUTUMN, 'autumn');
 plotPalette(WOOD, 'wood');
 plotPalette(BLUE_MOON, 'bluemoon');
+plotPalette(SIERRA, 'sierra');
+plotPalette(SKY, 'sky');
 
 // some custom extensible palettes
 plotPalette(getTolSequentialPalette(5), 'tol-sequential');

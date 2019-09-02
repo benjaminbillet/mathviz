@@ -1,5 +1,7 @@
 import * as approx from './approx';
 
+export const TWO_PI = Math.PI * 2;
+
 const mathFull = {
   sin: Math.sin,
   cos: Math.cos,
@@ -22,7 +24,7 @@ const mathApprox = {
   max: Math.max,
 };
 
-let currentMath = Object.assign({}, mathFull);
+const currentMath = Object.assign({}, mathFull);
 export default currentMath;
 
 export const enableMathApprox = () => {

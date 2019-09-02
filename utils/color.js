@@ -219,5 +219,8 @@ export const mixColorLinear = (color1, color2, amount = 0.5) => {
   ];
 };
 
+export const BLACK = [ 0, 0, 0 ];
+export const WHITE = [ 255, 255, 255 ];
+
 /** Common maps */
 export const RainbowColormap = buildColorMap([ [ 255, 0, 0 ], [ 0, 255, 0 ], [ 0, 0, 255 ] ]);
