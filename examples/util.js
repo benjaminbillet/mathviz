@@ -14,7 +14,7 @@ import { downscale } from '../utils/downscale';
 import { makeAdditiveBufferPlotter } from '../utils/plotter';
 
 
-export const plotFunctionBuffer = (width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null) => {
+export const plotFunctionBuffer = (width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null, normalize = true) => {
   const buffer = new Float32Array(width * height * 4);
 
   for (let i = 0; i < width; i++) {
@@ -36,7 +36,9 @@ export const plotFunctionBuffer = (width, height, f, domain = BI_UNIT_DOMAIN, co
   }
 
   if (colorfunc != null) {
-    normalizeBuffer(buffer, width, height);
+    if (normalize) {
+      normalizeBuffer(buffer, width, height);
+    }
 
     forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => {
       const color = colorfunc(r);
@@ -49,14 +51,14 @@ export const plotFunctionBuffer = (width, height, f, domain = BI_UNIT_DOMAIN, co
   return buffer;
 };
 
-export const plotFunction = async (path, width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null) => {
-  let buffer = plotFunctionBuffer(width, height, f, domain, colorfunc);
+export const plotFunction = async (path, width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null, normalize = true) => {
+  let buffer = plotFunctionBuffer(width, height, f, domain, colorfunc, normalize);
   buffer = convertUnitToRGBA(buffer);
   await saveImageBuffer(buffer, width, height, path);
 };
 
-export const plotFunctionClahe = async (path, width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null) => {
-  const buffer = plotFunctionBuffer(width, height, f, domain);
+export const plotFunctionClahe = async (path, width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null, normalize = true) => {
+  const buffer = plotFunctionBuffer(width, height, f, domain, normalize);
 
   // convert into a single channel grayscale picture
   const newBuffer = new Uint8Array(width * height);
