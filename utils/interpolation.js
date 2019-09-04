@@ -68,7 +68,7 @@ export const bicosine = (x, y, p00, p10, p01, p11) => {
   return bilinear(x, y, p00, p10, p01, p11);
 };
 
-export const cubic = (x, v1, v2, v3, v4) => {
+export const cubic = (x, v0, v1, v2, v3) => {
   const xSquared = x * x;
   const a0 = v3 - v2 - v0 + v1;
   const a1 = v0 - v1 - a0;
