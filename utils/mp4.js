@@ -2,8 +2,6 @@ import fs from 'fs';
 import { Converter } from 'ffmpeg-stream';
 import { saveImageBuffer } from './picture';
 import { mkdirs } from './fs';
-import * as Easing from './easing';
-
 
 export const buildAnimationAccumulator = (path, width, height, fps = 20, overwrite = false) => {
   const tmpFolder = `${path}.tmp`;

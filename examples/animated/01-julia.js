@@ -10,7 +10,6 @@ import { TWO_PI } from '../../utils/math';
 
 const OUTPUT_DIRECTORY = `${__dirname}/../../output/animated-julia`;
 mkdirs(OUTPUT_DIRECTORY);
-mkdirs(`${OUTPUT_DIRECTORY}/tmp`);
 
 const colormap = buildConstrainedColorMap(
   [ [ 0, 7, 100 ], [ 32, 107, 203 ], [ 237, 255, 255 ], [ 255, 170, 0 ], [ 0, 2, 0 ], [ 0, 7, 0 ] ],
@@ -20,9 +19,9 @@ const colorfunc = makeColorMapFunction(colormap, 255);
 
 const [ width, height ] = getPictureSize(1024, JULIA_DOMAIN);
 
-const functionToAnimate = async (v, i) => {
+const functionToAnimate = async (v, _, path) => {
   const configuredJulia = makeContinousJulia(complex(-1 + 0.3 * Math.sin(v), 0.3 * Math.cos(v)), 2, 10, 50);
-  await plotFunction(`${OUTPUT_DIRECTORY}/tmp/frame-${i}.png`, width, height, configuredJulia, JULIA_DOMAIN, colorfunc);
+  await plotFunction(path, width, height, configuredJulia, JULIA_DOMAIN, colorfunc);
 };
 
-animateFunction(functionToAnimate, 0, TWO_PI, Easing.linear, 100, `${OUTPUT_DIRECTORY}/tmp`, `${OUTPUT_DIRECTORY}/julia.mp4`, 20);
+animateFunction(functionToAnimate, 0, TWO_PI, Easing.linear, 100, OUTPUT_DIRECTORY, 'julia', 20);

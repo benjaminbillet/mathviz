@@ -23,8 +23,8 @@ export const compose2dRandomizedFunctions = (functions, randomIntFunction) => {
 
 export const shuffleArray = (a) => {
   for (let i = a.length - 1; i > 0; i--) {
-    let j = Math.trunc(random() * (i + 1));
-    let x = a[i];
+    const j = Math.trunc(random() * (i + 1));
+    const x = a[i];
     a[i] = a[j];
     a[j] = x;
   }
@@ -56,21 +56,20 @@ export const toParamsChainString = (obj) =>{
   }, null);
 };
 
-export const makeReservoirSampler = (k, f) => {
-  const reservoir = [];
-  let count = 0;
-
-  return (...args) => {
-    const result = f(...args);
-    count++;
-    if (reservoir.length < k) {
-      reservoir.push(result);
-    } else {
-      const x = randomInteger(0, count);
-      if (x < reservoir.length) {
-        reservoir[x] = result;
-      }
+export const makeLowCutFilter = (threshold, attenuatedValue = 0) => {
+  return (x) => {
+    if (x <= threshold) {
+      return attenuatedValue;
     }
-    return result;
+    return x;
+  };
+};
+
+export const makeHighCutFilter = (threshold, attenuatedValue = 0) => {
+  return (x) => {
+    if (x >= threshold) {
+      return attenuatedValue;
+    }
+    return x;
   };
 };
