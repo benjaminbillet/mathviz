@@ -23,7 +23,7 @@ plotAutoscaledAttractor(`${OUTPUT_DIRECTORY}/zaslavsky8.png`, 2048, 2048, makeZa
 
 
 // a simple perturbation function
-export const makePerturbator = (n = 500) => {
+const makePerturbator = (n = 500) => {
   let callCounter = 0;
   return (z) => {
     callCounter++;

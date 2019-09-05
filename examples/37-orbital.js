@@ -9,7 +9,7 @@ const OUTPUT_DIRECTORY = `${__dirname}/../output/orbital`;
 mkdirs(OUTPUT_DIRECTORY);
 
 
-export const makeBufferPlotter = (buffer, width, height) => {
+const makeBufferPlotter = (buffer, width, height) => {
   return (x, y, color, alpha) => {
     const idx = (Math.trunc(x) + Math.trunc(y) * width) * 4;
     const revAlpha = 1 - alpha;

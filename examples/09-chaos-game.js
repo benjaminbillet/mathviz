@@ -17,7 +17,7 @@ import { plotPolygon, plotWalk } from './util';
 const OUTPUT_DIRECTORY = `${__dirname}/../output/chaos-game`;
 mkdirs(OUTPUT_DIRECTORY);
 
-export const makePolygonRandomWalk = (polygon, jumpLength = 0.5) => {
+const makePolygonRandomWalk = (polygon, jumpLength = 0.5) => {
   // initialize the walk with a random point within the polygon
   let zn = randomComplex();
   while (withinPolygon(zn, polygon) === false) {
@@ -75,7 +75,7 @@ plotRestrictedPolygonRandomWalk(makePolygon(6));
 
 
 // if the two previous chosen positions are identical, we avoid jumping to neighbors
-export const customWalk = (polygon, jumpLength = 0.5) => {
+const customWalk = (polygon, jumpLength = 0.5) => {
   let zn = randomComplex();
   while (withinPolygon(zn, polygon) === false) {
     zn = randomComplex();
@@ -104,7 +104,7 @@ plotWalk(`${OUTPUT_DIRECTORY}/walk-custom-pentagon.png`, 1024, 1024, customWalk(
 plotWalk(`${OUTPUT_DIRECTORY}/walk-custom-hexagon.png`, 1024, 1024, customWalk(makePolygon(6)), BI_UNIT_DOMAIN, 10000000);
 
 
-export const customWalk2 = (polygon, jumpLength = 0.5) => {
+const customWalk2 = (polygon, jumpLength = 0.5) => {
   let zn = randomComplex();
   while (withinPolygon(zn, polygon) === false) {
     zn = randomComplex();
@@ -130,7 +130,7 @@ plotWalk(`${OUTPUT_DIRECTORY}/walk-custom2-hexagon.png`, 1024, 1024, customWalk2
 
 
 // http://paulbourke.net/fractals/star
-export const customWalk3 = (polygon) => {
+const customWalk3 = (polygon) => {
   let zn = complex(1, 1);
   return () => {
     const position = randomInteger(0, polygon.length);

@@ -206,6 +206,11 @@ export const cos = (z, out = undefined) => {
   return out;
 };
 
+
+export const equals = (z1, z2) => {
+  return z1.re === z2.re && z1.im === z2.im;
+};
+
 export class ImmutableComplex {
   constructor(re, im) {
     if (im == null) { // arg is object

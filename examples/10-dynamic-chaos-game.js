@@ -6,12 +6,13 @@ import { makePolygon, withinPolygon } from '../utils/polygon';
 import { pickRandom, random, randomComplex } from '../utils/random';
 import { moveTowards } from '../utils/segment';
 import { plotWalk, plotWalkClahe } from './util';
+import { makeLowCutFilter } from '../utils/misc';
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/dynamic-chaos-game`;
 mkdirs(OUTPUT_DIRECTORY);
 
 
-export const makePolygonSlidingRandomWalk = (polygon, slide = 0.5, freq = 1, jumpLength = 0.5) => {
+const makePolygonSlidingRandomWalk = (polygon, slide = 0.5, freq = 1, jumpLength = 0.5) => {
   // initialize the walk with a random point within the polygon
   let zn = randomComplex();
   while (withinPolygon(zn, polygon) === false) {
@@ -48,7 +49,7 @@ plotWalk(`${OUTPUT_DIRECTORY}/walk-sliding-triangle.png`, 1024, 1024, makePolygo
 plotWalk(`${OUTPUT_DIRECTORY}/walk-sliding-hexagon.png`, 1024, 1024, makePolygonSlidingRandomWalk(makePolygon(6), 0.25), BI_UNIT_DOMAIN, 10000000);
 
 
-export const makePolygonTransformingRandomWalk = (polygon, transform = z => z, freq = 1, jumpLength = 0.5) => {
+const makePolygonTransformingRandomWalk = (polygon, transform = z => z, freq = 1, jumpLength = 0.5) => {
   // initialize the walk with a random point within the polygon
   let zn = randomComplex();
   while (withinPolygon(zn, polygon) === false) {
@@ -81,7 +82,7 @@ const makeScale = (scale) => {
 plotWalk(`${OUTPUT_DIRECTORY}/walk-scale-triangle.png`, 1024, 1024, makePolygonTransformingRandomWalk(makePolygon(3), makeScale(0.5)), BI_UNIT_DOMAIN, 10000000);
 
 
-export const makePolygonJumpVariantRandomWalk = (polygon, minJump, maxJump, filter = x => x, jumpStep = 0.002, varyAfter = 3000) => {
+const makePolygonJumpVariantRandomWalk = (polygon, minJump, maxJump, filter = x => x, jumpStep = 0.002, varyAfter = 3000) => {
   let zn = complex(0, 0);
 
   let jumpLength = minJump;
@@ -141,16 +142,14 @@ plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-hendecagon.png`, 1024, 10
 plotWalkClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-hendecagon-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(11), 0.4, 1.6), DOMAIN, 100000000);
 
 
-const makeLowCutFilter = (threshold, low = 0) => {
-  return (x) => {
-    if (x <= threshold) {
-      return low;
-    }
-    return x;
-  };
-};
-
 const filter = makeLowCutFilter(1, 0.5);
 plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-triangle-lowcut.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 0.4, 1.6, filter), DOMAIN, 100000000);
 plotWalkClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-triangle-lowcut-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(3), 0.4, 1.6, filter), DOMAIN, 100000000);
 
+const filter2 = makeLowCutFilter(1, 0.6);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-square-lowcut.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(4), 0.4, 1.6, filter2), DOMAIN, 100000000);
+plotWalkClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-square-lowcut-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(4), 0.4, 1.6, filter2), DOMAIN, 100000000);
+
+const filter3 = makeLowCutFilter(1, 0.62);
+plotWalk(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-pentagon-lowcut.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(5), 0.4, 1.6, filter3), DOMAIN, 10000000);
+plotWalkClahe(`${OUTPUT_DIRECTORY}/walk-jumpvariant-0.4-1.6-pentagon-lowcut-clahe.png`, 1024, 1024, makePolygonJumpVariantRandomWalk(makePolygon(5), 0.4, 1.6, filter3), DOMAIN, 10000000);
