@@ -1,5 +1,5 @@
 import { makeWorleyNoise, makeWorleyLogSumNoise } from '../noise/worleyNoise';
-import { euclidean2d, manhattan2d, chebyshev2d, euclidean, makeMinkowski2d, makeAkritean2d, karlsruhe2d } from '../utils/distance';
+import { euclidean2d, manhattan2d, chebyshev2d, euclidean, makeMinkowski2d, makeAkritean2d, karlsruhe2d, makeSuperellipse2d } from '../utils/distance';
 import { mkdirs } from '../utils/fs';
 import { plotNoise } from './util';
 
@@ -50,11 +50,13 @@ const makeCustomDistFunc2 = (e, distFunc = euclidean2d) => {
     return d + (1 + Math.sin(e * d * 2 * Math.PI)) / 2;
   });
 };
+
 plotNoise(() => makeWorleyNoise(size, size, makeCustomDistFunc2(1)), size, `${OUTPUT_DIRECTORY}/noise-worley-custom2-e=1.png`);
 plotNoise(() => makeWorleyNoise(size, size, makeCustomDistFunc2(20)), size, `${OUTPUT_DIRECTORY}/noise-worley-custom2-e=20.png`);
 plotNoise(() => makeWorleyNoise(size, size, makeCustomDistFunc2(20, manhattan2d)), size, `${OUTPUT_DIRECTORY}/noise-worley-custom2-e=20-manhattan.png`);
 plotNoise(() => makeWorleyNoise(size, size, makeCustomDistFunc2(20, karlsruhe2d)), size, `${OUTPUT_DIRECTORY}/noise-worley-custom2-e=20-karlsruhe.png`);
 plotNoise(() => makeWorleyNoise(size, size, makeCustomDistFunc2(20, makeAkritean2d(0.5))), size, `${OUTPUT_DIRECTORY}/noise-worley-custom2-e=20-akritean.png`);
+plotNoise(() => makeWorleyNoise(size, size, makeCustomDistFunc2(20, makeSuperellipse2d(1, 1, 0.5))), size, `${OUTPUT_DIRECTORY}/noise-worley-custom2-e=20-superellipse.png`);
 
 // log-sum worley noise
 plotNoise(() => makeWorleyLogSumNoise(size, size, euclidean), size, `${OUTPUT_DIRECTORY}/noise-worleylogsum-euclidean.png`);

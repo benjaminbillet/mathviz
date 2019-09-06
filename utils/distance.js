@@ -115,3 +115,18 @@ export const britishRail2d = (x1, y1, x2, y2) => {
   return britishRail(x1 - x2, y1 - y2);
 };
 
+export const superellipse = (x, y, a = 1, b = 1, n = 0.5) => {
+  return Math.pow(Math.abs(x) / a, n) + Math.pow(Math.abs(y) / b, n);
+};
+
+export const superellipse2d = (x1, y1, x2, y2, a = 1, b = 1, n = 0.5) => {
+  return superellipse(x1 - x2, y1 - y2, a, b, n);
+};
+
+export const makeSuperellipse = (a = 1, b = 1, n = 0.5) => {
+  return (x, y) => superellipse(x, y, a, b, n);
+};
+
+export const makeSuperellipse2d = (a = 1, b = 1, n = 0.5) => {
+  return (x1, y1, x2, y2) => superellipse2d(x1, y1, x2, y2, a, b, n);
+};

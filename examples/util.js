@@ -1,5 +1,5 @@
 import { simpleWalkChaosPlot } from '../ifs/chaos-game';
-import { plotFlame, plotFlameWithColorStealing, makeMixedColorSteal } from '../ifs/fractal-flame';
+import { plotFlame, plotFlameWithColorStealing, makeMixedColorSteal, iterateFlamePoint } from '../ifs/fractal-flame';
 import { makeIdentity } from '../transform';
 import { applyContrastBasedScalefactor, applyLinearScalefactor, convertUnitToRGBA, mixColorLinear } from '../utils/color';
 import { complex } from '../utils/complex';
@@ -203,6 +203,54 @@ export const plotIfs = async (
   }
 
   plotFlame(transforms, randomInt, colors, plotter, initialPointPicker, finalTransform, nbPoints, nbIterations);
+
+  // we correct the generated image using the contrast-based scalefactor technique
+  // const averageHits =  Math.max(1, (nbPoints * nbIterations) / (width * height));
+  const averageHits = getAverageHits(buffer, width, height);
+  buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
+  // buffer = applyLinearScalefactor(buffer, width, height);
+
+  // we make sure that the colors are proper RGB
+  buffer = convertUnitToRGBA(buffer, width, height);
+
+  // and finally save the image
+  await saveImageBuffer(buffer, width, height, path);
+};
+
+export const plotIfsGrid = async (
+  path,
+  width,
+  height,
+  ifs,
+  nbIterations = 10000,
+  finalTransform = makeIdentity(),
+  domain = BI_UNIT_DOMAIN,
+  mappedDomain = BI_UNIT_DOMAIN,
+  accuracy = 1,
+  colors = null,
+  wrapPlotter = null,
+) => {
+  const transforms = ifs.functions;
+  const randomInt = randomIntegerWeighted(ifs.probabilities);
+
+  if (colors == null) {
+    colors = expandPalette(getBigQualitativePalette(5), transforms.length);
+    colors = colors.map(([ r, g, b ]) => [ r / 255, g / 255, b / 255 ]);
+  }
+
+  // we create a buffer and a standard plotter
+  let buffer = new Float32Array(width * height * 4);
+  let plotter = makeAdditiveBufferPlotter(buffer, width, height, domain);
+  if (wrapPlotter != null) {
+    plotter = wrapPlotter(plotter);
+  }
+
+  for (let i = 0; i < width * accuracy; i++) {
+    for (let j = 0; j < height * accuracy; j++) {
+      const [ x, y ] = mapPixelToDomain(i / accuracy, j / accuracy, width, height, mappedDomain);
+      iterateFlamePoint(complex(x, y), transforms, randomInt, colors, plotter, finalTransform, nbIterations);
+    }
+  }
 
   // we correct the generated image using the contrast-based scalefactor technique
   // const averageHits =  Math.max(1, (nbPoints * nbIterations) / (width * height));

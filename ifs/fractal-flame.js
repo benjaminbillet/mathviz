@@ -102,6 +102,38 @@ export const plotFlame = (
   }
 };
 
+
+export const iterateFlamePoint = (
+  z,
+  transforms,
+  randomInt,
+  colors,
+  plotter,
+  finalTransform = makeIdentity(),
+  nbIterations = 10000,
+  colorMerge = mixColorLinear,
+) => {
+  let pixelColor = [ 0, 0, 0 ];
+  for (let j = 0; j < nbIterations; j++) {
+    // at each iteration, we pick a function and an associated color from the ifs...
+    const selected = randomInt();
+    const transform = transforms[selected];
+    const color = colors[selected];
+
+    // at each iteration we apply one of the function...
+    z = transform(z);
+
+    // ... and a final transform that will not be part of the iteration...
+    const fz = finalTransform(z);
+
+    // each selected function contribute to the color of this iteration
+    pixelColor = colorMerge(color, pixelColor);
+
+    // we draw the pixel (the returned value is the pixel coordinate array)
+    plotter(fz, pixelColor);
+  }
+};
+
 export const plotFlameWithColorStealing = (
   transforms,
   randomInt,
