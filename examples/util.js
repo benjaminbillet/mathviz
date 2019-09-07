@@ -282,7 +282,7 @@ export const plotAttractor = async (
   domain = BI_UNIT_DOMAIN,
   wrapPlotter = null,
 ) => {
-  plotAttractorMultipoint(path, width, height, attractor, initialPointPicker, colorFunc, 1, nbIterations, domain, wrapPlotter);
+  await plotAttractorMultipoint(path, width, height, attractor, initialPointPicker, colorFunc, 1, nbIterations, domain, wrapPlotter);
 };
 
 export const plotAttractorMultipoint = async (
@@ -359,4 +359,15 @@ const getAverageHits = (buffer, width, height) => {
     return prev;
   }, 0);
   return Math.max(1, sum / (width * height));
+};
+
+
+export const plotAutomata = async (
+  path,
+  width,
+  height,
+  automata,
+) => {
+  const output = await automata();
+  await saveImageBuffer(convertUnitToRGBA(output), width, height, path);
 };
