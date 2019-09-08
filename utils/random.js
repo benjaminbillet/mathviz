@@ -190,6 +190,9 @@ export const makeMulberry32 = (seed) => {
 // a global shared mulberry32 generator
 let randomState = new Date().getTime();
 export const random = () => {
+  if (Number.isNaN(randomState) || Number.isFinite(randomState) === false) {
+    throw new Error('PRNG state diverged');
+  }
   let t = (randomState += 0x6D2B79F5);
   t = Math.imul(t ^ t >>> 15, t | 1);
   t ^= t + Math.imul(t ^ t >>> 7, t | 61);

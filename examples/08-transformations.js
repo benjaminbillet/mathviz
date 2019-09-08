@@ -46,11 +46,21 @@ import {
   makeEpicycloidFunction,
   makeEpitrochoidFunction,
   makeCardioidFunction,
+  makeSierpinskiFunction,
+  makeSplitFunction,
+  makeCpowFunction,
+  makeTwintrianFunction,
+  makeCrossFunction,
+  makeBladeFunction,
+  makeRaysFunction,
+  makeRectanglesFunction,
+  makeTriangleFunction,
 } from '../transform';
 import { pickColorMapValue, RainbowColormap } from '../utils/color';
 import { BI_UNIT_DOMAIN } from '../utils/domain';
 import { enableMathApprox } from '../utils/math';
 import { mkdirs } from '../utils/fs';
+
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/transformations`;
 mkdirs(OUTPUT_DIRECTORY);
@@ -106,6 +116,15 @@ const TRANSFORMATIONS = {
   epitrochoid: makeEpitrochoidFunction(0.1, 0.3, 0.05),
   hypocycloid: makeHypocycloidFunction(4),
   cardioid: makeCardioidFunction(0.5),
+  triangle: makeTriangleFunction(0.5),
+  sierpinski: makeSierpinskiFunction(0.5),
+  split: makeSplitFunction(0.1, 0.1),
+  cpow: makeCpowFunction(complex(-0.9, -0.25)),
+  twintrian: makeTwintrianFunction(1),
+  cross: makeCrossFunction(3),
+  blade: makeBladeFunction(1),
+  rays: makeRaysFunction(1),
+  rectangles: makeRectanglesFunction(0.5, 0.25),
 };
 
 const plotTransformedGrid = async (width, height, transformKey) => {
