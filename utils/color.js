@@ -176,10 +176,14 @@ export const makeColorMapFunction = (map, scale = 1) => {
   return x => pickColorMapValue(x, map);
 };
 
-export const buildSteppedColorMap = (colors, positions, steps = 1024) => {
+export const buildSteppedColorMap = (colors, positions = null, steps = 1024) => {
+  if (positions == null) {
+    positions = colors.map((_, i) => (i + 1) / colors.length);
+  }
+
   let current = 0;
   return new Array(steps).fill(0).map((_, i) => {
-    if (current < (colors.length - 1) && i / steps > positions[current]) {
+    if (current < (colors.length - 1) && i / steps >= positions[current]) {
       current++;
     }
     return colors[current];

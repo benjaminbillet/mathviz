@@ -95,13 +95,27 @@ export const getPictureSizeFromHeight = (height, domain) => {
   return [ Math.round(height * ratio), height ];
 };
 
-export const getPictureSize = (max, domain) => {
+export const getPictureSize = (max, domain, even = false) => {
   const domainWidth = domain.xmax - domain.xmin;
   const domainHeight = domain.ymax - domain.ymin;
+
+  let result = null;
   if (domainWidth >= domainHeight) {
-    return getPictureSizeFromWidth(max, domain);
+    result = getPictureSizeFromWidth(max, domain);
+  } else {
+    result = getPictureSizeFromHeight(max, domain);
   }
-  return getPictureSizeFromHeight(max, domain);
+
+  if (even) {
+    if (result[0] % 2 === 1) {
+      result[0]++;
+    }
+    if (result[1] % 2 === 1) {
+      result[1]++;
+    }
+  }
+
+  return result;
 };
 
 export const fillPicture = (buffer, width, height, r = 0, g = 0, b = 0, a = 255) => {
