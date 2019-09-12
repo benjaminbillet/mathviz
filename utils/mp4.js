@@ -66,5 +66,9 @@ export const buildAnimationFromFolder = async (folder, outputPath, fps = 20) => 
   const composed = promises.reduce((prev, next) => prev.then(next), Promise.resolve());
   composed.then(() => input.end());
 
-  await conv.run();
+  try {
+    await conv.run();
+  } catch (e) {
+    console.log(e);
+  }
 };
