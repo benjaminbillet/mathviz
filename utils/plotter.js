@@ -1,6 +1,7 @@
 import { mapDomainToPixel } from './picture';
+import { BI_UNIT_DOMAIN } from './domain';
 
-export const makeBufferPlotter = (buffer, width, height, domain) => {
+export const makeBufferPlotter = (buffer, width, height, domain = BI_UNIT_DOMAIN) => {
   return (z, color) => {
     const mapped = mapDomainToPixel(z.re, z.im, domain, width, height);
     const [ fx, fy ] = mapped;

@@ -1,6 +1,6 @@
 import { simpleWalkChaosPlot } from '../ifs/chaos-game';
 import { plotFlame, plotFlameWithColorStealing, makeMixedColorSteal, iterateFlamePoint } from '../ifs/fractal-flame';
-import { makeIdentity } from '../transform';
+import { makeIdentityFunction } from '../transform';
 import { applyContrastBasedScalefactor, applyLinearScalefactor, convertUnitToRGBA, mixColorLinear } from '../utils/color';
 import { complex } from '../utils/complex';
 import { BI_UNIT_DOMAIN, scaleDomain } from '../utils/domain';
@@ -10,8 +10,9 @@ import { withinPolygon } from '../utils/polygon';
 import { randomComplex, randomIntegerWeighted } from '../utils/random';
 import { expandPalette, getBigQualitativePalette, MAVERICK } from '../utils/palette';
 import { estimateAttractorDomain } from '../attractors/plot';
-import { downscale } from '../utils/downscale';
-import { makeAdditiveBufferPlotter } from '../utils/plotter';
+import { downscale, downscale2 } from '../utils/downscale';
+import { makeAdditiveBufferPlotter, makeBufferPlotter } from '../utils/plotter';
+import { plotVectorField, DefaultGridShuffle } from '../misc/vector-field';
 
 
 export const plotFunctionBuffer = (width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null, normalize = true) => {
@@ -136,7 +137,7 @@ export const plotIfsFlame = async (
   randomInt,
   colors,
   initialPointPicker = randomComplex,
-  finalTransform = makeIdentity(),
+  finalTransform = makeIdentityFunction(),
   nbPoints = 1000,
   nbIterations = 10000,
   domain = BI_UNIT_DOMAIN,
@@ -181,7 +182,7 @@ export const plotIfs = async (
   ifs,
   nbPoints = 1000,
   nbIterations = 10000,
-  finalTransform = makeIdentity(),
+  finalTransform = makeIdentityFunction(),
   domain = BI_UNIT_DOMAIN,
   initialPointPicker = randomComplex,
   colors = null,
@@ -223,7 +224,7 @@ export const plotIfsGrid = async (
   height,
   ifs,
   nbIterations = 10000,
-  finalTransform = makeIdentity(),
+  finalTransform = makeIdentityFunction(),
   domain = BI_UNIT_DOMAIN,
   mappedDomain = BI_UNIT_DOMAIN,
   accuracy = 1,
@@ -304,7 +305,7 @@ export const plotAttractorMultipoint = async (
     plotter = wrapPlotter(plotter);
   }
 
-  plotFlameWithColorStealing([ attractor ], () => 0, colorFunc, plotter, false, initialPointPicker, makeIdentity(), nbPoints, nbIterations);
+  plotFlameWithColorStealing([ attractor ], () => 0, colorFunc, plotter, false, initialPointPicker, makeIdentityFunction(), nbPoints, nbIterations);
 
   // we correct the generated image using the contrast-based scalefactor technique
   // const averageHits = Math.max(1, nbIterations / (width * height));
@@ -330,7 +331,7 @@ export const plotAutoscaledAttractor = async (
   zoomAfterAutoscale = 1.2,
 ) => {
   // we compute automatically the domain of the attractor
-  const domain = scaleDomain(estimateAttractorDomain(attractor, initialPointPicker, makeIdentity(), autoScaleIterations), zoomAfterAutoscale);
+  const domain = scaleDomain(estimateAttractorDomain(attractor, initialPointPicker, makeIdentityFunction(), autoScaleIterations), zoomAfterAutoscale);
   console.log('Estimated domain', domain);
 
   // we create a color function that will apply the palette depending on the location of the point and the number of iterations
@@ -338,6 +339,41 @@ export const plotAutoscaledAttractor = async (
 
   // and we plot
   plotAttractor(path, width, height, attractor, initialPointPicker, colorFunc, nbIterations, domain);
+};
+
+export const plotSupersampledVectorField = async (
+  path,
+  width,
+  height,
+  vectorFunction,
+  colorFunc,
+  timeFunction = () => 0,
+  nbIterations = 500,
+  finalTransform = makeIdentityFunction(),
+  wrapPlotter = null,
+  supersampling = 4,
+) => {
+  // supersampling consists into rendering a bigger image and downscale it afterwards
+  const superWidth = supersampling * width;
+  const superHeight = supersampling * height;
+
+  // we create a buffer and the standard plotter
+  let buffer = new Float32Array(superWidth * superHeight * 4);
+  let plotter = makeBufferPlotter(buffer, superWidth, superHeight, scaleDomain(BI_UNIT_DOMAIN, 2));
+  if (wrapPlotter != null) {
+    plotter = wrapPlotter(plotter);
+  }
+
+  plotVectorField(vectorFunction, colorFunc, plotter, timeFunction, finalTransform, 0.025, BI_UNIT_DOMAIN, DefaultGridShuffle, 0.01, nbIterations);
+
+  // downscale from the super size to the requested size
+  buffer = downscale2(buffer, superWidth, superHeight, width, height);
+
+  // we make sure that the colors are proper RGB
+  buffer = convertUnitToRGBA(buffer, width, height);
+
+  // and finally save the image
+  await saveImageBuffer(buffer, width, height, path);
 };
 
 export const downsampleImage = async (inputPath, outputPath, factor = 1) => {

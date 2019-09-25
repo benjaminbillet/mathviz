@@ -6,11 +6,14 @@ import { makeOctavePerlinNoise, makeOctaveSimplexNoise } from '../noise/fractalN
 import { makeSimplexNoise } from '../noise/simplexNoise';
 import { mkdirs } from '../utils/fs';
 import { plotNoise } from './util';
+import { setRandomSeed } from '../utils/random';
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/noise`;
 mkdirs(OUTPUT_DIRECTORY);
 
 const size = 1024;
+
+setRandomSeed(100);
 
 // different interpolation methods give different aspect to the final noise
 plotNoise(() => makeValueNoise(128, 128, size, size, UpscaleSamplers.NearestNeighbor), size, `${OUTPUT_DIRECTORY}/noise-value-nearestneighbor.png`);
@@ -64,3 +67,4 @@ forEachPixel(woodPerlin2, size, size, (r, g, b, a, i, j, idx) => {
   woodPerlin2[idx + 2] = intensity;
 });
 plotNoise(() => woodPerlin2, size, `${OUTPUT_DIRECTORY}/noise-perlin-wood2.png`);
+
