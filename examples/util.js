@@ -272,6 +272,21 @@ export const plotNoise = async (noiseFunction, size, outputPath) => {
   await saveImageBuffer(output, size, size, outputPath);
 };
 
+export const plotNoiseFunction = async (noiseFunction, size, outputPath, normalize = true) => {
+  const buffer = new Float32Array(size * size * 4);
+  forEachPixel(buffer, size, size, (r, g, b, a, i, j, idx) => {
+    const intensity = noiseFunction(i / size, j / size);
+    buffer[idx + 0] = intensity;
+    buffer[idx + 1] = intensity;
+    buffer[idx + 2] = intensity;
+  });
+  if (normalize) {
+    normalizeBuffer(buffer, size, size);
+  }
+  await saveImageBuffer(convertUnitToRGBA(buffer), size, size, outputPath);
+  return buffer;
+};
+
 export const plotAttractor = async (
   path,
   width,

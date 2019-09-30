@@ -1,6 +1,8 @@
 import { normalizeBuffer, forEachPixel } from '../utils/picture';
 import { makePerlinNoiseFunction } from './perlinNoise';
 import { makeSimplexNoiseFunction } from './simplexNoise';
+import { clamp } from '../utils/misc';
+import { cissoid, astroid } from '../utils/parametric';
 
 export const makeOctavePerlinNoise = (width, height, octaves = 8, initialFrequency = 1, persistence = 0.5) => {
   return plotOctaveNoise(width, height, makeOctavePerlinNoiseFunction(octaves, initialFrequency, persistence));
@@ -22,7 +24,7 @@ const makeAttenuatedFunction = (func, factor) => {
   return (x, y) => factor * func(x, y);
 };
 
-const makeOctaveNoiseFunction = (noiseMaker, octaves = 8, initialFrequency = 1, persistence = 0.5) => {
+export const makeOctaveNoiseFunction = (noiseMaker, octaves = 8, initialFrequency = 1, persistence = 0.5) => {
   const noiseFuncs = new Array(octaves);
   let amplitude = 1;
   let frequency = initialFrequency;

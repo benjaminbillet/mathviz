@@ -130,3 +130,20 @@ export const makeSuperellipse = (a = 1, b = 1, n = 0.5) => {
 export const makeSuperellipse2d = (a = 1, b = 1, n = 0.5) => {
   return (x1, y1, x2, y2) => superellipse2d(x1, y1, x2, y2, a, b, n);
 };
+
+
+export const canberra = (x, y) => {
+  return Math.abs(x - y) / (Math.abs(x) + Math.abs(y));
+};
+
+export const canberra2d = (x1, y1, x2, y2) => {
+  return canberra(x1, y1) + canberra(x2, y2);
+};
+
+export const cosine = (x, y) => { // cosine similarity = dot product
+  return x * y;
+};
+
+export const cosine2d = (x1, y1, x2, y2) => {
+  return x1 * y1 + x2 * y2;
+};
