@@ -1,4 +1,5 @@
-import { randomIntegerWeighted, randomIntegerUniform, random, randomInteger } from './random';
+import { randomIntegerWeighted, randomIntegerUniform, random } from './random';
+import * as affine from '../utils/affine';
 
 export const clamp = (x, min, max) => {
   return Math.max(min, Math.min(x, max));
@@ -71,5 +72,32 @@ export const makeHighCutFilter = (threshold, attenuatedValue = 0) => {
       return attenuatedValue;
     }
     return x;
+  };
+};
+
+export const mapRange = (v, xmin, xmax, fxmin, fxmax) => {
+  const xDelta = xmax - xmin;
+  const fxDelta = fxmax - fxmin;
+  const x = (v - xmin) / xDelta;
+  return fxmin + x * fxDelta;
+};
+
+export const makeTransformMatrix = () => {
+  let transformMatrix = affine.IDENTITY;
+  const stack = [];
+  return {
+    push: () => stack.push(transformMatrix),
+    pop: () => {
+      transformMatrix = stack.pop();
+      return transformMatrix;
+    },
+    transform: (...transforms) => {
+      transformMatrix = affine.combine(
+        transformMatrix,
+        ...transforms,
+      );
+      return transformMatrix;
+    },
+    apply: (z) => affine.applyAffine2dFromMatrix(transformMatrix, z),
   };
 };

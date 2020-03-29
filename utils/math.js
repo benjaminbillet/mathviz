@@ -14,6 +14,7 @@ const mathFull = {
   sign: Math.sign,
   min: Math.min,
   max: Math.max,
+  mod: (n, m) => ((n % m) + m) % m,
 };
 
 const mathApprox = {
@@ -28,6 +29,7 @@ const mathApprox = {
   sign: Math.sign,
   min: Math.min,
   max: Math.max,
+  mod: mathFull.mod,
 };
 
 const currentMath = Object.assign({}, mathFull);

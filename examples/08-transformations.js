@@ -119,7 +119,7 @@ const TRANSFORMATIONS = {
   triangle: makeTriangleFunction(0.5),
   sierpinski: makeSierpinskiFunction(0.5),
   split: makeSplitFunction(0.1, 0.1),
-  cpow: makeCpowFunction(complex(-0.9, -0.25)),
+  cpow: makeCpowFunction(complex(0.96, 0.2)),
   twintrian: makeTwintrianFunction(1),
   cross: makeCrossFunction(3),
   blade: makeBladeFunction(1),

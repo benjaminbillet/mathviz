@@ -68,12 +68,12 @@ const compose = (noiseMaker, f) => {
   };
 };
 
-plotNoiseFunction(makeOctaveNoiseFunction(compose(makePerlinNoiseFunction, x => Math.abs(x)), 8, 4), size, `${OUTPUT_DIRECTORY}/noise-billow.png`);
-plotNoiseFunction(makeOctaveNoiseFunction(compose(makePerlinNoiseFunction, x => 0.01 / (x + 0.01)), 8, 4, 0.75), size, `${OUTPUT_DIRECTORY}/noise-reciprocal.png`, false);
-plotNoiseFunction(makeOctaveNoiseFunction(compose(makePerlinNoiseFunction, x => Math.ceil(x)), 8, 4), size, `${OUTPUT_DIRECTORY}/noise-ceil.png`);
+plotNoiseFunction(makeOctaveNoiseFunction(compose(makePerlinNoiseFunction, x => Math.abs(x)), 8, 4), size, `${OUTPUT_DIRECTORY}/noise-octave-billow.png`);
+plotNoiseFunction(makeOctaveNoiseFunction(compose(makePerlinNoiseFunction, x => 0.01 / (x + 0.01)), 8, 4, 0.75), size, `${OUTPUT_DIRECTORY}/noise-octave-reciprocal.png`, false);
+plotNoiseFunction(makeOctaveNoiseFunction(compose(makePerlinNoiseFunction, x => Math.ceil(x)), 8, 4), size, `${OUTPUT_DIRECTORY}/noise-octave-ceil.png`);
 
 const customPreproc = (x) => {
   x = 1 - Math.abs(x); // invert billow
   return x * x * x; // sharpen
 };
-plotNoiseFunction(makeOctaveNoiseFunction(compose(makePerlinNoiseFunction, customPreproc), 8, 4), size, `${OUTPUT_DIRECTORY}/noise-custom.png`);
+plotNoiseFunction(makeOctaveNoiseFunction(compose(makePerlinNoiseFunction, customPreproc), 8, 4), size, `${OUTPUT_DIRECTORY}/noise-octave-custom.png`);

@@ -11,8 +11,9 @@ import { randomComplex, randomIntegerWeighted } from '../utils/random';
 import { expandPalette, getBigQualitativePalette, MAVERICK } from '../utils/palette';
 import { estimateAttractorDomain } from '../attractors/plot';
 import { downscale, downscale2 } from '../utils/downscale';
-import { makeAdditiveBufferPlotter, makeBufferPlotter } from '../utils/plotter';
+import { makeAdditiveBufferPlotter, makeBufferPlotter, makeUnmappedBufferPlotter } from '../utils/plotter';
 import { plotVectorField, DefaultGridShuffle } from '../misc/vector-field';
+import { plotCyclicCellularAutomaton, plotCyclicCellularAutomaton2 } from '../automata/cellular/cyclic-ca';
 
 
 export const plotFunctionBuffer = (width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null, normalize = true) => {
@@ -421,4 +422,35 @@ export const plotAutomata = async (
 ) => {
   const output = await automata();
   await saveImageBuffer(convertUnitToRGBA(output), width, height, path);
+};
+
+export const plotCyclicCA = async (
+  path,
+  width,
+  height,
+  colors,
+  range,
+  threshold,
+  maxState,
+  neighborReduceFunc,
+  iterations = 100,
+  initialState = null,
+  wrapPlotter = null,
+) => {
+  // we create a buffer and a standard plotter
+  let buffer = new Float32Array(width * height * 4);
+  let plotter = makeUnmappedBufferPlotter(buffer, width, height);
+  if (wrapPlotter != null) {
+    plotter = wrapPlotter(plotter);
+  }
+
+  const grid = plotCyclicCellularAutomaton(plotter, width, height, colors, range, threshold, maxState, neighborReduceFunc, iterations, initialState);
+
+  // we make sure that the colors are proper RGB
+  buffer = convertUnitToRGBA(buffer, width, height);
+
+  // and finally save the image
+  await saveImageBuffer(buffer, width, height, path);
+
+  return grid;
 };

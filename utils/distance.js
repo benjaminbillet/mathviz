@@ -25,6 +25,14 @@ export const manhattan2d = (x1, y1, x2, y2) => {
   return p.reduce((d, pi, i) => d + Math.abs(pi - q[i]), 0);
 };*/
 
+export const euclideanSquared = (a, b) => {
+  return a * a + b * b;
+};
+
+export const euclideanSquared2d = (x1, y1, x2, y2) => {
+  return euclideanSquared(x1 - x2, y1 - y2);
+};
+
 
 export const euclidean = (a, b) => {
   return Math.sqrt(a * a + b * b);

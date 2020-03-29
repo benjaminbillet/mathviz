@@ -8,6 +8,7 @@ import { makeOctavePerlinNoiseFunction } from '../noise/fractalNoise';
 import { makeSinusoidalFunction, makeSwirlFunction, makeIteratedMandelbrotFunction, makeExponentialFunction, makePolarFunction, makeFanFunction, makeRingsFunction, makeWaveFunction } from '../transform';
 import { astroid, kampyle, rectangularHyperbola, superformula, circle, cissoid } from '../utils/parametric';
 import { getTolDivergentPalette } from '../utils/palette';
+import { mapRange } from '../utils/misc';
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/vectorfields`;
 mkdirs(OUTPUT_DIRECTORY);
@@ -19,17 +20,10 @@ const palette = getTolDivergentPalette(10).map(([ r, g, b ]) => [ r / 255, g / 2
 const noise = makePerlinNoiseFunction(1);
 const fracnoise = makeOctavePerlinNoiseFunction(4);
 
-const map = (v, xmin, xmax, fxmin, fxmax) => {
-  const xDelta = xmax - xmin;
-  const fxDelta = fxmax - fxmin;
-  const x = (v - xmin) / xDelta;
-  return fxmin + x * fxDelta;
-};
-
 const size = 1024;
 
 const colorfunc = (i, j, p) => {
-  const x = map(noise(p / 1000, 0), -1, 1, 0, 1);
+  const x = mapRange(noise(p / 1000, 0), -1, 1, 0, 1);
   return palette[Math.trunc(100 * palette.length * x) % palette.length];
 };
 
@@ -38,7 +32,7 @@ const colorfunc = (i, j, p) => {
 plotSupersampledVectorField(`${OUTPUT_DIRECTORY}/vector-translation.png`, size, size, () => complex(0.1, 0.1), colorfunc);
 
 plotSupersampledVectorField(`${OUTPUT_DIRECTORY}/vector-noise1.png`, size, size, (z) => {
-  const n = TWO_PI * map(fracnoise(z.re, z.im), -1, 1, 0, 1);
+  const n = TWO_PI * mapRange(fracnoise(z.re, z.im), -1, 1, 0, 1);
   return circle(n);
 }, colorfunc);
 

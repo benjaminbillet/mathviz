@@ -12,8 +12,12 @@ export const applyAffine2dFromMatrix = (matrix, z) => {
   return complex(a11 * z.re + a12 * z.im + a13, a21 * z.re + a22 * z.im + a23);
 };
 
-export const makeAffine2dFromCoeffs = (coeffs) => {
-  return (z) => complex(coeffs[0] * z.re + coeffs[1] * z.im + coeffs[2], coeffs[3] * z.re + coeffs[4] * z.im + coeffs[5]);
+export const applyAffine2dFromCoeffs = ([ a11, a12, a13, a21, a22, a23 ], z) => {
+  return complex(a11 * z.re + a12 * z.im + a13, a21 * z.re + a22 * z.im + a23);
+};
+
+export const makeAffine2dFromCoeffs = ([ a11, a12, a13, a21, a22, a23 ]) => {
+  return (z) => complex(a11 * z.re + a12 * z.im + a13, a21 * z.re + a22 * z.im + a23);
 };
 
 export const makeAffine2dFromMatrix = (matrix) => {
@@ -24,6 +28,19 @@ export const makeAffine2dFromMatrix = (matrix) => {
   const a22 = matrix.get([ 1, 1 ]);
   const a23 = matrix.get([ 1, 2 ]);
   return (z) => complex(a11 * z.re + a12 * z.im + a13, a21 * z.re + a22 * z.im + a23);
+};
+
+export const getCoeffsFromMatrix = (matrix, out = null) => {
+  if (out == null) {
+    out = new Float32Array(6);
+  }
+  out[0] = matrix.get([ 0, 0 ]);
+  out[1] = matrix.get([ 0, 1 ]);
+  out[2] = matrix.get([ 0, 2 ]);
+  out[3] = matrix.get([ 1, 0 ]);
+  out[4] = matrix.get([ 1, 1 ]);
+  out[5] = matrix.get([ 1, 2 ]);
+  return out;
 };
 
 export const identity = () => {

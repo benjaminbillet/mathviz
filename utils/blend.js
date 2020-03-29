@@ -67,6 +67,10 @@ const pixelBiEach = (buffer1, buffer2, f) => {
   }
 };
 
+/* const makeBlendBuffer = (f) => {
+  return (buffer1, buffer2) => bimap(buffer1, buffer2, f);
+};*/
+
 export const blendAdd = (buffer1, buffer2) => {
   return bimap(buffer1, buffer2, (a, b) => Math.min(a + b, 1));
 };
