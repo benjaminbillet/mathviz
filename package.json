@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "execute": "babel-node",
+    "debug": "babel-node --inspect",
     "transpile": "babel . --ignore ./node_modules,./generated --out-dir ./generated"
   },
   "devDependencies": {

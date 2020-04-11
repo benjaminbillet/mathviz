@@ -1,13 +1,18 @@
-import math from '../../utils/math';
+// import math from '../../utils/math';
 import { complex } from '../../utils/complex';
+
 
 export const forEachMooreNeighbor = (grid, width, height, centerX, centerY, range, func) => {
   for (let i = -range; i <= range; i++) {
     for (let j = -range; j <= range; j++) {
       if (i !== 0 || j !== 0) {
-        const x = math.mod(i + centerX, width);
-        const y = math.mod(j + centerY, height);
-        func(grid[x + y * width], x, y, grid);
+        // const x = math.mod(i + centerX, width);
+        // const y = math.mod(j + centerY, height);
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          func(grid[x + y * width], x, y, grid);
+        }
       }
     }
   }
@@ -15,9 +20,17 @@ export const forEachMooreNeighbor = (grid, width, height, centerX, centerY, rang
 
 export const reduceMooreNeighbor = (grid, width, height, centerX, centerY, range, func, initialValue) => {
   let result = initialValue;
-  forEachMooreNeighbor(grid, width, height, centerX, centerY, range, (v, x, y) => {
-    result = func(result, v, x, y, grid);
-  });
+  for (let i = -range; i <= range; i++) {
+    for (let j = -range; j <= range; j++) {
+      if (i !== 0 || j !== 0) {
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          result = func(result, grid[x + y * width], x, y, grid);
+        }
+      }
+    }
+  }
   return result;
 };
 
@@ -25,9 +38,13 @@ export const forEachVonNeumannNeighbor = (grid, width, height, centerX, centerY,
   for (let i = -range; i <= range; i++) {
     for (let j = -range; j <= range; j++) {
       if ((i !== 0 || j !== 0) && Math.abs(i) + Math.abs(j) <= range) {
-        const x = math.mod(i + centerX, width);
-        const y = math.mod(j + centerY, height);
-        func(grid[x + y * width], x, y, grid);
+        // const x = math.mod(i + centerX, width);
+        // const y = math.mod(j + centerY, height);
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          func(grid[x + y * width], x, y, grid);
+        }
       }
     }
   }
@@ -35,9 +52,17 @@ export const forEachVonNeumannNeighbor = (grid, width, height, centerX, centerY,
 
 export const reduceVonNeumannNeighbor = (grid, width, height, centerX, centerY, range, func, initialValue) => {
   let result = initialValue;
-  forEachVonNeumannNeighbor(grid, width, height, centerX, centerY, range, (v, x, y) => {
-    result = func(result, v, x, y, grid);
-  });
+  for (let i = -range; i <= range; i++) {
+    for (let j = -range; j <= range; j++) {
+      if ((i !== 0 || j !== 0) && Math.abs(i) + Math.abs(j) <= range) {
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          result = func(result, grid[x + y * width], x, y, grid);
+        }
+      }
+    }
+  }
   return result;
 };
 
@@ -55,9 +80,17 @@ export const forEachVonNeumannHexagonalNeighbor = (grid, width, height, centerX,
 
 export const reduceVonNeumannHexagonalNeighbor = (grid, width, height, centerX, centerY, range, func, initialValue) => {
   let result = initialValue;
-  forEachVonNeumannHexagonalNeighbor(grid, width, height, centerX, centerY, range, (v, x, y) => {
-    result = func(result, v, x, y, grid);
-  });
+  for (let i = -range; i <= range; i++) {
+    for (let j = -range; j <= range; j++) {
+      if (Math.abs(i + j) <= range) {
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          result = func(result, grid[x + y * width], x, y, grid);
+        }
+      }
+    }
+  }
   return result;
 };
 
@@ -76,7 +109,9 @@ export const forEachMooreHexagonalNeighbor = (grid, width, height, centerX, cent
       if (Math.abs(i + j) <= rangePlusOne && !HEX_DIRECTIONS.some(d => i === d.re * rangePlusOne && j === d.im * rangePlusOne)) {
         const x = i + centerX;
         const y = j + centerY;
-        func(grid[x + y * width], x, y, grid);
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          func(grid[x + y * width], x, y, grid);
+        }
       }
     }
   }
@@ -84,9 +119,18 @@ export const forEachMooreHexagonalNeighbor = (grid, width, height, centerX, cent
 
 export const reduceMooreHexagonalNeighbor = (grid, width, height, centerX, centerY, range, func, initialValue) => {
   let result = initialValue;
-  forEachMooreHexagonalNeighbor(grid, width, height, centerX, centerY, range, (v, x, y) => {
-    result = func(result, v, x, y, grid);
-  });
+  const rangePlusOne = range + 1;
+  for (let i = -rangePlusOne; i <= rangePlusOne; i++) {
+    for (let j = -rangePlusOne; j <= rangePlusOne; j++) {
+      if (Math.abs(i + j) <= rangePlusOne && !HEX_DIRECTIONS.some(d => i === d.re * rangePlusOne && j === d.im * rangePlusOne)) {
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          result = func(result, grid[x + y * width], x, y, grid);
+        }
+      }
+    }
+  }
   return result;
 };
 
@@ -94,14 +138,20 @@ export const forEachStarHexagonalNeighbor = (grid, width, height, centerX, cente
   return HEX_DIRECTIONS.forEach((direction) => {
     const x = centerX + direction.re * range;
     const y = centerY + direction.im * range;
-    func(grid[x + y * width], x, y, grid);
+    if (x >= 0 && x < width && y >= 0 && y < height) {
+      func(grid[x + y * width], x, y, grid);
+    }
   });
 };
 
 export const reduceStarHexagonalNeighbor = (grid, width, height, centerX, centerY, range, func, initialValue) => {
   let result = initialValue;
-  forEachStarHexagonalNeighbor(grid, width, height, centerX, centerY, range, (v, x, y) => {
-    result = func(result, v, x, y, grid);
+  HEX_DIRECTIONS.forEach((direction) => {
+    const x = centerX + direction.re * range;
+    const y = centerY + direction.im * range;
+    if (x >= 0 && x < width && y >= 0 && y < height) {
+      result = func(result, grid[x + y * width], x, y, grid);
+    }
   });
   return result;
 };
@@ -112,9 +162,11 @@ export const forEachCircularNeighbor = (grid, width, height, centerX, centerY, r
   for (let i = -range; i <= range; i++) {
     for (let j = -range; j <= range; j++) {
       if (i * i + j * j <= rangeSquared) {
-        const x = math.mod(i + centerX, width);
-        const y = math.mod(j + centerY, height);
-        func(grid[x + y * width], x, y, grid);
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          func(grid[x + y * width], x, y, grid);
+        }
       }
     }
   }
@@ -122,9 +174,18 @@ export const forEachCircularNeighbor = (grid, width, height, centerX, centerY, r
 
 export const reduceCircularNeighbor = (grid, width, height, centerX, centerY, range, func, initialValue) => {
   let result = initialValue;
-  forEachCircularNeighbor(grid, width, height, centerX, centerY, range, (v, x, y) => {
-    result = func(result, v, x, y, grid);
-  });
+  const rangeSquared = range * range;
+  for (let i = -range; i <= range; i++) {
+    for (let j = -range; j <= range; j++) {
+      if (i * i + j * j <= rangeSquared) {
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          result = func(result, grid[x + y * width], x, y, grid);
+        }
+      }
+    }
+  }
   return result;
 };
 

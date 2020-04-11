@@ -101,3 +101,10 @@ export const makeTransformMatrix = () => {
     apply: (z) => affine.applyAffine2dFromMatrix(transformMatrix, z),
   };
 };
+
+export const evenify = (x) => {
+  if (x % 2 === 0) {
+    return x;
+  }
+  return x + 1;
+}

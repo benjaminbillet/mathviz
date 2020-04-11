@@ -11,9 +11,11 @@ import { randomComplex, randomIntegerWeighted } from '../utils/random';
 import { expandPalette, getBigQualitativePalette, MAVERICK } from '../utils/palette';
 import { estimateAttractorDomain } from '../attractors/plot';
 import { downscale, downscale2 } from '../utils/downscale';
-import { makeAdditiveBufferPlotter, makeBufferPlotter, makeUnmappedBufferPlotter } from '../utils/plotter';
+import { makeAdditiveBufferPlotter, makeBufferPlotter, makeUnmappedBufferPlotter, makePixelToComplexPlotter } from '../utils/plotter';
 import { plotVectorField, DefaultGridShuffle } from '../misc/vector-field';
 import { plotCyclicCellularAutomaton, plotCyclicCellularAutomaton2 } from '../automata/cellular/cyclic-ca';
+import { plot2dAutomaton } from '../automata/cellular/2d-automaton';
+import { drawFilledNgon } from '../utils/raster';
 
 
 export const plotFunctionBuffer = (width, height, f, domain = BI_UNIT_DOMAIN, colorfunc = null, normalize = true) => {
@@ -424,17 +426,15 @@ export const plotAutomata = async (
   await saveImageBuffer(convertUnitToRGBA(output), width, height, path);
 };
 
-export const plotCyclicCA = async (
+export const plot2dCA = async (
   path,
   width,
   height,
+  nextCellState,
   colors,
-  range,
-  threshold,
-  maxState,
-  neighborReduceFunc,
   iterations = 100,
   initialState = null,
+  deadCellState = null,
   wrapPlotter = null,
 ) => {
   // we create a buffer and a standard plotter
@@ -444,13 +444,69 @@ export const plotCyclicCA = async (
     plotter = wrapPlotter(plotter);
   }
 
-  const grid = plotCyclicCellularAutomaton(plotter, width, height, colors, range, threshold, maxState, neighborReduceFunc, iterations, initialState);
+  const grid = plot2dAutomaton(plotter, width, height, nextCellState, colors, deadCellState, iterations, initialState);
 
   // we make sure that the colors are proper RGB
   buffer = convertUnitToRGBA(buffer, width, height);
 
   // and finally save the image
   await saveImageBuffer(buffer, width, height, path);
+
+  return grid;
+};
+
+export const plot2dHexCA = async (
+  path,
+  width,
+  height,
+  nextCellState,
+  colors,
+  iterations = 100,
+  initialState = null,
+  deadCellState = null,
+  wrapPlotter = null,
+) => {
+  // we compute the size of the final buffer, according to a fixed hexagon size
+  const hexagonalRadius = 10;
+  const hexagonalRadiusWithBorder = hexagonalRadius + 3;
+
+  const w = Math.sqrt(3) * hexagonalRadiusWithBorder;
+  const h = 2 * hexagonalRadiusWithBorder;
+
+  const bufferWidth = Math.trunc(width * w);
+  const bufferHeight = Math.trunc(height * h * 0.75);
+
+  // we create a buffer for drawing
+  let buffer = new Float32Array(bufferWidth * bufferHeight * 4);
+
+  // the plotter is a regular buffer plotter, encapsulated by a plotter that draws hexagon
+  const canvasPlotter = makePixelToComplexPlotter(makeUnmappedBufferPlotter(buffer, bufferWidth, bufferHeight));
+  const hexagonPlotter = (x, y, color) => {
+    drawFilledNgon(6, x, y, hexagonalRadius, color, canvasPlotter);
+  };
+
+  // the final plotter encapsulates the hexagon plotter
+  // with a logic for converting the hex grid coordinates to the buffer coordinates
+  const skewness = (height * 0.5 * 0.5);
+  const plotter = (z, color) => {
+    const x = Math.trunc((z.re - skewness) * w + z.im * w * 0.5);
+    const y = Math.trunc(z.im * 0.75 * h);
+    if (x >= 0 && x < bufferWidth && y >= 0 && y < bufferHeight) {
+      hexagonPlotter(x, y, color);
+    }
+  };
+
+  if (wrapPlotter != null) {
+    plotter = wrapPlotter(plotter);
+  }
+
+  const grid = plot2dAutomaton(plotter, width, height, nextCellState, colors, deadCellState, iterations, initialState);
+
+  // we make sure that the colors are proper RGB
+  buffer = convertUnitToRGBA(buffer, bufferWidth, bufferHeight);
+
+  // and finally save the image
+  await saveImageBuffer(buffer, bufferWidth, bufferHeight, path);
 
   return grid;
 };
