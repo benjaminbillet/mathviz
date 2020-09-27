@@ -1,4 +1,5 @@
 import PngImage from 'pngjs-image';
+import { ComplexNumber } from './complex';
 import { clampInt } from './misc';
 import { PlotBuffer, PlotDomain } from './types';
 
@@ -63,6 +64,15 @@ export const mapPixelToDomain = (x: number, y: number, width: number, height: nu
   ];
 };
 
+export const mapPixelToComplexDomain = (x: number, y: number, width: number, height: number, domain: PlotDomain) => {
+  const domainWidth = domain.xmax - domain.xmin;
+  const domainHeight = domain.ymax - domain.ymin;
+
+  const xRatio = domainWidth / width;
+  const yRatio = domainHeight / height;
+  return new ComplexNumber(domain.xmin + (x * xRatio), domain.ymin + (y * yRatio));
+};
+
 export const mapDomainToPixel = (x: number, y: number, domain: PlotDomain, width: number, height: number) => {
   // optimization if domain is 0-1
   if (domain.xmin === 0 && domain.xmax === 1 && domain.ymin === 0 && domain.ymax === 1) {
@@ -81,6 +91,20 @@ export const mapDomainToPixel = (x: number, y: number, domain: PlotDomain, width
     Math.trunc((x - domain.xmin) * xRatio),
     Math.trunc((y - domain.ymin) * yRatio),
   ];
+};
+
+export const mapComplexDomainToPixel = (z: ComplexNumber, domain: PlotDomain, width: number, height: number) => {
+  // optimization if domain is 0-1
+  if (domain.xmin === 0 && domain.xmax === 1 && domain.ymin === 0 && domain.ymax === 1) {
+    return new ComplexNumber(Math.trunc(z.re * width), Math.trunc(z.im * height));
+  }
+
+  const domainWidth = domain.xmax - domain.xmin;
+  const domainHeight = domain.ymax - domain.ymin;
+
+  const xRatio = (width - 1) / domainWidth;
+  const yRatio = (height - 1) / domainHeight;
+  return new ComplexNumber(Math.trunc((z.re - domain.xmin) * xRatio), Math.trunc((z.im - domain.ymin) * yRatio));
 };
 
 export const getPictureSizeFromWidth = (width: number, domain: PlotDomain) => {

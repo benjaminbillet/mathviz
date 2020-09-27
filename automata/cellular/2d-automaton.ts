@@ -38,12 +38,12 @@ export const iterate2dAutomaton = (gridWidth: number, gridHeight: number, nextCe
 export const plot2dAutomaton = (plotter: ComplexPlotter, gridWidth: number, gridHeight: number, nextCellState: NextCellStateFunction, colors: Color[], deadCellState?: Optional<number>, iterations = 100, initialState?: Optional<CellularAutomataGrid>, postProcessIteration?: Optional<CellularAutomataIterationPostProcessor>) => {
   const grid = iterate2dAutomaton(gridWidth, gridHeight, nextCellState, iterations, initialState, postProcessIteration);
 
-  const pxelPlotter = makePixelToComplexPlotter(plotter);
+  const pixelPlotter = makePixelToComplexPlotter(plotter);
   for (let x = 0; x < gridWidth; x++) {
     for (let y = 0; y < gridHeight; y++) {
       const cellState = grid[x + y * gridWidth];
       if (cellState !== deadCellState) {
-        pxelPlotter(x, y, colors[grid[x + y * gridWidth]], cellState);
+        pixelPlotter(x, y, colors[grid[x + y * gridWidth]], cellState);
       }
     }
   }

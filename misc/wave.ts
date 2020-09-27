@@ -46,7 +46,7 @@ export const makeMultiwave = (freq = 1, nbWaves = 1, phase = 0, cosine = false, 
 
 export const polar = (z: ComplexNumber, freq = 1, angle = 0, phase = 0, cosine = false, distanceFunc = euclidean) => {
   const r = distanceFunc(z.re, z.im);
-  const theta = argument(z);
+  const theta = z.argument();
 
   const x = (theta * Math.cos(angle) - r * Math.sin(angle)) * freq + phase;
   if (cosine) {

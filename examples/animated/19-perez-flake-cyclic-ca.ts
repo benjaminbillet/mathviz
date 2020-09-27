@@ -33,7 +33,7 @@ export const makeAnimatedPerezFlakeCCA = (width: number, height: number, maxStat
   };
 };
 
-//animateFunction(makeAnimatedPerezFlakeCCA(250, 250, 12, [ 0, 1, 0, 1, 0, 0, 1 ], HexagonalNeighborhoodReducer.VonNeumann, 1), 0, 80, Easing.linear, 80, OUTPUT_DIRECTORY, 'perez-flake-cyclic2-vonneumann', 10);
-//animateFunction(makeAnimatedPerezFlakeCCA(250, 250, 12, [ 0, 1, 0, 1, 0, 0, 1 ], HexagonalNeighborhoodReducer.Moore, 1), 0, 50, Easing.linear, 50, OUTPUT_DIRECTORY, 'perez-flake-cyclic2-moore', 10);
-//animateFunction(makeAnimatedPerezFlakeCCA(250, 250, 12, [ 0, 1, 0, 1, 0, 0, 1 ], HexagonalNeighborhoodReducer.Moore, 2), 0, 30, Easing.linear, 30, OUTPUT_DIRECTORY, 'perez-flake-cyclic2-moore-r=2', 10);
+animateFunction(makeAnimatedPerezFlakeCCA(250, 250, 12, [ 0, 1, 0, 1, 0, 0, 1 ], HexagonalNeighborhoodReducer.VonNeumann, 1), 0, 80, Easing.linear, 80, OUTPUT_DIRECTORY, 'perez-flake-cyclic2-vonneumann', 10);
+animateFunction(makeAnimatedPerezFlakeCCA(250, 250, 12, [ 0, 1, 0, 1, 0, 0, 1 ], HexagonalNeighborhoodReducer.Moore, 1), 0, 50, Easing.linear, 50, OUTPUT_DIRECTORY, 'perez-flake-cyclic2-moore', 10);
+animateFunction(makeAnimatedPerezFlakeCCA(250, 250, 12, [ 0, 1, 0, 1, 0, 0, 1 ], HexagonalNeighborhoodReducer.Moore, 2), 0, 30, Easing.linear, 30, OUTPUT_DIRECTORY, 'perez-flake-cyclic2-moore-r=2', 10);
 animateFunction(makeAnimatedPerezFlakeCCA(250, 250, 12, [ 0, 1, 0, 1, 0, 0, 1 ], HexagonalNeighborhoodReducer.FullStar, 2), 0, 45, Easing.linear, 45, OUTPUT_DIRECTORY, 'perez-flake-cyclic2-fullstar-r=2', 10);

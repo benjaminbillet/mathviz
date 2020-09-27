@@ -38,3 +38,14 @@ export const drawFilledPolygon = (polygon: Polygon, color: Color, svgCanvas) => 
   const polygonString = polygon.reduce((str, z) => `${str}${Math.trunc(z.re)},${Math.trunc(z.im)} `, '').trim();
   svgCanvas.polygon(polygonString).fill(D3Color.rgb(...color.map(x => x *255)).formatHex());
 };
+
+export default {
+  drawFilledNgon, drawNgon,
+};
+
+export const getScaledRaster = (scale = 1) => {
+  return {
+    drawFilledNgon: (n: number, x0: number, y0: number, radius: number, color: Color, svgCanvas) => drawFilledNgon(n, x0, y0, radius * scale, color, svgCanvas),
+    drawNgon: (n: number, x0: number, y0: number, radius: number, stroke: number, color: Color, svgCanvas) => drawNgon(n, x0, y0, radius * scale, stroke * scale, color, svgCanvas),
+  }
+};

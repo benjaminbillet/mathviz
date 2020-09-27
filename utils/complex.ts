@@ -39,6 +39,15 @@ export const argument = (z: ComplexNumber): number => {
   return math.atan2(z.im, z.re);
 };
 
+export const negative = (z: ComplexNumber, out?: ComplexNumber): ComplexNumber => {
+  if (out == null) {
+    out = complex();
+  }
+  out.re = - z.re;
+  out.im = - z.im;
+  return out;
+};
+
 export const conjugate = (z: ComplexNumber, out?: ComplexNumber): ComplexNumber => {
   if (out == null) {
     out = complex();
@@ -269,6 +278,10 @@ export class ComplexNumber {
   conjugate(out?: ComplexNumber) {
     return conjugate(this, out);
   };
+
+  negative(out?: ComplexNumber) {
+    return negative(this, out);
+  }
 
   add(z: ComplexNumber | number, out?: ComplexNumber) {
     return add(this, z, out);
