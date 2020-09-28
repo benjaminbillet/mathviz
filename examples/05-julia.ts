@@ -52,7 +52,7 @@ const plotBitmapTrapJulia = async (bitmapPath: string, trapSize: number, c: Comp
   await plotFunction(`${OUTPUT_DIRECTORY}/julia-c=${c.re}+${c.im}i-d=${d}${suffix}-trap.png`, width, height, configuredJulia, domain);
 };
 
-plotJulia(complex(-0.761, 0.15), 2, 2, 100, JULIA_DOMAIN);
+/*plotJulia(complex(-0.761, 0.15), 2, 2, 100, JULIA_DOMAIN);
 plotJulia(complex(-0.761, 0.15), 2, 2, 200, zoomDomain(JULIA_DOMAIN, -0.5, 0.25, 128), '-zoom');
 plotJulia(complex(0.355, 0.355), 2, 2, 500, JULIA_DOMAIN);
 plotJulia(complex(0.355534, -0.337292), 2, 2, 1000, JULIA_DOMAIN);
@@ -63,11 +63,23 @@ plotContinuousJulia(complex(-0.761, 0.15), 2, 10, 200, zoomDomain(JULIA_DOMAIN, 
 plotContinuousJulia(complex(-0.584, 0.488), 3, 10, 100, JULIA_DOMAIN);
 
 plotAverageStripeJulia(complex(-0.761, 0.15), 2, 100, 1000, 10, JULIA_DOMAIN);
-plotAverageStripeJulia(complex(-0.761, 0.15), 2, 100, 1000, 10,  zoomDomain(JULIA_DOMAIN, -0.5, 0.25, 128), '-zoom');
+plotAverageStripeJulia(complex(-0.761, 0.15), 2, 100, 1000, 10, zoomDomain(JULIA_DOMAIN, -0.5, 0.25, 128), '-zoom');
 plotAverageStripeJulia(complex(0.355, 0.355), 2, 100, 1000, 10, zoomDomain(JULIA_DOMAIN, -0.13, 0.48, 4), '-zoom');
 // note: this one is very long to compute, because a lot of points are divergent
 plotAverageStripeJulia(complex(0.355534, -0.337292), 2, 100, 5000, 10, zoomDomain(JULIA_DOMAIN, 0.14, -0.46, 4), '-zoom');
 
 plotBitmapTrapJulia(TRAP_IMAGE, 0.5, complex(-0.761, 0.15), 2, 2, 100, JULIA_DOMAIN);
 plotBitmapTrapJulia(TRAP_IMAGE, 1, complex(-0.584, 0.488), 3, 2, 100, JULIA_DOMAIN);
+*/
 
+// Glynn fractal http://eldar.mathstat.uoguelph.ca/dashlock/ftax/Glynn.html
+plotContinuousJulia(complex(-0.2, 0), 1.5, 2, 100, JULIA_DOMAIN);
+plotContinuousJulia(complex(-0.2, 0), 1.5, 2, 100, zoomDomain(JULIA_DOMAIN, 0.24, -0.5, 10), '-zoom');
+plotContinuousJulia(complex(-0.2, 0), 1.5, 50, 250, zoomDomain(JULIA_DOMAIN, 0.33, -0.46, 60), '-zoom2');
+plotContinuousJulia(complex(-0.2, 0), 1.5, 2, 500, zoomDomain(JULIA_DOMAIN, 0.24, -0.5, 10), '-it=500-zoom');
+plotAverageStripeJulia(complex(-0.2, 0), 1.5, 100, 100, 10, zoomDomain(JULIA_DOMAIN, 0.24, -0.5, 10), '-it=100-zoom');
+plotAverageStripeJulia(complex(-0.2, 0), 1.5, 100, 150, 10, zoomDomain(JULIA_DOMAIN, 0.24, -0.5, 10), '-it=150-zoom');
+
+plotContinuousJulia(complex(-0.375, 0), 1.75, 2, 100, JULIA_DOMAIN); 
+plotContinuousJulia(complex(-0.375, 0), 1.75, 2, 100, zoomDomain(JULIA_DOMAIN, -0.1, -0.45, 7), '-zoom');
+plotAverageStripeJulia(complex(-0.375, 0), 1.75, 100, 100, 10, zoomDomain(JULIA_DOMAIN, -0.1, -0.45, 7), '-it=100-zoom');
