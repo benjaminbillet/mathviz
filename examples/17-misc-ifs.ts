@@ -7,12 +7,16 @@ import { BI_UNIT_DOMAIN } from '../utils/domain';
 import { makeDragon1, DRAGON1_DOMAIN, makeDragon2, makeDragon3, makeDragon4, DRAGON2_DOMAIN, DRAGON3_DOMAIN, DRAGON4_DOMAIN } from '../ifs/misc-dragon';
 import { TREE1_DOMAIN, TREE2_DOMAIN, TREE3_DOMAIN, TREE4_DOMAIN, makeTree1, makeTree2, makeTree3, makeTree4 } from '../ifs/misc-tree';
 import { VORTEX1_DOMAIN, VORTEX2_DOMAIN, VORTEX3_DOMAIN, makeVortex1, makeVortex2, makeVortex3 } from '../ifs/misc-vortex';
+import { CORAL1_DOMAIN, makeCoral1 } from '../ifs/coral';
+import { makeMapleLeaf, MAPLE_LEAF_DOMAIN } from '../ifs/maple-leaf';
+import { makeMauldinGasketIfs, MAULDIN_GASKET_DOMAIN } from '../ifs/mauldin-gasket';
+import { APOLLONY_DOMAIN, makeApollonyGasketIfs } from '../ifs/apollony';
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/ifs`;
 mkdirs(OUTPUT_DIRECTORY);
 
 // the number of points is high, it can take a lot of time to get a picture
-plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon1.png`, 2048, 2048, makeDragon1(), 10000, 10000, makeIdentity(), DRAGON1_DOMAIN);
+/*plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon1.png`, 2048, 2048, makeDragon1(), 10000, 10000, makeIdentity(), DRAGON1_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon2.png`, 2048, 2048, makeDragon2(), 10000, 10000, makeIdentity(), DRAGON2_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon3.png`, 2048, 2048, makeDragon3(), 10000, 10000, makeIdentity(), DRAGON3_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon4.png`, 2048, 2048, makeDragon4(), 10000, 10000, makeIdentity(), DRAGON4_DOMAIN);
@@ -40,3 +44,15 @@ plotIfs(`${OUTPUT_DIRECTORY}/misc-vortex3.png`, 2048, 2048, makeVortex3(), 10000
 plotIfs(`${OUTPUT_DIRECTORY}/misc-vortex3-mandelbrot3.png`, 2048, 2048, makeVortex3(), 10000, 10000, makeIteratedMandelbrotFunction(3, 5), VORTEX3_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/misc-vortex3-mandelbrot5.png`, 2048, 2048, makeVortex3(), 10000, 10000, makeIteratedMandelbrotFunction(5, 5), VORTEX3_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/misc-vortex3-mandelbrot6.png`, 2048, 2048, makeVortex3(), 10000, 10000, makeIteratedMandelbrotFunction(6, 5), VORTEX3_DOMAIN);
+
+
+plotIfs(`${OUTPUT_DIRECTORY}/misc-coral.png`, 2048, 2048, makeCoral1(), 10000, 10000, makeIdentity(), CORAL1_DOMAIN);
+
+
+plotIfs(`${OUTPUT_DIRECTORY}/misc-maple-leaf.png`, 2048, 2048, makeMapleLeaf(), 10000, 10000, makeIdentity(), MAPLE_LEAF_DOMAIN);
+
+
+plotIfs(`${OUTPUT_DIRECTORY}/misc-mauldin-gasket.png`, 2048, 2048, makeMauldinGasketIfs(), 10000, 10000, makeIdentity(), MAULDIN_GASKET_DOMAIN);*/
+
+
+plotIfs(`${OUTPUT_DIRECTORY}/misc-apollony-gasket.png`, 2048, 2048, makeApollonyGasketIfs(), 10000, 10000, makeIdentity(), APOLLONY_DOMAIN);

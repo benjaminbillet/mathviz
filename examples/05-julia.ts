@@ -9,6 +9,7 @@ import { zoomDomain } from '../utils/domain';
 import { MANDELBROT } from '../utils/palette';
 import { PlotDomain } from '../utils/types';
 
+// https://matousstieber.wordpress.com/2016/01/12/julia-set/
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/julia`;
 mkdirs(OUTPUT_DIRECTORY);
@@ -52,7 +53,7 @@ const plotBitmapTrapJulia = async (bitmapPath: string, trapSize: number, c: Comp
   await plotFunction(`${OUTPUT_DIRECTORY}/julia-c=${c.re}+${c.im}i-d=${d}${suffix}-trap.png`, width, height, configuredJulia, domain);
 };
 
-/*plotJulia(complex(-0.761, 0.15), 2, 2, 100, JULIA_DOMAIN);
+plotJulia(complex(-0.761, 0.15), 2, 2, 100, JULIA_DOMAIN);
 plotJulia(complex(-0.761, 0.15), 2, 2, 200, zoomDomain(JULIA_DOMAIN, -0.5, 0.25, 128), '-zoom');
 plotJulia(complex(0.355, 0.355), 2, 2, 500, JULIA_DOMAIN);
 plotJulia(complex(0.355534, -0.337292), 2, 2, 1000, JULIA_DOMAIN);
@@ -70,7 +71,6 @@ plotAverageStripeJulia(complex(0.355534, -0.337292), 2, 100, 5000, 10, zoomDomai
 
 plotBitmapTrapJulia(TRAP_IMAGE, 0.5, complex(-0.761, 0.15), 2, 2, 100, JULIA_DOMAIN);
 plotBitmapTrapJulia(TRAP_IMAGE, 1, complex(-0.584, 0.488), 3, 2, 100, JULIA_DOMAIN);
-*/
 
 // Glynn fractal http://eldar.mathstat.uoguelph.ca/dashlock/ftax/Glynn.html
 plotContinuousJulia(complex(-0.2, 0), 1.5, 2, 100, JULIA_DOMAIN);
