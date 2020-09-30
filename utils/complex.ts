@@ -31,7 +31,7 @@ export const squaredModulus = (z: ComplexNumber): number => {
   return z.re * z.re + z.im * z.im;
 };
 
-export const logModulus = (z: ComplexNumber): number => {
+export const lnModulus = (z: ComplexNumber): number => {
   return Math.log(z.re * z.re + z.im * z.im) * 0.5;
 };
 
@@ -127,7 +127,7 @@ export const powN = (z: ComplexNumber, n: number, out?: ComplexNumber): ComplexN
   }
   // (a+ib)^N=r^N(cos(Nθ)+isin(Nθ))
 
-  const rPowN = Math.exp(logModulus(z) * n); // optimized r^N
+  const rPowN = Math.exp(lnModulus(z) * n); // optimized r^N
   const nTheta = math.atan2(z.im, z.re) * n;
 
   out.re = rPowN * math.cos(nTheta);
@@ -139,7 +139,7 @@ export const pow = (z1: ComplexNumber, z2: ComplexNumber, out?: ComplexNumber): 
   if (out == null) {
     out = complex();
   }
-  const logr = logModulus(z1);
+  const logr = lnModulus(z1);
   const arg = math.atan2(z1.im, z1.re);
 
   const a = Math.exp(logr * z2.re - arg * z2.im);
@@ -150,16 +150,23 @@ export const pow = (z1: ComplexNumber, z2: ComplexNumber, out?: ComplexNumber): 
   return out;
 };
 
-export const log = (z: ComplexNumber, out?: ComplexNumber): ComplexNumber => {
+export const ln = (z: ComplexNumber, out?: ComplexNumber): ComplexNumber => {
   if (out == null) {
     out = complex();
   }
-  const logr = logModulus(z);
+  const logr = lnModulus(z);
   const arg = math.atan2(z.im, z.re);
 
   out.re = logr;
   out.im = arg;
   return out;
+};
+
+export const logb = (z: ComplexNumber, base: number, out?: ComplexNumber): ComplexNumber => {
+  if (out == null) {
+    out = complex();
+  }
+  return ln(z, out).div(Math.log(base), out);
 };
 
 export const reciprocal = (z: ComplexNumber, out?: ComplexNumber): ComplexNumber => {
@@ -267,8 +274,8 @@ export class ComplexNumber {
     return squaredModulus(this);
   };
 
-  logModulus() {
-    return logModulus(this);
+  lnModulus() {
+    return lnModulus(this);
   };
 
   argument() {
@@ -307,8 +314,8 @@ export class ComplexNumber {
     return pow(this, z, out);
   };
 
-  log(out?: ComplexNumber) {
-    return log(this, out);
+  ln(out?: ComplexNumber) {
+    return ln(this, out);
   };
 
   reciprocal(out?: ComplexNumber) {

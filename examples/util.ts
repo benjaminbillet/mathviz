@@ -1,3 +1,4 @@
+import * as D3Color from 'd3-color';
 import { simpleWalkChaosPlot } from '../ifs/chaos-game';
 import { plotFlame, plotFlameWithColorStealing, makeMixedColorSteal, iterateFlamePoint } from '../ifs/fractal-flame';
 import { makeIdentityFunction } from '../transform';
@@ -17,6 +18,8 @@ import { plot2dAutomaton } from '../automata/cellular/2d-automaton';
 import { drawFilledNgon } from '../utils/raster';
 import { makeDihedralSymmetry } from '../utils/symmetry';
 import { Attractor, CellularAutomataGrid, Color, ColorMapFunction, ColorSteal, ComplexPlotter, ComplexToColorFunction, ComplexToComplexFunction, Ifs, IterableComplexFunction, IterableRealFunction, NextCellStateFunction, NoiseFunction2D, Optional, PixelPlotter, PlotBuffer, PlotDomain, Polygon, Transform2D, VectorFieldFunction, VectorFieldTimeFunction, Wrapper } from '../utils/types';
+import { makeInvertCollageHorizontal } from '../symmetry/color-reversing-wallpaper-group';
+import { blendAverage, blendDarken, blendLighten } from '../utils/blend';
 
 export const plotFunctionBuffer = (width: number, height: number, f: ComplexToColorFunction, domain = BI_UNIT_DOMAIN, colorfunc?: ColorMapFunction, normalize = true): PlotBuffer => {
   const buffer = new Float32Array(width * height * 4);
@@ -601,17 +604,14 @@ export const plotSymmetrical2dHexCA = async (
   return grid;
 };
 
-export const plotDomainColoring = async (
+export const plotDomainColoring2 = async (
   path: string,
-  bitmapPath: string,
+  bitmap: PlotBuffer,
+  width: number,
+  height: number,
   f: ComplexToComplexFunction,
   domain: PlotDomain = BI_UNIT_DOMAIN
 ) => {
-  const picture = await readImage(bitmapPath);
-  const width = picture.width;
-  const height = picture.height;
-  const bitmap = picture.buffer;
-
   const image = createImage(width, height, 0, 0, 0, 255);
   const buffer = image.getImage().data;
 
@@ -645,4 +645,46 @@ export const plotDomainColoring = async (
   }
 
   await saveImage(image, path);
+};
+
+export const plotDomainColoring = async (
+  path: string,
+  bitmapPath: string,
+  f: ComplexToComplexFunction,
+  domain: PlotDomain = BI_UNIT_DOMAIN
+) => {
+  const picture = await readImage(bitmapPath);
+  const width = picture.width;
+  const height = picture.height;
+  const bitmap = picture.buffer;
+
+  await plotDomainColoring2(path, bitmap, width, height, f, domain);
+};
+
+export const plotDomainReverseColoring = async (
+  path: string,
+  bitmapPath: string,
+  f: ComplexToComplexFunction,
+  domain: PlotDomain = BI_UNIT_DOMAIN,
+  stripe = true,
+) => {
+  const picture = await readImage(bitmapPath, 255);
+  const width = picture.width;
+  const height = picture.height;
+  const bitmap = picture.buffer;
+
+  const newBitmap = makeInvertCollageHorizontal(bitmap, width, height, stripe);
+  await plotDomainColoring2(path, convertUnitToRGBA(newBitmap), width, height, f, domain);
+};
+
+export const plotDomainReverseColoring2 = async (
+  path: string,
+  bitmap: PlotBuffer,
+  width: number,
+  height: number,
+  f: ComplexToComplexFunction,
+  domain: PlotDomain = BI_UNIT_DOMAIN
+) => {
+  const newBitmap = makeInvertCollageHorizontal(bitmap.map(x => x / 255), width, height);
+  await plotDomainColoring2(path, convertUnitToRGBA(newBitmap), width, height, f, domain);
 };
