@@ -197,7 +197,7 @@ export const div = (z1: ComplexNumber, z2: ComplexNumber | number, out?: Complex
 
   const inverseSquaredModulus = 1 / squaredModulus(z2);
   out.re = inverseSquaredModulus * (r1 * r2 + i1 * i2);
-  out.im = inverseSquaredModulus * (r1 * i2 - i1 * r2);
+  out.im = inverseSquaredModulus * (i1 * r2 - r1 * i2);
   return out;
 };
 
@@ -233,6 +233,28 @@ export const cos = (z: ComplexNumber, out?: ComplexNumber): ComplexNumber => {
   const im = z.im;
   out.re = Math.cos(re) * Math.cosh(im);
   out.im = Math.sin(re) * Math.sinh(im);
+  return out;
+};
+
+export const cosh = (z: ComplexNumber, out?: ComplexNumber): ComplexNumber => {
+  if (out == null) {
+    out = complex();
+  }
+  const re = z.re;
+  const im = z.im;
+  out.re = Math.cosh(re) * Math.cos(im);
+  out.im = Math.sinh(re) * Math.sin(im);
+  return out;
+};
+
+export const sinh = (z: ComplexNumber, out?: ComplexNumber): ComplexNumber => {
+  if (out == null) {
+    out = complex();
+  }
+  const re = z.re;
+  const im = z.im;
+  out.re = Math.sinh(re) * Math.cos(im);
+  out.im = Math.cosh(re) * Math.sin(im);
   return out;
 };
 
@@ -337,6 +359,14 @@ export class ComplexNumber {
   cos(out?: ComplexNumber) {
     return cos(this, out);
   };
+
+  sinh(out?: ComplexNumber) {
+    return sinh(this, out);
+  };
+  
+  cosh(out?: ComplexNumber) {
+    return cosh(this, out);
+  };
   
   equals(z: ComplexNumber) {
     return equals(this, z);
@@ -344,5 +374,9 @@ export class ComplexNumber {
 
   normalize(out?: ComplexNumber) {
     return normalize(this, out);
+  }
+
+  toString() {
+    return `${this.re}+${this.im}i`
   }
 };
