@@ -1,8 +1,8 @@
 import { makeIfs } from './build';
 import * as affine from '../utils/affine';
 
-export const MCCORTER_PENTIGREE_DOMAIN = { xmin: -0.2, xmax: 1.2, ymin: -0.4, ymax: 1 };
-export const makeMcCorterPentigree = () => {
+export const MCWORTER_PENTIGREE_DOMAIN = { xmin: -0.2, xmax: 1.2, ymin: -0.4, ymax: 1 };
+export const makeMcWorterPentigree = () => {
   const r = (3 - Math.sqrt(5)) / 2;
   const rotation1 = 0.628319; // 36 degrees
   const rotation2 = 1.88496; // 108 degrees
@@ -39,8 +39,8 @@ export const makeMcCorterPentigree = () => {
   return makeIfs([ f1, f2, f3, f4, f5, f6 ], [ 1/6, 1/6, 1/6, 1/6, 1/6, 1/6 ]);
 };
 
-export const MCCORTER_PENTIGREE_2NDFORM_DOMAIN = { xmin: -1.2, xmax: 1.2, ymin: -1.2, ymax: 1.2 };
-export const makeMcCorterPentigree2ndForm = () => {
+export const MCWORTER_PENTIGREE_2NDFORM_DOMAIN = { xmin: -1.2, xmax: 1.2, ymin: -1.2, ymax: 1.2 };
+export const makeMcWorterPentigree2ndForm = () => {
   const r = (3 - Math.sqrt(5)) / 2;
   const rotation = 0.628319; // 36 degrees
 

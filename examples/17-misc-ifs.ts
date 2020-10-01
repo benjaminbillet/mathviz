@@ -12,11 +12,13 @@ import { makeMapleLeaf, MAPLE_LEAF_DOMAIN } from '../ifs/maple-leaf';
 import { makeMauldinGasketIfs, MAULDIN_GASKET_DOMAIN } from '../ifs/mauldin-gasket';
 import { APOLLONY_DOMAIN, makeApollonyGasketIfs } from '../ifs/apollony';
 import { makeSierpinskiCarpet, makeSierpinskiNGon, makeSierpinskiPedalTriangle, makeSierpinskiPentagon, makeSierpinskiTriangle, SIERPINSKI_CARPET_DOMAIN, SIERPINSKI_NGON_DOMAIN, SIERPINSKI_PEDAL_TRIANGLE_DOMAIN, SIERPINSKI_PENTAGON_DOMAIN, SIERPINSKI_TRIANGLE_DOMAIN } from '../ifs/sierpinski';
+import { makeMcWorterPentigree, makeMcWorterPentigree2ndForm, makePentadentrite2ndForm, MCWORTER_PENTIGREE_DOMAIN, MCWORTER_PENTIGREE_2NDFORM_DOMAIN, PENTADENDRITE_2NDFORM_DOMAIN } from '../ifs/mcworter-pentigree';
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/ifs`;
 mkdirs(OUTPUT_DIRECTORY);
 
 // the number of points is high, it can take a lot of time to get a picture
+
 plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon1.png`, 2048, 2048, makeDragon1(), 10000, 10000, makeIdentity(), DRAGON1_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon2.png`, 2048, 2048, makeDragon2(), 10000, 10000, makeIdentity(), DRAGON2_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon3.png`, 2048, 2048, makeDragon3(), 10000, 10000, makeIdentity(), DRAGON3_DOMAIN);
@@ -65,3 +67,8 @@ plotIfs(`${OUTPUT_DIRECTORY}/sierpinski-pedal.png`, 2048, 2048, makeSierpinskiPe
 plotIfs(`${OUTPUT_DIRECTORY}/sierpinski-pentagon.png`, 2048, 2048, makeSierpinskiPentagon(), 10000, 10000, makeIdentity(), SIERPINSKI_PENTAGON_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/sierpinski-6gon.png`, 2048, 2048, makeSierpinskiNGon(6), 10000, 10000, makeIdentity(), SIERPINSKI_NGON_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/sierpinski-7gon.png`, 2048, 2048, makeSierpinskiNGon(7), 10000, 10000, makeIdentity(), SIERPINSKI_NGON_DOMAIN);
+
+
+plotIfs(`${OUTPUT_DIRECTORY}/misc-mcworter-pentigree.png`, 2048, 2048, makeMcWorterPentigree(), 10000, 10000, makeIdentity(), MCWORTER_PENTIGREE_DOMAIN);
+plotIfs(`${OUTPUT_DIRECTORY}/misc-mcworter-pentigree-2nd-form.png`, 2048, 2048, makeMcWorterPentigree2ndForm(), 10000, 10000, makeIdentity(), MCWORTER_PENTIGREE_2NDFORM_DOMAIN);
+plotIfs(`${OUTPUT_DIRECTORY}/misc-pentadendrite.png`, 2048, 2048, makePentadentrite2ndForm(), 10000, 10000, makeIdentity(), PENTADENDRITE_2NDFORM_DOMAIN);
