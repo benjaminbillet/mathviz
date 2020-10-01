@@ -1,4 +1,4 @@
-import { RealToRealFunction } from "./types";
+import { RealToRealFunction } from './types';
 
 export const makeLanczos = (a: number): RealToRealFunction => {
   return (x) => {

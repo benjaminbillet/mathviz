@@ -1,5 +1,5 @@
-import { Matrix } from "mathjs";
-import { ComplexNumber } from "./complex";
+import { Matrix } from 'mathjs';
+import { ComplexNumber } from './complex';
 
 export type RealToRealFunction = (x: number) => number;
 export type BiRealToRealFunction = (x: number, y: number) => number;

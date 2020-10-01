@@ -11,12 +11,13 @@ import { CORAL1_DOMAIN, makeCoral1 } from '../ifs/coral';
 import { makeMapleLeaf, MAPLE_LEAF_DOMAIN } from '../ifs/maple-leaf';
 import { makeMauldinGasketIfs, MAULDIN_GASKET_DOMAIN } from '../ifs/mauldin-gasket';
 import { APOLLONY_DOMAIN, makeApollonyGasketIfs } from '../ifs/apollony';
+import { makeSierpinskiCarpet, makeSierpinskiNGon, makeSierpinskiPedalTriangle, makeSierpinskiPentagon, makeSierpinskiTriangle, SIERPINSKI_CARPET_DOMAIN, SIERPINSKI_NGON_DOMAIN, SIERPINSKI_PEDAL_TRIANGLE_DOMAIN, SIERPINSKI_PENTAGON_DOMAIN, SIERPINSKI_TRIANGLE_DOMAIN } from '../ifs/sierpinski';
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/ifs`;
 mkdirs(OUTPUT_DIRECTORY);
 
 // the number of points is high, it can take a lot of time to get a picture
-/*plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon1.png`, 2048, 2048, makeDragon1(), 10000, 10000, makeIdentity(), DRAGON1_DOMAIN);
+plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon1.png`, 2048, 2048, makeDragon1(), 10000, 10000, makeIdentity(), DRAGON1_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon2.png`, 2048, 2048, makeDragon2(), 10000, 10000, makeIdentity(), DRAGON2_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon3.png`, 2048, 2048, makeDragon3(), 10000, 10000, makeIdentity(), DRAGON3_DOMAIN);
 plotIfs(`${OUTPUT_DIRECTORY}/misc-dragon4.png`, 2048, 2048, makeDragon4(), 10000, 10000, makeIdentity(), DRAGON4_DOMAIN);
@@ -52,7 +53,15 @@ plotIfs(`${OUTPUT_DIRECTORY}/misc-coral.png`, 2048, 2048, makeCoral1(), 10000, 1
 plotIfs(`${OUTPUT_DIRECTORY}/misc-maple-leaf.png`, 2048, 2048, makeMapleLeaf(), 10000, 10000, makeIdentity(), MAPLE_LEAF_DOMAIN);
 
 
-plotIfs(`${OUTPUT_DIRECTORY}/misc-mauldin-gasket.png`, 2048, 2048, makeMauldinGasketIfs(), 10000, 10000, makeIdentity(), MAULDIN_GASKET_DOMAIN);*/
+plotIfs(`${OUTPUT_DIRECTORY}/misc-mauldin-gasket.png`, 2048, 2048, makeMauldinGasketIfs(), 10000, 10000, makeIdentity(), MAULDIN_GASKET_DOMAIN);
 
 
 plotIfs(`${OUTPUT_DIRECTORY}/misc-apollony-gasket.png`, 2048, 2048, makeApollonyGasketIfs(), 10000, 10000, makeIdentity(), APOLLONY_DOMAIN);
+
+
+plotIfs(`${OUTPUT_DIRECTORY}/sierpinski-triangle.png`, 2048, 2048, makeSierpinskiTriangle(), 10000, 10000, makeIdentity(), SIERPINSKI_TRIANGLE_DOMAIN);
+plotIfs(`${OUTPUT_DIRECTORY}/sierpinski-carpet.png`, 2048, 2048, makeSierpinskiCarpet(), 10000, 10000, makeIdentity(), SIERPINSKI_CARPET_DOMAIN);
+plotIfs(`${OUTPUT_DIRECTORY}/sierpinski-pedal.png`, 2048, 2048, makeSierpinskiPedalTriangle(), 10000, 10000, makeIdentity(), SIERPINSKI_PEDAL_TRIANGLE_DOMAIN);
+plotIfs(`${OUTPUT_DIRECTORY}/sierpinski-pentagon.png`, 2048, 2048, makeSierpinskiPentagon(), 10000, 10000, makeIdentity(), SIERPINSKI_PENTAGON_DOMAIN);
+plotIfs(`${OUTPUT_DIRECTORY}/sierpinski-6gon.png`, 2048, 2048, makeSierpinskiNGon(6), 10000, 10000, makeIdentity(), SIERPINSKI_NGON_DOMAIN);
+plotIfs(`${OUTPUT_DIRECTORY}/sierpinski-7gon.png`, 2048, 2048, makeSierpinskiNGon(7), 10000, 10000, makeIdentity(), SIERPINSKI_NGON_DOMAIN);

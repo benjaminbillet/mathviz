@@ -1,6 +1,6 @@
 // http://www.gizma.com/easing
 
-import { EasingFunction } from "./types";
+import { EasingFunction } from './types';
 
 export const linear: EasingFunction = x => x;
 

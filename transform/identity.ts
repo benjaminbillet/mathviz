@@ -1,4 +1,4 @@
-import { Transform2D } from "../utils/types";
+import { Transform2D } from '../utils/types';
 
 export const makeIdentityFunction = (): Transform2D => {
   return (z) => z;

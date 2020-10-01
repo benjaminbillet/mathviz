@@ -1,4 +1,4 @@
-import { NeighborReducer, NextCellStateFunction } from "../../utils/types";
+import { NeighborReducer, NextCellStateFunction } from '../../utils/types';
 
 export const makeCyclicNextState = (maxState: number, range: number, threshold: number, neighborReduceFunc: NeighborReducer): NextCellStateFunction => {
   return (stateGrid, gridWidth, gridHeight, currentState, x, y) => {

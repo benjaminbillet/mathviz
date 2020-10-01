@@ -1,4 +1,4 @@
-import { PlotBuffer, ColorHistogram, SingleChannelHistogram } from "./types";
+import { PlotBuffer, ColorHistogram, SingleChannelHistogram } from './types';
 
 export const makeHistogram = (input: PlotBuffer, width: number, height: number, nbBins = 256) => {
   const nbPixels = width * height;

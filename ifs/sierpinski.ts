@@ -1,5 +1,6 @@
 import { makeIfs } from './build';
 import * as affine from '../utils/affine';
+import { Optional } from '../utils/types';
 
 export const SIERPINSKI_TRIANGLE_DOMAIN = { xmin: 0, xmax: 1, ymin: 0, ymax: 1 };
 export const makeSierpinskiTriangle = () => {
@@ -56,20 +57,17 @@ export const makeSierpinskiPedalTriangle = (angleA = 1.135, angleB = 0.872, angl
   const cosC = Math.cos(angleC);
   const sinC = Math.sin(angleC);
 
-  console.log(cosB * cosB, cosB * Math.sin(angleB), cosB * Math.sin(angleB), -cosB * cosB);
   const f1 = affine.makeAffine2dFromMatrix(affine.combine(
     affine.reverseRotate(angleB),
     affine.reflect(false, true),
     affine.scale(cosB, cosB),
   ));
-  console.log(cosC * cosC, -cosC * Math.sin(angleC), Math.sin(angleC) * Math.sin(angleC), -cosC * Math.sin(angleC), -cosC * cosC, cosC * Math.sin(angleC));
   const f2 = affine.makeAffine2dFromMatrix(affine.combine(
     affine.translate(sinC * sinC, cosC * sinC),
     affine.reverseRotate(-angleC),
     affine.reflect(false, true),
     affine.scale(cosC, cosC),
   ));
-  console.log(cosB * cosB, cosB * Math.sin(angleB), cosB * Math.sin(angleB), -cosB * cosB);
   const f3 = affine.makeAffine2dFromMatrix(affine.combine(
     affine.translate(sinC * sinC, cosC * sinC),
     affine.reverseRotate(angleB - angleC),
@@ -106,7 +104,7 @@ export const makeSierpinskiPentagon = () => {
 };
 
 export const SIERPINSKI_NGON_DOMAIN = { xmin: -1, xmax: 1, ymin: -1, ymax: 1 };
-export const makeSierpinskiNGon = (n, s = null) => {
+export const makeSierpinskiNGon = (n: number, s?: Optional<number>) => {
   const k = Math.trunc(n / 4);
   if (s == null) {
     s = 0;
