@@ -8,10 +8,13 @@ import { makeStateStyles } from '../automata/cellular/state-styles';
 import { ICE, getBigQualitativePalette, expandPalette, BLUE_MOON, BOAT, SKY, PURPLE_MAGIC } from '../utils/palette';
 import { shuffleArray } from '../utils/misc';
 import { CellularAutomataGrid, Color, ComplexPlotter, NextCellStateFunction, Optional, PixelPlotter } from '../utils/types';
+import { setRandomSeed } from '../utils/random';
 
 
 const OUTPUT_DIRECTORY = `${__dirname}/../output/cellular`;
 mkdirs(OUTPUT_DIRECTORY);
+
+setRandomSeed(100);
 
 const plot2dHexCA = async (
   path: string,

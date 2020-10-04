@@ -26,8 +26,8 @@ const buildAndPlotCyclicCA = async (path: string, width: number, height: number,
 };
 
 // the number of points is high, it can take a lot of time to get a picture
-/*buildAndPlotCyclicCA(`${OUTPUT_DIRECTORY}/cyclic-r=1-t=3-s=3-moore.png`, 1024, 1024, 1, 3, 3, NeighborhoodReducer.Moore, 1000);
+buildAndPlotCyclicCA(`${OUTPUT_DIRECTORY}/cyclic-r=1-t=3-s=3-moore.png`, 1024, 1024, 1, 3, 3, NeighborhoodReducer.Moore, 1000);
 buildAndPlotCyclicCA(`${OUTPUT_DIRECTORY}/cyclic-r=1-t=3-s=4-moore.png`, 1024, 1024, 1, 3, 4, NeighborhoodReducer.Moore, 5000);
 buildAndPlotCyclicCA(`${OUTPUT_DIRECTORY}/cyclic-r=1-t=1-s=14-vonneumann.png`, 1024, 1024, 1, 1, 14, NeighborhoodReducer.VonNeumann, 300);
-buildAndPlotCyclicCA(`${OUTPUT_DIRECTORY}/cyclic-r=2-t=4-s=5-moore.png`, 1024, 1024, 2, 4, 5, NeighborhoodReducer.Moore, 1000);*/
+buildAndPlotCyclicCA(`${OUTPUT_DIRECTORY}/cyclic-r=2-t=4-s=5-moore.png`, 1024, 1024, 2, 4, 5, NeighborhoodReducer.Moore, 1000);
 buildAndPlotCyclicCA(`${OUTPUT_DIRECTORY}/cyclic-r=5-t=15-s=6-moore.png`, 1024, 1024, 5, 15, 6, NeighborhoodReducer.Moore, 100);

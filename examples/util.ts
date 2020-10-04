@@ -17,7 +17,7 @@ import { plotVectorField, DefaultGridShuffle } from '../misc/vector-field';
 import { plot2dAutomaton } from '../automata/cellular/2d-automaton';
 import { drawFilledNgon } from '../utils/raster';
 import { makeDihedralSymmetry } from '../utils/symmetry';
-import { Attractor, CellularAutomataGrid, Color, ColorMapFunction, ColorSteal, ComplexPlotter, ComplexToColorFunction, ComplexToComplexFunction, Ifs, IterableComplexFunction, IterableRealFunction, NextCellStateFunction, NoiseFunction2D, Optional, PixelPlotter, PlotBuffer, PlotDomain, Polygon, Transform2D, VectorFieldFunction, VectorFieldTimeFunction, Wrapper } from '../utils/types';
+import { Attractor, CellularAutomataGrid, Color, ColorMapFunction, ColorSteal, ComplexPlotter, ComplexToColorFunction, ComplexToComplexFunction, Ifs, IterableComplexFunction, IterableRealFunction, NextCellStateFunction, NoiseFunction2D, Optional, PixelPlotter, PlotBuffer, PlotDomain, Polygon, ReactDiffuseFunction, Transform2D, VectorFieldFunction, VectorFieldTimeFunction, Wrapper } from '../utils/types';
 import { makeInvertCollageHorizontal } from '../symmetry/color-reversing-wallpaper-group';
 import { blendAverage, blendDarken, blendLighten } from '../utils/blend';
 
