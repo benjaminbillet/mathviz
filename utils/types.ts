@@ -123,6 +123,9 @@ export type NeighborReduceFunction = (result: number, state: number, x: number, 
 export type NeighborIterator = (grid: CellularAutomataGrid, width: number, height: number, centerX: number, centerY: number, range: number, func: NeighborForEachFunction) => void;
 export type NeighborReducer = (grid: CellularAutomataGrid, width: number, height: number, centerX: number, centerY: number, range: number, func: NeighborReduceFunction, initialValue: number) => number;
 
+export type ReactionDiffusionGrid<S> = S[];
+export type ReactDiffuseFunction<S> = (stateGrid: ReactionDiffusionGrid<S>, gridWidth: number, gridHeight: number, currentState: S, x: number, y: number) => S;
+
 export type AnimationAccumulator = {
   accumulate: (frame: PlotBuffer) => Promise<void>,
   finish: () => Promise<void>,
