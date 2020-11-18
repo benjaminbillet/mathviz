@@ -1,81 +1,101 @@
 import { mapDomainToPixel } from './picture';
 import { BI_UNIT_DOMAIN } from './domain';
-import { complex } from './complex';
-import { Affine2D, ComplexPlotter, PixelPlotter, PlotBuffer, PlotDomain } from './types';
+import { Affine2D, BiRealToRealFunction, ComplexPlotter, PixelPlotter } from './types';
+import { alphaBlendingFunction } from './blend';
 
-export const makePixelToComplexPlotter = (plotter: ComplexPlotter): PixelPlotter => {
-  const z = complex();
-  return (x, y, color, ...args) => {
-    z.re = x;
-    z.im = y;
-    return plotter(z, color, ...args);
-  };
-};
+// TODO create a kind of generic plotter instead of a lot of specific ones? Would the impact on performance be very bad?
 
-export const makeBufferPlotter = (buffer: PlotBuffer, width: number, height: number, domain = BI_UNIT_DOMAIN): ComplexPlotter => {
-  return (z, color) => {
-    const mapped = mapDomainToPixel(z.re, z.im, domain, width, height);
-    const [ fx, fy ] = mapped;
-    if (fx < 0 || fy < 0 || fx >= width || fy >= height) {
-      return null;
+export const makePlotter = (buffer: Float32Array, width: number, height: number): PixelPlotter => {
+  return (x, y, color) => {
+    if (x < 0 || y < 0 || x >= width || y >= height) {
+      return false;
     }
+    x = Math.trunc(x);
+    y = Math.trunc(y);
 
-    const idx = (fx + fy * width) * 4;
+    const idx = (x + y * width) * 4;
     buffer[idx + 0] = color[0];
     buffer[idx + 1] = color[1];
     buffer[idx + 2] = color[2];
-
-    // the alpha channel is hacked to store how many times the pixel was drawn
-    buffer[idx + 3] += 1;
-    return mapped;
+    buffer[idx + 3] = color[3];
+    return true;
   };
 };
 
-export const makeUnmappedBufferPlotter = (buffer: PlotBuffer, width: number, height: number): ComplexPlotter => {
-  return (z, color) => {
-    const idx = (z.re + z.im * width) * 4;
-    buffer[idx + 0] = color[0];
-    buffer[idx + 1] = color[1];
-    buffer[idx + 2] = color[2];
-
-    // the alpha channel is hacked to store how many times the pixel was drawn
-    buffer[idx + 3] += 1;
-    return z;
-  };
-};
-
-
-export const makeAdditiveBufferPlotter = (buffer: PlotBuffer, width: number, height: number, domain: PlotDomain): ComplexPlotter => {
-  return (z, color) => {
-    const mapped = mapDomainToPixel(z.re, z.im, domain, width, height);
-    const [ fx, fy ] = mapped;
-    if (fx < 0 || fy < 0 || fx >= width || fy >= height) {
-      return null;
+export const makeAlphaBlendingPlotter = (buffer: Float32Array, width: number, height: number): PixelPlotter => {
+  const inputColorBuffer = new Float32Array(4).fill(0);
+  const outputColorBuffer = new Float32Array(4).fill(0);
+  return (x, y, color) => {
+    if (x < 0 || y < 0 || x >= width || y >= height) {
+      return false;
     }
+    x = Math.trunc(x);
+    y = Math.trunc(y);
 
-    const idx = (fx + fy * width) * 4;
+    const idx = (x + y * width) * 4;
+   
+    inputColorBuffer[0] = buffer[idx + 0];
+    inputColorBuffer[1] = buffer[idx + 1];
+    inputColorBuffer[2] = buffer[idx + 2];
+    inputColorBuffer[3] = buffer[idx + 3];
 
-    // the color is added to the current color; be careful, it means that you
-    // will need some postprocessing in order to get the actual colors
-    buffer[idx + 0] += color[0];
-    buffer[idx + 1] += color[1];
-    buffer[idx + 2] += color[2];
+    alphaBlendingFunction(color, inputColorBuffer, outputColorBuffer);
 
-    // the alpha channel is hacked to store how many times the pixel was drawn
-    buffer[idx + 3] += 1;
-    return mapped;
+    buffer[idx + 0] = outputColorBuffer[0];
+    buffer[idx + 1] = outputColorBuffer[1];
+    buffer[idx + 2] = outputColorBuffer[2];
+    buffer[idx + 3] = outputColorBuffer[3];
+
+    return true;
   };
 };
 
-export const makeMultiPlotter = (plotter: ComplexPlotter, transforms: Affine2D[]): ComplexPlotter => {
+
+export const makeZPlotter = (buffer: Float32Array, width: number, height: number): ComplexPlotter => {
+  const plotter = makePlotter(buffer, width, height);
+  return (z, color) => plotter(z.re, z.im, color);
+};
+
+export const makeMappedPlotter = (buffer: Float32Array, width: number, height: number, domain = BI_UNIT_DOMAIN): PixelPlotter => {
+  const plotter = makePlotter(buffer, width, height);
+  return (x, y, color) => {
+    const [ fx, fy ] = mapDomainToPixel(x, y, domain, width, height);
+    return plotter(fx, fy, color);
+  };
+};
+
+export const makeMappedZPlotter = (buffer: Float32Array, width: number, height: number, domain = BI_UNIT_DOMAIN): ComplexPlotter => {
+  const plotter = makeMappedPlotter(buffer, width, height, domain);
+  return (z, color) => plotter(z.re, z.im, color);
+};
+
+export const makeBlendPlotter = (buffer: Float32Array, width: number, height: number, blendFunc: BiRealToRealFunction): PixelPlotter => {
+  return (x, y, color) => {
+    if (x < 0 || y < 0 || x >= width || y >= height) {
+      return false;
+    }
+    x = Math.trunc(x);
+    y = Math.trunc(y);
+
+    const idx = (x + y * width) * 4;
+    buffer[idx + 0] = blendFunc(buffer[idx + 0], color[0]);
+    buffer[idx + 1] = blendFunc(buffer[idx + 1], color[1]);
+    buffer[idx + 2] = blendFunc(buffer[idx + 2], color[2]);
+    buffer[idx + 3] = color[3];
+    return true;
+  };
+};
+
+export const makeMultiZPlotter = (plotter: ComplexPlotter, transforms: Affine2D[]): ComplexPlotter => {
   return (z, color) => {
     // plot regular
-    const mapped = plotter(z, color);
+    let drawn = plotter(z, color);
+
     // transformed plot
     transforms.forEach((f) => {
       const fz = f(z);
-      plotter(fz, color);
+      drawn = drawn || plotter(fz, color);
     });
-    return mapped;
+    return drawn;
   };
 };

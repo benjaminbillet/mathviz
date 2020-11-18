@@ -1,5 +1,5 @@
 import { complex, ComplexNumber } from './complex';
-import { makePolygon, withinPolygon } from './polygon';
+import { makeBoundingBox, makePolygon, withinPolygon } from './polygon';
 import { Color, PixelPlotter, PlotBuffer, Polygon } from './types';
 
 export const drawFilledCircle = (x0: number, y0: number, radius: number, color: Color, plot: PixelPlotter) => {
@@ -10,7 +10,19 @@ export const drawFilledCircle = (x0: number, y0: number, radius: number, color: 
       const nx = x - x0;
       const ny = y - y0;
       if (nx * nx + ny * ny < limit) {
-        plot(x, y, color, color[3] != null ? color[3] : 1);
+        plot(x, y, color);
+      }
+    }
+  }
+};
+
+export const drawFilledEllipse = (x0: number, y0: number, a: number, b: number, color: Color, plot: PixelPlotter) => {
+  for (let x = x0 - a; x <= x0 + a; x++) {
+    for (let y = y0 - b; y <= y0 + b; y++) {
+      const nx = (x - x0) / a;
+      const ny = (y - y0) / b;
+      if (nx * nx + ny * ny < 1) {
+        plot(x, y, color);
       }
     }
   }
@@ -19,7 +31,7 @@ export const drawFilledCircle = (x0: number, y0: number, radius: number, color: 
 export const drawFilledRectangle = (x0: number, y0: number, width: number, height: number, color: Color, plot: PixelPlotter) => {
   for (let x = x0; x <= x0 + width; x++) {
     for (let y = y0; y <= y0 + height; y++) {
-      plot(x, y, color, color[3] != null ? color[3] : 1);
+      plot(x, y, color);
     }
   }
 };
@@ -27,7 +39,7 @@ export const drawFilledRectangle = (x0: number, y0: number, width: number, heigh
 export const drawFilledSquare = (x0: number, y0: number, width: number, color: Color, plot: PixelPlotter) => {
   for (let x = x0; x <= x0 + width; x++) {
     for (let y = y0; y <= y0 + width; y++) {
-      plot(x, y, color, color[3] != null ? color[3] : 1);
+      plot(x, y, color);
     }
   }
 };
@@ -37,16 +49,25 @@ export const drawFilledNgon = (n: number, x0: number, y0: number, radius: number
   for (let x = x0 - radius; x <= x0 + radius; x++) {
     for (let y = y0 - radius; y <= y0 + radius; y++) {
       if (withinPolygon(complex(x, y), polygon)) {
-        plot(x, y, color, color[3] != null ? color[3] : 1);
+        plot(x, y, color);
       }
     }
   }
 };
 
-export const drawNgon = (n: number, x0: number, y0: number, radius: number, stroke: number, color: Color, plot: PixelPlotter) => {
-  for (let i = 0; i < stroke; i++) {
-    const polygon = makePolygon(n, x0, y0, radius - i);
-    drawPolygon(polygon, color, plot);
+export const drawNgon = (n: number, x0: number, y0: number, radius: number, color: Color, plot: PixelPlotter) => {
+  const polygon = makePolygon(n, x0, y0, radius);
+  drawPolygon(polygon, color, plot);
+};
+
+export const drawFilledPolygon = (polygon: Polygon, color: Color, plot: PixelPlotter) => {
+  const boundingBox = makeBoundingBox(polygon);
+  for (let x = boundingBox.xmin; x <= boundingBox.xmax; x++) {
+    for (let y = boundingBox.ymin; y <= boundingBox.ymax; y++) {
+      if (withinPolygon(complex(x, y), polygon)) {
+        plot(x, y, color);
+      }
+    }
   }
 };
 
