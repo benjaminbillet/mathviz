@@ -1,7 +1,9 @@
 import { complex, ComplexNumber } from '../utils/complex';
 import { randomComplex, randomInteger } from './random';
 import { euclidean2d, euclideanSquared2d } from './distance';
-import { Box, Circle, Polygon } from './types';
+import { Box, Circle, ComplexToRealFunction, Optional, Polygon } from './types';
+import { det2 } from './vector';
+import { CENTROID, integrateTriangle, STRANG9 } from './triangle-integration';
 
 
 /*
@@ -233,4 +235,55 @@ export const getRandomPointInPolygon = (polygon: Polygon, box?: Box) => {
       return c;
     }
   }
+};
+
+/*
+  Returns a positive value if the points a, b, and c occur in counterclockwise order (c lies to the left of the directed line defined by points a and b).
+  Returns a negative value if they occur in clockwise order (c lies to the right of the directed line ab).
+  Returns zero if they are collinear.
+*/
+export const orient2d = (p1: ComplexNumber, p2: ComplexNumber, p3: ComplexNumber) => {
+  return (p1.im - p3.im) * (p2.re - p3.re) - (p1.re - p3.re) * (p2.im - p3.im);
+};
+
+export const computeCentroid = (polygon: Polygon): ComplexNumber => {
+  // TODO check collinear case?
+  let centroidX = 0;
+  let centroidY = 0;
+  let detSum = 0;
+  for (let i = 0; i < polygon.length; i++) {
+    const p0 = polygon[i];
+    const p1 = polygon[(i + 1) % polygon.length];
+    const det = p0.re * p1.im - p1.re * p0.im;
+    centroidX += (p0.re + p1.re) * det;
+    centroidY += (p0.im + p1.im) * det;
+    detSum += det;
+  }
+  
+  return complex(centroidX / (3 * detSum), centroidY / (3 * detSum));
+};
+
+// https://en.wikipedia.org/wiki/Graham_scan would be better instead of just sorting
+export const makeConvexBoundingPolygon = (points: ComplexNumber[]) => {
+  const polygon = [ ...points ];
+
+  // find a start point
+  let first = polygon[0];
+  for (let i = 1; i < polygon.length; i++) {
+    if (polygon[i].im < first.im) {
+      first = polygon[i];
+    } else if (polygon[i].im === first.im && polygon[i].re > first.re) {
+      first = polygon[i];
+    }
+  }
+
+  polygon.sort((a, b) => {
+    const isLeft = (a.re - first.re) * (b.im - first.im) - (b.re - first.re) * (a.im - first.im);
+    if (isLeft === 0) {
+      return euclideanSquared2d(first.re, first.im, a.re, a.im) - euclideanSquared2d(first.re, first.im, b.re, b.im);
+    }
+    return isLeft;
+  });
+
+  return polygon;
 };
