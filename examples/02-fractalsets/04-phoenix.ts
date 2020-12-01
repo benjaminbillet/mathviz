@@ -13,7 +13,7 @@ import { PlotDomain } from '../../utils/types';
 const OUTPUT_DIRECTORY = `${__dirname}/../../output/phoenix`;
 mkdirs(OUTPUT_DIRECTORY);
 
-const TRAP_IMAGE = `${__dirname}/ada-big.png`;
+const TRAP_IMAGE = `${__dirname}/../ada-big.png`;
 
 
 const colormap = buildConstrainedColorMap(

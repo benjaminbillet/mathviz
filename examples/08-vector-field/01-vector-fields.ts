@@ -1,36 +1,35 @@
-import { makePerlinNoiseFunction } from '../noise/perlinNoise';
-import { plotSupersampledVectorField } from './util';
-import { mkdirs } from '../utils/fs';
-import { complex, mul, sub } from '../utils/complex';
-import { setRandomSeed } from '../utils/random';
-import { TWO_PI } from '../utils/math';
-import { makeOctavePerlinNoiseFunction } from '../noise/fractalNoise';
-import { makeSinusoidalFunction, makeSwirlFunction, makeIteratedMandelbrotFunction, makeExponentialFunction, makePolarFunction, makeFanFunction, makeRingsFunction, makeWaveFunction } from '../transform';
-import { astroid, kampyle, rectangularHyperbola, superformula, circle, cissoid } from '../utils/parametric';
-import { getTolDivergentPalette } from '../utils/palette';
-import { mapRange } from '../utils/misc';
-import { ColorSteal, Palette } from '../utils/types';
+import { makePerlinNoiseFunction } from '../../noise/perlinNoise';
+import { plotSupersampledVectorField } from '../util';
+import { mkdirs } from '../../utils/fs';
+import { complex, mul, sub } from '../../utils/complex';
+import { setRandomSeed } from '../../utils/random';
+import { TWO_PI } from '../../utils/math';
+import { makeOctavePerlinNoiseFunction } from '../../noise/fractalNoise';
+import { makeSinusoidalFunction, makeSwirlFunction, makeIteratedMandelbrotFunction, makeExponentialFunction, makePolarFunction, makeFanFunction, makeRingsFunction, makeWaveFunction, makeIdentityFunction } from '../../transform';
+import { astroid, kampyle, rectangularHyperbola, superformula, circle, cissoid } from '../../utils/parametric';
+import { getTolDivergentPalette } from '../../utils/palette';
+import { mapRange } from '../../utils/misc';
+import { VectorFieldColorFunction } from '../../utils/types';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/vectorfields`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/vectorfields`;
 mkdirs(OUTPUT_DIRECTORY);
 
-setRandomSeed(100);
+setRandomSeed('dioptase');
 
-const palette: Palette = getTolDivergentPalette(10).map(([ r, g, b ]) => [ r / 255, g / 255, b / 255 ]);
+const palette = getTolDivergentPalette(10);
 
 const noise = makePerlinNoiseFunction(1);
 const fracnoise = makeOctavePerlinNoiseFunction(4);
 
 const size = 1024;
 
-const colorfunc: ColorSteal = (i, j, p) => {
+const colorfunc: VectorFieldColorFunction = (z, p) => {
   const x = mapRange(noise(p / 1000, 0), -1, 1, 0, 1);
   return palette[Math.trunc(100 * palette.length * x) % palette.length];
 };
 
-
 // a very simple vector field that translate points
-plotSupersampledVectorField(`${OUTPUT_DIRECTORY}/vector-translation.png`, size, size, () => complex(0.1, 0.1), colorfunc);
+plotSupersampledVectorField(`${OUTPUT_DIRECTORY}/vector-translation.png`, size, size, () => complex(0.1, 0.1), colorfunc, () => 0, 500, makeIdentityFunction(), null, 4, 1.5);
 
 plotSupersampledVectorField(`${OUTPUT_DIRECTORY}/vector-noise1.png`, size, size, (z) => {
   const n = TWO_PI * mapRange(fracnoise(z.re, z.im), -1, 1, 0, 1);
@@ -136,4 +135,3 @@ plotSupersampledVectorField(`${OUTPUT_DIRECTORY}/vector-misc1.png`, size, size, 
 
   return complex(Math.cos(v2.re * n1), Math.sin(v1.im + n2));
 }, colorfunc, (_, i) => i / 500);
-
