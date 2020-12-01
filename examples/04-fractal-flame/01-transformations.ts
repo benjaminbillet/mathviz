@@ -1,6 +1,6 @@
-import { complex, modulus } from '../utils/complex';
+import { complex, modulus } from '../../utils/complex';
 
-import { createImage, saveImage, mapPixelToDomain, mapDomainToPixel, readImage, saveImageBuffer } from '../utils/picture';
+import { createImage, saveImage, mapPixelToDomain, mapDomainToPixel } from '../../utils/picture';
 import {
   makeFanFunction,
   makeNgonFunction,
@@ -57,15 +57,15 @@ import {
   makeHeartFunction,
   makeFan2Function,
   makePolynomialFunction
-} from '../transform';
-import { pickColorMapValue, RainbowColormap } from '../utils/color';
-import { BI_UNIT_DOMAIN } from '../utils/domain';
-import { enableMathApprox } from '../utils/math';
-import { mkdirs } from '../utils/fs';
-import { Index, PixelPlotter, PlotBuffer, Transform2D } from '../utils/types';
-import { drawBresenhamLine } from '../utils/raster';
+} from '../../transform';
+import { pickColorMapValue, RainbowColormap } from '../../utils/color';
+import { BI_UNIT_DOMAIN } from '../../utils/domain';
+import { mkdirs } from '../../utils/fs';
+import { Index, Transform2D } from '../../utils/types';
+import { drawBresenhamLine } from '../../utils/raster';
+import { makePlotter } from '../../utils/plotter';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/transformations`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/transformations`;
 mkdirs(OUTPUT_DIRECTORY);
 
 const TRANSFORMATIONS: Index<Transform2D> = {
@@ -130,24 +130,9 @@ const TRANSFORMATIONS: Index<Transform2D> = {
   polynomial: makePolynomialFunction(0, 0.2, -0.3, -1.6, 0, 0.8, -2.4)
 };
 
-const makePlotter = (buffer: PlotBuffer, width: number, height: number): PixelPlotter => {
-  return (x, y, color) => {
-    if (x < 0 || y < 0 || x >= width || y >= height) {
-      return;
-    }
-    x = Math.round(x);
-    y = Math.round(y);
-
-    const idx = (y * width + x) * 4;
-    buffer[idx + 0] = color[0];
-    buffer[idx + 1] = color[1];
-    buffer[idx + 2] = color[2];
-  };
-};
-
 const plotTransformedGrid = async (width: number, height: number, transformKey: string) => {
   const image = createImage(width, height, 255, 255, 255, 255);
-  const buffer = image.getImage().data;
+  const buffer = image.buffer;
   const transform = TRANSFORMATIONS[transformKey];
 
   const cellSize = 10;
@@ -188,12 +173,12 @@ const plotTransformedGrid = async (width: number, height: number, transformKey: 
     }
   }
 
-  await saveImage(image, `${OUTPUT_DIRECTORY}/transform-grid-${transformKey}.png`);
+  saveImage(image, `${OUTPUT_DIRECTORY}/transform-grid-${transformKey}.png`);
 };
 
-const plotTransformedGrid2 = async (width: number, height: number, transformKey: string) => {
+const plotTransformedPoints = (width: number, height: number, transformKey: string) => {
   const image = createImage(width, height, 255, 255, 255, 255);
-  const buffer = image.getImage().data;
+  const buffer = image.buffer;
   const transform = TRANSFORMATIONS[transformKey];
 
   // we want to draw only the pixels that belongs to a grid composed of one line every 2 pixels
@@ -223,13 +208,13 @@ const plotTransformedGrid2 = async (width: number, height: number, transformKey:
       buffer[idx + 0] = color[0];
       buffer[idx + 1] = color[1];
       buffer[idx + 2] = color[2];
-      buffer[idx + 3] = 255;
+      buffer[idx + 3] = color[3];
     }
   }
 
-  await saveImage(image, `${OUTPUT_DIRECTORY}/transform-grid-${transformKey}2.png`);
+  saveImage(image, `${OUTPUT_DIRECTORY}/transform-points-${transformKey}.png`);
 };
 
 // plot all transformations
 Object.keys(TRANSFORMATIONS).forEach(key => plotTransformedGrid(1024, 1024, key));
-Object.keys(TRANSFORMATIONS).forEach(key => plotTransformedGrid2(1024, 1024, key));
+Object.keys(TRANSFORMATIONS).forEach(key => plotTransformedPoints(1024, 1024, key));
