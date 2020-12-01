@@ -2,9 +2,9 @@ import { normalizeBuffer } from '../utils/picture';
 import { euclidean2d, euclidean } from '../utils/distance';
 import { randomInteger } from '../utils/random';
 
-const findDistanceToClosestPoint = (x: number, y: number, points, distance = euclidean2d, nth = 0) => {
+const findDistanceToClosestPoint = (x: number, y: number, points: Uint32Array, distance = euclidean2d, nth = 0): number => {
   const nthPoints = new Uint32Array(nth + 1).fill(-1);
-  let minDist = null;
+  let minDist = Number.MAX_SAFE_INTEGER;
   for (let i = 0; i < nth + 1; i++) {
     minDist = Number.MAX_SAFE_INTEGER;
     for (let j = 0; j < points.length; j += 2) {
@@ -35,7 +35,7 @@ export const makeWorleyNoise = (width: number, height: number, distance = euclid
       buffer[idx + 0] = intensity;
       buffer[idx + 1] = intensity;
       buffer[idx + 2] = intensity;
-      buffer[idx + 3] = 255;
+      buffer[idx + 3] = 1;
     }
   }
   normalizeBuffer(buffer, width, height);

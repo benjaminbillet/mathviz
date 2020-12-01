@@ -1,7 +1,7 @@
 import { normalizeBuffer, forEachPixel } from '../utils/picture';
 import { dot2 } from '../utils/vector';
 import { shuffleArray, clampInt } from '../utils/misc';
-import { Noise2DPostProcess2D, Noise2DPreProcess2D, NoiseFunction2D, Optional } from '../utils/types';
+import { Noise2DPostProcess2D, Noise2DPreProcess2D, NoiseFunction2D } from '../utils/types';
 
 export const DefaultGradients = new Int8Array([
   1, 1,
@@ -125,7 +125,7 @@ export const makePerlinNoiseFunction = (frequency = 32): NoiseFunction2D => {
 };
 
 export const DefaultPostProcess: Noise2DPostProcess2D = intensity => intensity;
-export const DefaultPreProcess: Noise2DPreProcess2D = coords => { };
+export const DefaultPreProcess: Noise2DPreProcess2D = () => { };
 
 export const makePerlinNoise2 = (width: number, height: number, preprocessFunc?: Noise2DPreProcess2D, postprocessFunc?: Noise2DPostProcess2D, gradients = DefaultGradients) => {
   preprocessFunc = preprocessFunc || DefaultPreProcess;

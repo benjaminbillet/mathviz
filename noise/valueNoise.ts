@@ -1,12 +1,11 @@
-import { forEachPixel } from '../utils/picture';
+import { fillPicture, forEachPixel } from '../utils/picture';
 import { upscale2, UpscaleSamplers } from '../utils/upscale';
 import { DefaultNormalDistribution } from '../utils/random';
-import { PlotBuffer } from '../utils/types';
 
 // the value noise method consists into building a lattice of random values that are interpolated to form the final noise.
 
-export const makeValueNoise = (noiseWidth: number, noiseHeight: number, outputWidth: number, outputHeight: number, sampler = UpscaleSamplers.Bicubic, distribution = DefaultNormalDistribution, bw = false): PlotBuffer => {
-  const buffer = new Float32Array(noiseWidth * noiseHeight * 4);
+export const makeValueNoise = (noiseWidth: number, noiseHeight: number, outputWidth: number, outputHeight: number, sampler = UpscaleSamplers.Bicubic, distribution = DefaultNormalDistribution, bw = false) => {
+  const buffer = fillPicture(new Float32Array(noiseWidth * noiseHeight * 4), 0, 0, 0, 1);
 
   // we initialize a set of randomly-valued pixels
   forEachPixel(buffer, noiseWidth, noiseHeight, (r, g, b, a, i, j, idx) => {

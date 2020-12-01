@@ -1,10 +1,10 @@
-import { makeWorleyNoise, makeWorleyLogSumNoise } from '../noise/worleyNoise';
-import { euclidean2d, manhattan2d, chebyshev2d, euclidean, makeMinkowski2d, makeAkritean2d, karlsruhe2d, makeSuperellipse2d } from '../utils/distance';
-import { mkdirs } from '../utils/fs';
-import { DistanceFunction2D } from '../utils/types';
-import { plotNoise } from './util';
+import { makeWorleyNoise, makeWorleyLogSumNoise } from '../../noise/worleyNoise';
+import { euclidean2d, manhattan2d, chebyshev2d, euclidean, makeMinkowski2d, makeAkritean2d, karlsruhe2d, makeSuperellipse2d } from '../../utils/distance';
+import { mkdirs } from '../../utils/fs';
+import { DistanceFunction2D } from '../../utils/types';
+import { plotNoise } from '../util';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/noise`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/noise`;
 mkdirs(OUTPUT_DIRECTORY);
 
 const size = 1024;

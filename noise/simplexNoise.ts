@@ -143,7 +143,7 @@ export const makeSimplexNoiseFunction = (frequency = 32): NoiseFunction2D => {
 
 
 const DefaultPostProcess: Noise2DPostProcess2D = intensity => intensity;
-const DefaultPreProcess: Noise2DPreProcess2D = coords => {};
+const DefaultPreProcess: Noise2DPreProcess2D = () => {};
 
 export const makeSimplexNoise2 = (width: number, height: number, preprocessFunc?: Noise2DPreProcess2D, postprocessFunc?: Noise2DPostProcess2D, gradients = DefaultGradients) => {
   preprocessFunc = preprocessFunc || DefaultPreProcess;

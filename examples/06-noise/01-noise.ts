@@ -1,19 +1,19 @@
-import { makeValueNoise } from '../noise/valueNoise';
-import { UpscaleSamplers } from '../utils/upscale';
-import { makePerlinNoiseFunction, makePerlinNoiseFunction2 } from '../noise/perlinNoise';
-import { makeOctavePerlinNoiseFunction, makeOctaveSimplexNoiseFunction, makeOctaveNoiseFunction } from '../noise/fractalNoise';
-import { makeSimplexNoiseFunction } from '../noise/simplexNoise';
-import { mkdirs } from '../utils/fs';
-import { plotNoise, plotNoiseFunction } from './util';
-import { setRandomSeed } from '../utils/random';
-import { NoiseFunction2D, NoiseMaker2D, RealToRealFunction } from '../utils/types';
+import { makeValueNoise } from '../../noise/valueNoise';
+import { UpscaleSamplers } from '../../utils/upscale';
+import { makePerlinNoiseFunction, makePerlinNoiseFunction2 } from '../../noise/perlinNoise';
+import { makeOctavePerlinNoiseFunction, makeOctaveSimplexNoiseFunction, makeOctaveNoiseFunction } from '../../noise/fractalNoise';
+import { makeSimplexNoiseFunction } from '../../noise/simplexNoise';
+import { mkdirs } from '../../utils/fs';
+import { plotNoise, plotNoiseFunction } from '../util';
+import { setRandomSeed } from '../../utils/random';
+import { NoiseFunction2D, NoiseMaker2D, RealToRealFunction } from '../../utils/types';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/noise`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/noise`;
 mkdirs(OUTPUT_DIRECTORY);
 
 const size = 1024;
 
-setRandomSeed(100);
+setRandomSeed('dioptase');
 
 // different interpolation methods give different aspect to the final noise
 plotNoise(() => makeValueNoise(128, 128, size, size, UpscaleSamplers.NearestNeighbor), size, `${OUTPUT_DIRECTORY}/noise-value-nearestneighbor.png`);
