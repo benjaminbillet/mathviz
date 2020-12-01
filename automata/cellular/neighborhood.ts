@@ -67,6 +67,66 @@ export const reduceVonNeumannNeighbor = (grid: CellularAutomataGrid, width: numb
   return result;
 };
 
+export const forEachPlusNeighbor = (grid: CellularAutomataGrid, width: number, height: number, centerX: number, centerY: number, range: number, func: NeighborForEachFunction) => {
+  for (let i = -range; i <= range; i++) {
+    for (let j = -range; j <= range; j++) {
+      if (i === 0 || j === 0) {
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          func(grid[x + y * width], x, y, grid);
+        }
+      }
+    }
+  }
+};
+
+export const reducePlusNeighbor = (grid: CellularAutomataGrid, width: number, height: number, centerX: number, centerY: number, range: number, func: NeighborReduceFunction, initialValue: number) => {
+  let result = initialValue;
+  for (let i = -range; i <= range; i++) {
+    for (let j = -range; j <= range; j++) {
+      if (i === 0 || j === 0) {
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          result = func(result, grid[x + y * width], x, y, grid);
+        }
+      }
+    }
+  }
+  return result;
+};
+
+export const forEachCrossNeighbor = (grid: CellularAutomataGrid, width: number, height: number, centerX: number, centerY: number, range: number, func: NeighborForEachFunction) => {
+  for (let i = -range; i <= range; i++) {
+    for (let j = -range; j <= range; j++) {
+      if (Math.abs(i) === Math.abs(j)) {
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          func(grid[x + y * width], x, y, grid);
+        }
+      }
+    }
+  }
+};
+
+export const reduceCrossNeighbor = (grid: CellularAutomataGrid, width: number, height: number, centerX: number, centerY: number, range: number, func: NeighborReduceFunction, initialValue: number) => {
+  let result = initialValue;
+  for (let i = -range; i <= range; i++) {
+    for (let j = -range; j <= range; j++) {
+      if (Math.abs(i) === Math.abs(j)) {
+        const x = i + centerX;
+        const y = j + centerY;
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+          result = func(result, grid[x + y * width], x, y, grid);
+        }
+      }
+    }
+  }
+  return result;
+};
+
 export const forEachVonNeumannHexagonalNeighbor = (grid: CellularAutomataGrid, width: number, height: number, centerX: number, centerY: number, range: number, func: NeighborForEachFunction) => {
   for (let i = -range; i <= range; i++) {
     for (let j = -range; j <= range; j++) {
@@ -208,12 +268,16 @@ export const NeighborhoodReducer = {
   Moore: reduceMooreNeighbor,
   VonNeumann: reduceVonNeumannNeighbor,
   Circular: reduceCircularNeighbor,
+  Cross: reduceCrossNeighbor,
+  Plus: reducePlusNeighbor,
 };
 
 export const NeighborhoodIterator = {
   Moore: forEachMooreNeighbor,
   VonNeumann: forEachVonNeumannNeighbor,
   Circular: forEachCircularNeighbor,
+  Cross: forEachCrossNeighbor,
+  Plus: forEachPlusNeighbor,
 };
 
 export const HexagonalNeighborhoodReducer: Index<NeighborReducer> = {

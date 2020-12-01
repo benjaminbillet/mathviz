@@ -1,276 +1,278 @@
-import { getScaledRaster } from '../../utils/svg-raster';
 import { PixelPlotter } from '../../utils/types';
+import { SvgDocument, makeSvgCanvas } from '../../utils/canvas-svg';
 
-export const makeStateStyles = (baseSize: number, scale: number, plotter: PixelPlotter): PixelPlotter[] => {
-  let raster = getScaledRaster(scale);
+export const HEXAGON_RADIUS = 12;
+
+export const makeStateStyles = (scale: number, doc: SvgDocument): PixelPlotter[] => {
+  const canvas = makeSvgCanvas(doc, scale);
   return [
-    (x, y, color) => raster.drawFilledNgon(6, x, y, baseSize, color, plotter),
-    (x, y, color) => raster.drawFilledNgon(6, x, y, Math.round(2/3 * baseSize), color, plotter),
-    (x, y, color) => raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter),
-    (x, y, color) => raster.drawNgon(6, x, y, baseSize, 1, color, plotter),
-    (x, y, color) => raster.drawNgon(6, x, y, Math.round(2/3 * baseSize), 1, color, plotter),
-    (x, y, color) => raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter),
-    (x, y, color) => raster.drawNgon(6, x, y, baseSize, 2, color, plotter),
-    (x, y, color) => raster.drawNgon(6, x, y, Math.round(2/3 * baseSize), 2, color, plotter),
-    (x, y, color) => raster.drawNgon(6, x, y, baseSize, 4, color, plotter),
+    (x, y, color) => canvas.drawFilledNgon(6, x, y, HEXAGON_RADIUS, color),
+    (x, y, color) => canvas.drawFilledNgon(6, x, y, Math.round(2/3 * HEXAGON_RADIUS), color),
+    (x, y, color) => canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color),
+    (x, y, color) => canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color),
+    (x, y, color) => canvas.drawNgon(6, x, y, Math.round(2/3 * HEXAGON_RADIUS), 1, color),
+    (x, y, color) => canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color),
+    (x, y, color) => canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 2, color),
+    (x, y, color) => canvas.drawNgon(6, x, y, Math.round(2/3 * HEXAGON_RADIUS), 2, color),
+    (x, y, color) => canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 4, color),
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, (baseSize - 2), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 2), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, (baseSize - 2), 1, color, plotter);
-      raster.drawNgon(6, x, y, (baseSize - 4), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 2), 1, color);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 4), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, (baseSize - 2), 1, color, plotter);
-      raster.drawNgon(6, x, y, (baseSize - 4), 1, color, plotter);
-      raster.drawNgon(6, x, y, (baseSize - 6), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 2), 1, color);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 4), 1, color);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 6), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, (baseSize - 2), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawFilledNgon(6, x, y, (HEXAGON_RADIUS - 2), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, (baseSize - 2), 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, (baseSize - 4), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 2), 1, color);
+      canvas.drawFilledNgon(6, x, y, (HEXAGON_RADIUS - 4), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, (baseSize - 2), 1, color, plotter);
-      raster.drawNgon(6, x, y, (baseSize - 4), 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, (baseSize - 6), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 2), 1, color);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 4), 1, color);
+      canvas.drawFilledNgon(6, x, y, (HEXAGON_RADIUS - 6), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, (baseSize - 2), 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, (baseSize - 4), color, plotter);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 2), 1, color);
+      canvas.drawFilledNgon(6, x, y, (HEXAGON_RADIUS - 4), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, (baseSize - 2), 1, color, plotter);
-      raster.drawNgon(6, x, y, (baseSize - 4), 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, (baseSize - 6), color, plotter);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 2), 1, color);
+      canvas.drawNgon(6, x, y, (HEXAGON_RADIUS - 4), 1, color);
+      canvas.drawFilledNgon(6, x, y, (HEXAGON_RADIUS - 6), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 2, 2, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 2, 2, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 2, 2, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 6, 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 2, 2, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 6, 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 2, 2, color, plotter);
-      raster.drawFilledNgon(6, x, y, baseSize - 6, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 2, 2, color);
+      canvas.drawFilledNgon(6, x, y, HEXAGON_RADIUS - 6, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 2, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 4, 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 2, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 4, 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 2, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 4, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 2, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 4, 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 2, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 4, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 2, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 4, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 1, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 1, 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 2, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 2, 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 1, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 1, 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 1, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) - 1, 1, color, plotter);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 1, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) - 1, 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, baseSize - 4, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawFilledNgon(6, x, y, HEXAGON_RADIUS - 4, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, Math.round(2/3 * baseSize), 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, Math.round(2/3 * HEXAGON_RADIUS), 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },  
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 2, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 2, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 2, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 2, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 2, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 2, 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 2, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 6, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 2, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 2, 1, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 6, 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, Math.round(2/3 * baseSize), 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, Math.round(2/3 * HEXAGON_RADIUS), 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },  
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 2, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 2, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 2, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 2, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, baseSize - 6, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 2, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 2, 1, color);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS - 6, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 2, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize) + 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize) + 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 2, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 2, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 3, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 3, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 3, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 3, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 3, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 3, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 4, 2, color, plotter);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 4, 2, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 4, 2, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 4, 2, color);
     },
     (x, y, color) => {
-      raster.drawFilledNgon(6, x, y, Math.round(baseSize / 3) + 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 4, 3, color, plotter);
+      canvas.drawFilledNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 1, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 4, 3, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 4, 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3), 1, color, plotter);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 4, 2, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 4, 2, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(baseSize / 3), color, plotter);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 4, 2, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3), color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 4, 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3), 1, color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 4, 2, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3), 1, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, baseSize, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 2, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(baseSize / 3) + 4, 2, color, plotter);
-      raster.drawFilledNgon(6, x, y, Math.round(baseSize / 3), color, plotter);
+      canvas.drawNgon(6, x, y, HEXAGON_RADIUS, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 2, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3) + 4, 2, color);
+      canvas.drawFilledNgon(6, x, y, Math.round(HEXAGON_RADIUS / 3), color);
     },
     (x, y, color) => {
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize) + 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 3, 1, color, plotter);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 3, 1, color);
     },
     (x, y, color) => {
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize) + 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 4, 2, color, plotter);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 4, 2, color);
     },
     (x, y, color) => {
-      raster.drawFilledNgon(6, x, y, Math.round(1/3 * baseSize), color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 2, 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 5, 2, color, plotter);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS), color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, 2, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 5, 2, color);
     },
     (x, y, color) => {
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) - 1, 1, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 2, 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/3 * baseSize) + 5, 2, color, plotter);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) - 1, 1, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 2, 2, color);
+      canvas.drawNgon(6, x, y, Math.round(1/3 * HEXAGON_RADIUS) + 5, 2, color);
     },
     (x, y, color) => {
-      raster.drawFilledNgon(6, x, y, Math.round(1/4 * baseSize), color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/4 * baseSize) + 2, 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/4 * baseSize) + 5, 2, color, plotter);
-      raster.drawNgon(6, x, y, Math.round(1/4 * baseSize) + 8, 2, color, plotter);
+      canvas.drawFilledNgon(6, x, y, Math.round(1/4 * HEXAGON_RADIUS), color);
+      canvas.drawNgon(6, x, y, Math.round(1/4 * HEXAGON_RADIUS) + 2, 2, color);
+      canvas.drawNgon(6, x, y, Math.round(1/4 * HEXAGON_RADIUS) + 5, 2, color);
+      canvas.drawNgon(6, x, y, Math.round(1/4 * HEXAGON_RADIUS) + 8, 2, color);
     },
   ];
 };

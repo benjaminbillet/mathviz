@@ -1,9 +1,9 @@
 import { reduceVonNeumannHexagonalNeighbor } from './neighborhood';
 import { random } from '../../utils/random';
-import { NextCellStateFunction } from '../../utils/types';
+import { Next2dCellStateFunction } from '../../utils/types';
 
 // https://www.wolframscience.com/nks/p371--the-growth-of-crystals
-export const makeWolframCrystalNextState = (hexagonalNeighborReduceFunc = reduceVonNeumannHexagonalNeighbor): NextCellStateFunction => {
+export const makeWolframCrystalNextState = (hexagonalNeighborReduceFunc = reduceVonNeumannHexagonalNeighbor): Next2dCellStateFunction => {
   return (stateGrid, gridWidth, gridHeight, currentState, x, y) => {
     if (currentState !== 0) {
       return currentState;
@@ -26,7 +26,7 @@ export const makeProbabilisticWolframCrystalNextState = (
   deathProbability = [ 0, 0, 0, 0, 0, 0, 0 ],  // add 1 more item if includeItself is true
   includeItself = false, // if true, the center cell state is included in the neighborood sum
   hexagonalNeighborReduceFunc = reduceVonNeumannHexagonalNeighbor
-): NextCellStateFunction => {
+): Next2dCellStateFunction => {
   return (stateGrid, gridWidth, gridHeight, currentState, x, y) => {
     const sum = hexagonalNeighborReduceFunc(stateGrid, gridWidth, gridHeight, x, y, 1, (total, neighborState) => {
       if (neighborState === 1) {

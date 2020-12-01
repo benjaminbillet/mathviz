@@ -1,5 +1,5 @@
-import { CellularAutomataGrid, NextCellStateFunction } from '../../utils/types';
-import { reduceVonNeumannHexagonalNeighbor, reduceMooreHexagonalNeighbor } from './neighborhood';
+import { CellularAutomataGrid, Next2dCellStateFunction } from '../../utils/types';
+import { reduceVonNeumannHexagonalNeighbor } from './neighborhood';
 
 // http://psoup.math.wisc.edu/extras/hexca/hexca.html
 // http://psoup.math.wisc.edu/extras/hexca/flake1.gif
@@ -16,7 +16,7 @@ export const perezSnowflakeNextState = (stateGrid: CellularAutomataGrid, gridWid
   return 0;
 };
 
-export const makePerezSnowflakeNextState = (aliveSums = [ 0, 1, 1, 0, 0, 0, 0, 0 ], hexagonalNeighborReduceFunc = reduceVonNeumannHexagonalNeighbor): NextCellStateFunction => {
+export const makePerezSnowflakeNextState = (aliveSums = [ 0, 1, 1, 0, 0, 0, 0, 0 ], hexagonalNeighborReduceFunc = reduceVonNeumannHexagonalNeighbor): Next2dCellStateFunction => {
   return (stateGrid, gridWidth, gridHeight, currentState, x, y) => {
     const sum = hexagonalNeighborReduceFunc(stateGrid, gridWidth, gridHeight, x, y, 1, (total, neighborState) => {
       if (neighborState === 1) {
@@ -37,7 +37,7 @@ export const makePerezCyclicSnowflakeNextState = (
   aliveSums = [ 0, 1, 0, 1, 0, 0, 1 ], // add 1 more item if includeItself is true
   includeItself = false,
   hexagonalNeighborReduceFunc = reduceVonNeumannHexagonalNeighbor
-): NextCellStateFunction => {
+): Next2dCellStateFunction => {
   return (stateGrid, gridWidth, gridHeight, currentState, x, y) => {
     const sum = hexagonalNeighborReduceFunc(stateGrid, gridWidth, gridHeight, x, y, 1, (total, neighborState) => {
       if (neighborState > 0) {
@@ -58,7 +58,7 @@ export const makePerezCyclicSnowflakeNextState2 = (
   includeItself = false,
   hexagonalNeighborReduceFunc = reduceVonNeumannHexagonalNeighbor,
   range = 1,
-): NextCellStateFunction => {
+): Next2dCellStateFunction => {
   return (stateGrid, gridWidth, gridHeight, currentState, x, y) => {
     if (currentState > 0) {
       return (currentState + 1) % maxState;
