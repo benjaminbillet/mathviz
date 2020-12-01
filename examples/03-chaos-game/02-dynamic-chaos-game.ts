@@ -1,15 +1,15 @@
-import * as affine from '../utils/affine';
-import { complex, ComplexNumber } from '../utils/complex';
-import { BI_UNIT_DOMAIN, scaleDomain } from '../utils/domain';
-import { mkdirs } from '../utils/fs';
-import { makePolygon, withinPolygon } from '../utils/polygon';
-import { pickRandom, random, randomComplex } from '../utils/random';
-import { moveTowards } from '../utils/segment';
-import { plotWalk, plotWalkClahe } from './util';
-import { makeLowCutFilter } from '../utils/misc';
-import { Polygon, RealToRealFunction } from '../utils/types';
+import * as affine from '../../utils/affine';
+import { complex, ComplexNumber } from '../../utils/complex';
+import { BI_UNIT_DOMAIN, scaleDomain } from '../../utils/domain';
+import { mkdirs } from '../../utils/fs';
+import { makePolygon, withinPolygon } from '../../utils/polygon';
+import { pickRandom, random, randomComplex } from '../../utils/random';
+import { moveTowards } from '../../utils/segment';
+import { plotWalk, plotWalkClahe } from '../util';
+import { makeLowCutFilter } from '../../utils/misc';
+import { Polygon, RealToRealFunction } from '../../utils/types';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/dynamic-chaos-game`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/dynamic-chaos-game`;
 mkdirs(OUTPUT_DIRECTORY);
 
 

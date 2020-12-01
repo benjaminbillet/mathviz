@@ -3,19 +3,19 @@ LINKS
 https://community.wolfram.com/groups/-/m/t/1025180
 */
 
-import { add, complex, mul, reciprocal } from '../utils/complex';
-import { circularDistance } from '../utils/distance';
-import { BI_UNIT_DOMAIN, zoomDomain } from '../utils/domain';
-import { mkdirs } from '../utils/fs';
-import { findAllSubsets, toParamsChainString } from '../utils/misc';
-import { makePolygon, withinPolygon } from '../utils/polygon';
-import { pickRandom, randomComplex, randomInteger } from '../utils/random';
-import { moveTowards } from '../utils/segment';
-import { Polygon } from '../utils/types';
-import { plotPolygon, plotWalk } from './util';
+import { add, complex, mul, reciprocal } from '../../utils/complex';
+import { circularDistance } from '../../utils/distance';
+import { BI_UNIT_DOMAIN, zoomDomain } from '../../utils/domain';
+import { mkdirs } from '../../utils/fs';
+import { findAllSubsets, toParamsChainString } from '../../utils/misc';
+import { makePolygon, withinPolygon } from '../../utils/polygon';
+import { pickRandom, randomComplex, randomInteger } from '../../utils/random';
+import { moveTowards } from '../../utils/segment';
+import { Polygon } from '../../utils/types';
+import { plotPolygon, plotWalk, plotWalkLine } from '../util';
 
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/chaos-game`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/chaos-game`;
 mkdirs(OUTPUT_DIRECTORY);
 
 const makePolygonRandomWalk = (polygon: Polygon, jumpLength = 0.5) => {
@@ -40,6 +40,12 @@ plotWalk(`${OUTPUT_DIRECTORY}/walk-pentagon.png`, 1024, 1024, makePolygonRandomW
 plotWalk(`${OUTPUT_DIRECTORY}/walk-pentagon-jump=0.4.png`, 1024, 1024, makePolygonRandomWalk(makePolygon(5), 0.4), BI_UNIT_DOMAIN, 100000);
 plotWalk(`${OUTPUT_DIRECTORY}/walk-hexagon.png`, 1024, 1024, makePolygonRandomWalk(makePolygon(6)), BI_UNIT_DOMAIN, 100000);
 plotWalk(`${OUTPUT_DIRECTORY}/walk-hexagon-jump=0.4.png`, 1024, 1024, makePolygonRandomWalk(makePolygon(6), 0.4), BI_UNIT_DOMAIN, 100000);
+
+plotWalkLine(`${OUTPUT_DIRECTORY}/walk-triangle-lines.png`, 1024, 1024, makePolygonRandomWalk(makePolygon(3)), BI_UNIT_DOMAIN, 2000);
+plotWalkLine(`${OUTPUT_DIRECTORY}/walk-square-lines.png`, 1024, 1024, makePolygonRandomWalk(makePolygon(4)), BI_UNIT_DOMAIN, 2000);
+plotWalkLine(`${OUTPUT_DIRECTORY}/walk-pentagon-lines.png`, 1024, 1024, makePolygonRandomWalk(makePolygon(5)), BI_UNIT_DOMAIN, 2000);
+plotWalkLine(`${OUTPUT_DIRECTORY}/walk-hexagon-lines.png`, 1024, 1024, makePolygonRandomWalk(makePolygon(6)), BI_UNIT_DOMAIN, 2000);
+
 
 // create a right-angled triangle
 const triangle = makePolygon(3);

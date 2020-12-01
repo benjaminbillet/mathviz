@@ -1,27 +1,28 @@
-import * as D3Color from 'd3-color';
-import { simpleWalkChaosPlot } from '../ifs/chaos-game';
+import sharp from 'sharp';
+import { simpleWalkChaosLinePlot, simpleWalkChaosPlot } from '../ifs/chaos-game';
 import { plotFlame, plotFlameWithColorStealing, makeMixedColorSteal, iterateFlamePoint } from '../ifs/fractal-flame';
 import { makeIdentityFunction } from '../transform';
-import { applyContrastBasedScalefactor, applyLinearScalefactor, convertUnitToRGBA, mixColorLinear } from '../utils/color';
-import { complex } from '../utils/complex';
+import { applyContrastBasedScalefactor, applyLinearScalefactor, mixColorLinear } from '../utils/color';
+import { add, complex, mul } from '../utils/complex';
 import { BI_UNIT_DOMAIN, scaleDomain } from '../utils/domain';
-import { performClahe } from '../utils/histogram';
-import { forEachPixel, mapPixelToDomain, saveImageBuffer, readImage, normalizeBuffer, saveImage, mapDomainToPixel, createImage } from '../utils/picture';
+import { performClahe } from '../effects/clahe';
+import { forEachPixel, mapPixelToDomain, saveImageBuffer, readImage, normalizeBuffer, saveImage, mapDomainToPixel, createImage, fillPicture, mapComplexDomainToPixel, mapPixelToComplexDomain } from '../utils/picture';
 import { withinPolygon } from '../utils/polygon';
 import { randomComplex, randomIntegerWeighted } from '../utils/random';
 import { expandPalette, getBigQualitativePalette, MAVERICK } from '../utils/palette';
 import { estimateAttractorDomain } from '../attractors/plot';
 import { downscale, downscale2 } from '../utils/downscale';
-import { makeAdditiveBufferPlotter, makeBufferPlotter, makeUnmappedBufferPlotter, makePixelToComplexPlotter } from '../utils/plotter';
-import { plotVectorField, DefaultGridShuffle } from '../misc/vector-field';
+import { plotVectorField, DefaultGridShuffle } from '../vector-field/vector-field';
 import { plot2dAutomaton } from '../automata/cellular/2d-automaton';
-import { drawFilledNgon } from '../utils/raster';
+import { drawBresenhamLine, drawFilledCircle, drawFilledNgon } from '../utils/raster';
 import { makeDihedralSymmetry } from '../utils/symmetry';
-import { Attractor, CellularAutomataGrid, Color, ColorMapFunction, ColorSteal, ComplexPlotter, ComplexToColorFunction, ComplexToComplexFunction, Ifs, IterableComplexFunction, IterableRealFunction, NextCellStateFunction, NoiseFunction2D, Optional, PixelPlotter, PlotBuffer, PlotDomain, Polygon, ReactDiffuseFunction, Transform2D, VectorFieldFunction, VectorFieldTimeFunction, Wrapper } from '../utils/types';
+import { Attractor, CellularAutomataGrid, Color, ColorMapFunction, ColorSteal, ComplexPlotter, ComplexToColorFunction, ComplexToComplexFunction, Ifs, IterableComplexFunction, IterableRealFunction, Next1dCellStateFunction, Next2dCellStateFunction, NoiseFunction2D, Optional, PixelPlotter, PlotDomain, Polygon, Transform2D, VectorFieldColorFunction, VectorFieldFunction, VectorFieldTimeFunction, Wrapper } from '../utils/types';
 import { makeInvertCollageHorizontal } from '../symmetry/color-reversing-wallpaper-group';
-import { blendAverage, blendDarken, blendLighten } from '../utils/blend';
+import { plot1dAutomaton } from '../automata/cellular/1d-automaton';
+import { makeMappedZPlotter, makePlotter } from '../utils/plotter';
+import { makeSvgDocument, saveSvgToFile, SvgDocument } from '../utils/canvas-svg';
 
-export const plotFunctionBuffer = (width: number, height: number, f: ComplexToColorFunction, domain = BI_UNIT_DOMAIN, colorfunc?: ColorMapFunction, normalize = true): PlotBuffer => {
+export const plotFunctionBuffer = (width: number, height: number, f: ComplexToColorFunction, domain = BI_UNIT_DOMAIN, colorfunc?: ColorMapFunction, normalize = true): Float32Array => {
   const buffer = new Float32Array(width * height * 4);
 
   for (let i = 0; i < width; i++) {
@@ -34,10 +35,12 @@ export const plotFunctionBuffer = (width: number, height: number, f: ComplexToCo
         buffer[idx + 0] = color;
         buffer[idx + 1] = color;
         buffer[idx + 2] = color;
+        buffer[idx + 3] = 1;
       } else {
         buffer[idx + 0] = color[0];
         buffer[idx + 1] = color[1];
         buffer[idx + 2] = color[2];
+        buffer[idx + 3] = 1;
       }
     }
   }
@@ -52,74 +55,51 @@ export const plotFunctionBuffer = (width: number, height: number, f: ComplexToCo
       buffer[idx + 0] = color[0];
       buffer[idx + 1] = color[1];
       buffer[idx + 2] = color[2];
+      buffer[idx + 3] = 1;
     });
   }
 
   return buffer;
 };
 
-export const plotFunction = async (path: string, width: number, height: number, f: ComplexToColorFunction, domain = BI_UNIT_DOMAIN, colorfunc?: ColorMapFunction, normalize = true) => {
-  let buffer = plotFunctionBuffer(width, height, f, domain, colorfunc, normalize);
-  buffer = convertUnitToRGBA(buffer);
-  await saveImageBuffer(buffer, width, height, path);
-};
-
-export const plotFunctionClahe = async (path: string, width: number, height: number, f: ComplexToColorFunction, domain = BI_UNIT_DOMAIN, colorfunc: ColorMapFunction, normalize = true) => {
+export const plotFunction = (path: string, width: number, height: number, f: ComplexToColorFunction, domain = BI_UNIT_DOMAIN, colorfunc?: ColorMapFunction, normalize = true): void => {
   const buffer = plotFunctionBuffer(width, height, f, domain, colorfunc, normalize);
-
-  // convert into a single channel grayscale picture
-  const newBuffer = new Uint8Array(width * height);
-  forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => newBuffer[idx / 4] = r * 255);
-
-  performClahe(newBuffer, width, height, newBuffer, 16, 16, 256, 128);
-
-  // convert back into a colorized rgba image
-  await saveImageBuffer(newBuffer.reduce((result, val, i) => {
-    const color = colorfunc(val / 255);
-    result[i * 4 + 0] = color[0] * 255;
-    result[i * 4 + 1] = color[1] * 255;
-    result[i * 4 + 2] = color[2] * 255;
-    result[i * 4 + 3] = 255;
-    return result;
-  }, new Uint8Array(width * height * 4)), width, height, path);
+  saveImageBuffer(buffer, width, height, path);
 };
 
-export const plotWalk = async (path: string, width: number, height: number, walk: IterableComplexFunction, domain = BI_UNIT_DOMAIN, nbIterations = 10000) => {
-  let buffer: PlotBuffer = new Float32Array(width * height * 4);
-
-  simpleWalkChaosPlot(buffer, width, height, walk, null, domain, nbIterations);
-
-  buffer = applyLinearScalefactor(buffer, width, height);
-  buffer = convertUnitToRGBA(buffer);
-
-  await saveImageBuffer(buffer, width, height, path);
+export const plotFunctionClahe = (path: string, width: number, height: number, f: ComplexToColorFunction, domain = BI_UNIT_DOMAIN, colorfunc: ColorMapFunction, normalize = true): void => {
+  const buffer = plotFunctionBuffer(width, height, f, domain, colorfunc, normalize);
+  const claheCorrected = performClahe(buffer, width, height, new Float32Array(width * height * 4), 16, 16, 256, 128);
+  saveImageBuffer(claheCorrected, width, height, path);
 };
 
-export const plotWalkClahe = async (path: string, width: number, height: number, walk: IterableComplexFunction, domain = BI_UNIT_DOMAIN, nbIterations = 10000) => {
-  let buffer: PlotBuffer = new Float32Array(width * height * 4);
-
-  simpleWalkChaosPlot(buffer, width, height, walk, null, domain, nbIterations);
-
-  buffer = applyLinearScalefactor(buffer, width, height);
-
-  // convert into a single channel grayscale picture
-  const newBuffer = new Uint8Array(width * height);
-  forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => newBuffer[idx / 4] = r * 255);
-
-  performClahe(newBuffer, width, height, newBuffer, 16, 16, 256, 4);
-
-  // convert back into a rgba image
-  await saveImageBuffer(newBuffer.reduce((result, val, i) => {
-    result[i * 4 + 0] = val;
-    result[i * 4 + 1] = val;
-    result[i * 4 + 2] = val;
-    result[i * 4 + 3] = 255;
-    return result;
-  }, new Uint8Array(width * height * 4)), width, height, path);
+export const plotWalk = (path: string, width: number, height: number, walk: IterableComplexFunction, domain = BI_UNIT_DOMAIN, nbIterations = 10000): void => {
+  const buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
+  const hitmap = new Uint32Array(width * height).fill(0);
+  simpleWalkChaosPlot(buffer, hitmap, width, height, walk, null, domain, nbIterations);
+  const corrected = applyLinearScalefactor(buffer, hitmap, width, height);
+  saveImageBuffer(corrected, width, height, path);
 };
 
-export const plotPolygon = async (path: string, width: number, height: number, polygon: Polygon, domain = BI_UNIT_DOMAIN, nbIterations = 10000) => {
-  let buffer: PlotBuffer = new Float32Array(width * height * 4);
+export const plotWalkLine = (path: string, width: number, height: number, walk: IterableComplexFunction, domain = BI_UNIT_DOMAIN, nbIterations = 1000): void => {
+  const buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
+  simpleWalkChaosLinePlot(buffer, width, height, walk, domain, nbIterations);
+  saveImageBuffer(buffer, width, height, path);
+};
+
+export const plotWalkClahe = (path: string, width: number, height: number, walk: IterableComplexFunction, domain = BI_UNIT_DOMAIN, nbIterations = 10000): void => {
+  const buffer = new Float32Array(width * height * 4);
+  const hitmap = new Uint32Array(width * height).fill(0);
+
+  simpleWalkChaosPlot(buffer, hitmap, width, height, walk, null, domain, nbIterations);
+
+  const corrected = applyLinearScalefactor(buffer, hitmap, width, height);
+  const claheCorrected = performClahe(corrected, width, height, new Float32Array(width * height * 4), 16, 16, 256, 4);
+  saveImageBuffer(claheCorrected, width, height, path);
+};
+
+export const plotPolygon = (path: string, width: number, height: number, polygon: Polygon, domain = BI_UNIT_DOMAIN, nbIterations = 10000): void => {
+  const buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
 
   const walk = () => {
     let zn = randomComplex();
@@ -129,13 +109,12 @@ export const plotPolygon = async (path: string, width: number, height: number, p
     return zn;
   };
 
-  simpleWalkChaosPlot(buffer, width, height, walk, null, domain, nbIterations);
-
-  buffer = convertUnitToRGBA(buffer);
-  await saveImageBuffer(buffer, width, height, path);
+  const hitmap = new Uint32Array(width * height).fill(0);
+  simpleWalkChaosPlot(buffer, hitmap, width, height, walk, null, domain, nbIterations);
+  saveImageBuffer(buffer, width, height, path);
 };
 
-export const plotIfsFlame = async (
+export const plotIfsFlame = (
   path: string,
   width: number,
   height: number,
@@ -151,12 +130,13 @@ export const plotIfsFlame = async (
   colorMerge = mixColorLinear,
   additiveColors = true,
   wrapPlotter?: Wrapper<ComplexPlotter>,
-) => {
-  // we create a buffer and a standard plotter
-  let buffer: PlotBuffer = new Float32Array(width * height * 4);
-  let plotter = makeAdditiveBufferPlotter(buffer, width, height, domain);
+): void => {
+  // we create a buffer and a custom plotter for storing the hitmap
+  let buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
+  const hitmap = new Uint32Array(width * height).fill(0);
+  let plotter = makeAdditiveHitmapZPlotter(buffer, hitmap, width, height, domain);
   if (additiveColors === false) {
-    plotter = makeBufferPlotter(buffer, width, height, domain);
+    plotter = makeHitmapZPlotter(buffer, hitmap, width, height, domain);
   }
   if (wrapPlotter != null) {
     plotter = wrapPlotter(plotter);
@@ -165,23 +145,19 @@ export const plotIfsFlame = async (
   plotFlame(transforms, randomInt, colors, plotter, initialPointPicker, finalTransform, nbPoints, nbIterations, resetIfOverflow, colorMerge);
 
   // we correct the generated image using the contrast-based scalefactor technique
-  let averageHits = 1;
   if (additiveColors) {
-    // averageHits = Math.max(1, (nbPoints * nbIterations) / (width * height));
-    averageHits = getAverageHits(buffer, width, height);
+    // const averageHits = Math.max(1, (nbPoints * nbIterations) / (width * height));
+    const averageHits = getAverageHits(hitmap, width, height);
+    buffer = applyContrastBasedScalefactor(buffer, hitmap, width, height, averageHits);
+    // buffer = applyLinearScalefactor(buffer, width, height);
+    // buffer = applyLogScalefactor(buffer, hitmap, width, height);
   }
 
-  buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
-  // buffer = applyLinearScalefactor(buffer, width, height);
-
-  // we make sure that the colors are proper RGB
-  buffer = convertUnitToRGBA(buffer);
-
   // and finally save the image
-  await saveImageBuffer(buffer, width, height, path);
+  saveImageBuffer(buffer, width, height, path);
 };
 
-export const plotIfs = async (
+export const plotIfs = (
   path: string,
   width: number,
   height: number,
@@ -193,18 +169,17 @@ export const plotIfs = async (
   initialPointPicker = randomComplex,
   colors?: Optional<Color[]>,
   wrapPlotter?: Wrapper<ComplexPlotter>,
-) => {
+): void => {
   const transforms = ifs.functions;
   const randomInt = randomIntegerWeighted(ifs.probabilities);
 
   if (colors == null) {
     colors = expandPalette(getBigQualitativePalette(5), transforms.length);
-    colors = colors.map(([ r, g, b ]) => [ r / 255, g / 255, b / 255 ]);
   }
 
-  // we create a buffer and a standard plotter
-  let buffer: PlotBuffer = new Float32Array(width * height * 4);
-  let plotter = makeAdditiveBufferPlotter(buffer, width, height, domain);
+  let buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
+  const hitmap = new Uint32Array(width * height).fill(0);
+  let plotter = makeAdditiveHitmapZPlotter(buffer, hitmap, width, height, domain);
   if (wrapPlotter != null) {
     plotter = wrapPlotter(plotter);
   }
@@ -212,19 +187,14 @@ export const plotIfs = async (
   plotFlame(transforms, randomInt, colors, plotter, initialPointPicker, finalTransform, nbPoints, nbIterations);
 
   // we correct the generated image using the contrast-based scalefactor technique
-  // const averageHits =  Math.max(1, (nbPoints * nbIterations) / (width * height));
-  const averageHits = getAverageHits(buffer, width, height);
-  buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
-  // buffer = applyLinearScalefactor(buffer, width, height);
-
-  // we make sure that the colors are proper RGB
-  buffer = convertUnitToRGBA(buffer);
+  const averageHits = getAverageHits(hitmap, width, height);
+  buffer = applyContrastBasedScalefactor(buffer, hitmap, width, height, averageHits);
 
   // and finally save the image
-  await saveImageBuffer(buffer, width, height, path);
+  saveImageBuffer(buffer, width, height, path);
 };
 
-export const plotIfsGrid = async (
+export const plotIfsGrid = (
   path: string,
   width: number,
   height: number,
@@ -236,18 +206,17 @@ export const plotIfsGrid = async (
   accuracy = 1,
   colors?: Optional<Color[]>,
   wrapPlotter?: Wrapper<ComplexPlotter>,
-) => {
+): void => {
   const transforms = ifs.functions;
   const randomInt = randomIntegerWeighted(ifs.probabilities);
 
   if (colors == null) {
     colors = expandPalette(getBigQualitativePalette(5), transforms.length);
-    colors = colors.map(([ r, g, b ]) => [ r / 255, g / 255, b / 255 ]);
   }
 
-  // we create a buffer and a standard plotter
-  let buffer: PlotBuffer = new Float32Array(width * height * 4);
-  let plotter = makeAdditiveBufferPlotter(buffer, width, height, domain);
+  let buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
+  const hitmap = new Uint32Array(width * height).fill(0);
+  let plotter = makeAdditiveHitmapZPlotter(buffer, hitmap, width, height, domain);
   if (wrapPlotter != null) {
     plotter = wrapPlotter(plotter);
   }
@@ -260,68 +229,65 @@ export const plotIfsGrid = async (
   }
 
   // we correct the generated image using the contrast-based scalefactor technique
-  // const averageHits =  Math.max(1, (nbPoints * nbIterations) / (width * height));
-  const averageHits = getAverageHits(buffer, width, height);
-  buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
-  // buffer = applyLinearScalefactor(buffer, width, height);
-
-  // we make sure that the colors are proper RGB
-  buffer = convertUnitToRGBA(buffer);
+  const averageHits = getAverageHits(hitmap, width, height);
+  buffer = applyContrastBasedScalefactor(buffer, hitmap, width, height, averageHits);
 
   // and finally save the image
-  await saveImageBuffer(buffer, width, height, path);
+  saveImageBuffer(buffer, width, height, path);
 };
 
-export const plotNoise = async (noiseFunction: () => PlotBuffer, size: number, outputPath: string) => {
+export const plotNoise = (noiseFunction: () => Float32Array, size: number, outputPath: string): void => {
   const noise = noiseFunction();
-  const output = convertUnitToRGBA(noise);
-  await saveImageBuffer(output, size, size, outputPath);
+  saveImageBuffer(noise, size, size, outputPath);
 };
 
-export const plotNoiseFunction = async (noiseFunction: NoiseFunction2D, size: number, outputPath: string, normalize = true) => {
-  const buffer = new Float32Array(size * size * 4);
+export const plotNoiseFunction = (noiseFunction: NoiseFunction2D, size: number, outputPath: string, normalize = true): Float32Array => {
+  const buffer = fillPicture(new Float32Array(size * size * 4), 0, 0, 0, 1);
   forEachPixel(buffer, size, size, (r, g, b, a, i, j, idx) => {
     const intensity = noiseFunction(i / size, j / size);
     buffer[idx + 0] = intensity;
     buffer[idx + 1] = intensity;
     buffer[idx + 2] = intensity;
+    buffer[idx + 3] = a;
   });
-  /*if (normalize) {
+  if (normalize) {
     normalizeBuffer(buffer, size, size);
   }
-  await saveImageBuffer(convertUnitToRGBA(buffer), size, size, outputPath);
-  return buffer;*/
+  saveImageBuffer(buffer, size, size, outputPath);
+  return buffer;
 };
 
-export const plotAttractor = async (
+export const plotAttractor = (
   path: string,
   width: number,
   height: number,
   attractor: Attractor,
   initialPointPicker = () => complex(0, 0),
-  colorFunc: ColorSteal = () => [ 1, 1, 1 ],
+  colorFunc: ColorSteal = () => [ 1, 1, 1, 1 ],
   nbIterations = 1000000,
   domain = BI_UNIT_DOMAIN,
   wrapPlotter?: Wrapper<ComplexPlotter>,
-) => {
-  await plotAttractorMultipoint(path, width, height, attractor, initialPointPicker, colorFunc, 1, nbIterations, domain, wrapPlotter);
+): void => {
+  plotAttractorMultipoint(path, width, height, attractor, initialPointPicker, colorFunc, 1, nbIterations, domain, wrapPlotter);
 };
 
-export const plotAttractorMultipoint = async (
+export const plotAttractorMultipoint = (
   path: string,
   width: number,
   height: number,
   attractor: Attractor,
   initialPointPicker = () => complex(0, 0),
-  colorFunc: ColorSteal = () => [ 1, 1, 1 ],
+  colorFunc: ColorSteal = () => [ 1, 1, 1, 1 ],
   nbPoints = 10,
   nbIterations = 1000000,
   domain = BI_UNIT_DOMAIN,
   wrapPlotter?: Wrapper<ComplexPlotter>,
-) => {
+): void => {
   // we create a buffer and the standard plotter
-  let buffer: PlotBuffer = new Float32Array(width * height * 4);
-  let plotter = makeAdditiveBufferPlotter(buffer, width, height, domain);
+  let buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
+  const hitmap = new Uint32Array(width * height).fill(0);
+  let plotter = makeAdditiveHitmapZPlotter(buffer, hitmap, width, height, domain);
+
   if (wrapPlotter != null) {
     plotter = wrapPlotter(plotter);
   }
@@ -329,18 +295,14 @@ export const plotAttractorMultipoint = async (
   plotFlameWithColorStealing([ attractor ], () => 0, colorFunc, plotter, false, initialPointPicker, makeIdentityFunction(), nbPoints, nbIterations);
 
   // we correct the generated image using the contrast-based scalefactor technique
-  // const averageHits = Math.max(1, nbIterations / (width * height));
-  const averageHits = getAverageHits(buffer, width, height);
-  buffer = applyContrastBasedScalefactor(buffer, width, height, averageHits);
-
-  // we make sure that the colors are proper RGB
-  buffer = convertUnitToRGBA(buffer);
+  const averageHits = getAverageHits(hitmap, width, height);
+  buffer = applyContrastBasedScalefactor(buffer, hitmap, width, height, averageHits);
 
   // and finally save the image
-  await saveImageBuffer(buffer, width, height, path);
+  saveImageBuffer(buffer, width, height, path);
 };
 
-export const plotAutoscaledAttractor = async (
+export const plotAutoscaledAttractor = (
   path: string,
   width: number,
   height: number,
@@ -350,7 +312,7 @@ export const plotAutoscaledAttractor = async (
   nbIterations = 1000000,
   autoScaleIterations = 100000,
   zoomAfterAutoscale = 1.2,
-) => {
+): void => {
   // we compute automatically the domain of the attractor
   const domain = scaleDomain(estimateAttractorDomain(attractor, initialPointPicker, makeIdentityFunction(), autoScaleIterations), zoomAfterAutoscale);
   console.log('Estimated domain', domain);
@@ -362,25 +324,24 @@ export const plotAutoscaledAttractor = async (
   plotAttractor(path, width, height, attractor, initialPointPicker, colorFunc, nbIterations, domain);
 };
 
-export const plotSupersampledVectorField = async (
+export const plotSupersampledVectorField = (
   path: string,
   width: number,
   height: number,
   vectorFunction: VectorFieldFunction,
-  colorFunc: ColorSteal,
+  colorFunc: VectorFieldColorFunction,
   timeFunction: VectorFieldTimeFunction = () => 0,
   nbIterations = 500,
   finalTransform = makeIdentityFunction(),
-  wrapPlotter?: Wrapper<ComplexPlotter>,
+  wrapPlotter?: Optional<Wrapper<ComplexPlotter>>,
   supersampling = 4,
-) => {
-  // supersampling consists into rendering a bigger image and downscale it afterwards
+  domainScale = 2,
+): void => {
   const superWidth = supersampling * width;
   const superHeight = supersampling * height;
 
-  // we create a buffer and the standard plotter
-  let buffer: PlotBuffer = new Float32Array(superWidth * superHeight * 4);
-  let plotter = makeBufferPlotter(buffer, superWidth, superHeight, scaleDomain(BI_UNIT_DOMAIN, 2));
+  let buffer = fillPicture(new Float32Array(superWidth * superHeight * 4), 0, 0, 0, 1);
+  let plotter = makeMappedZPlotter(buffer, superWidth, superHeight, scaleDomain(BI_UNIT_DOMAIN, domainScale));
   if (wrapPlotter != null) {
     plotter = wrapPlotter(plotter);
   }
@@ -390,114 +351,195 @@ export const plotSupersampledVectorField = async (
   // downscale from the super size to the requested size
   buffer = downscale2(buffer, superWidth, superHeight, width, height);
 
-  // we make sure that the colors are proper RGB
-  buffer = convertUnitToRGBA(buffer);
-
   // and finally save the image
-  await saveImageBuffer(buffer, width, height, path);
+  saveImageBuffer(buffer, width, height, path);
 };
 
-export const downsampleImage = async (inputPath: string, outputPath: string, factor = 1) => {
-  const inputImage = await readImage(inputPath, 255);
+export const plotVectorFieldVectors = (
+  path: string,
+  vectorFunction: VectorFieldFunction,
+  colorFunc: VectorFieldColorFunction,
+  iteration = 0,
+  time = 0,
+  gridAccuracy = 0.025,
+  gridDomain = BI_UNIT_DOMAIN,
+  halfCellSize = 10,
+): void => {
+  const cellSize = 2 * halfCellSize + 1;
+  const width = cellSize * Math.ceil((gridDomain.xmax - gridDomain.xmin) / gridAccuracy);
+  const height = cellSize * Math.ceil((gridDomain.ymax - gridDomain.ymin) / gridAccuracy);
+
+  const buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
+  const plotter = makePlotter(buffer, width, height);
+
+  let point = 0;
+  for (let x = gridDomain.xmin; x <= gridDomain.xmax; x += gridAccuracy) {
+    for (let y = gridDomain.ymin; y <= gridDomain.ymax; y += gridAccuracy) {
+      const z = complex(x, y);
+      const fz = add(mapComplexDomainToPixel(z, gridDomain, width, height), complex(halfCellSize, halfCellSize));
+      const v = mul(vectorFunction(z, iteration, time), halfCellSize);
+      const color = colorFunc(z, point, iteration, z);
+      drawBresenhamLine(fz.re, fz.im, fz.re + v.re, fz.im + v.im, color, plotter);
+      drawFilledCircle(fz.re, fz.im, 2, color, plotter);
+      point++;
+    }
+  }
+
+  saveImageBuffer(buffer, width, height, path);
+};
+
+export const plotVectorFieldVectors2 = (
+  path: string,
+  vectors: Float32Array,
+  width: number,
+  height: number,
+  colorFunc: VectorFieldColorFunction,
+  halfCellSize = 10,
+): void => {
+  const cellSize = 2 * halfCellSize + 1;
+
+  const outWidth = width * cellSize;
+  const outHeight = height * cellSize;
+  const buffer = fillPicture(new Float32Array(outWidth * outHeight * 4), 0, 0, 0, 1);
+  const plotter = makePlotter(buffer, outWidth, outHeight);
+
+  let point = 0;
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      const fz = add(mul(complex(x, y), cellSize), complex(halfCellSize + 1, halfCellSize + 1));
+      const v = mul(complex(vectors[(x + y * width) * 2], vectors[(x + y * width) * 2 + 1]), halfCellSize);
+      const z = mapPixelToComplexDomain(x, y, width, height, BI_UNIT_DOMAIN);
+      const color = colorFunc(z, point, 0, z);
+      drawBresenhamLine(fz.re, fz.im, fz.re + v.re, fz.im + v.im, color, plotter);
+      drawFilledCircle(fz.re, fz.im, 2, color, plotter);
+      point++;
+    }
+  }
+
+  saveImageBuffer(buffer, outWidth, outHeight, path);
+};
+
+
+export const downsampleImage = (inputPath: string, outputPath: string, factor = 1): void => {
+  const inputImage = readImage(inputPath);
 
   const downscaleFactor = 1 / factor;
   const outputWidth = Math.trunc(downscaleFactor * inputImage.width);
   const outputHeight = Math.trunc(downscaleFactor * inputImage.height);
 
   const resizedBuffer = downscale(inputImage.buffer, inputImage.width, inputImage.height, downscaleFactor);
-  await saveImageBuffer(convertUnitToRGBA(resizedBuffer), outputWidth, outputHeight, outputPath);
+  saveImageBuffer(resizedBuffer, outputWidth, outputHeight, outputPath);
 };
 
-const getAverageHits = (buffer: PlotBuffer, width: number, height: number) => {
-  const sum = buffer.reduce((prev, cur, i) => {
-    if ((i + 1) % 4 === 0) {
-      return prev + cur;
-    }
-    return prev;
-  }, 0);
+const getAverageHits = (buffer: Uint32Array, width: number, height: number) => {
+  const sum = buffer.reduce((prev, cur) => prev + cur, 0);
   return Math.max(1, sum / (width * height));
 };
 
-
-export const plotAutomata = async (
+export const plotAutomata = (
   path: string,
   width: number,
   height: number,
-  automata: () => Promise<PlotBuffer>,
-) => {
-  const output = await automata();
-  await saveImageBuffer(convertUnitToRGBA(output), width, height, path);
+  automata: () => Float32Array,
+): void => {
+  const output = automata();
+  saveImageBuffer(output, width, height, path);
 };
 
-export const plot2dCA = async (
+export const plot1dCA = (
   path: string,
   width: number,
   height: number,
-  nextCellState: NextCellStateFunction,
+  nextCellState: Next1dCellStateFunction,
+  colors: Color[],
+  iterations = 100,
+  initialState?: Optional<CellularAutomataGrid>,
+  startAtLine = 0,
+  deadCellState?: Optional<number>,
+  wrapPlotter?: Wrapper<PixelPlotter>,
+): CellularAutomataGrid => {
+  // we create a buffer and a standard plotter
+  const buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
+  let plotter = makePlotter(buffer, width, height);
+  if (wrapPlotter != null) {
+    plotter = wrapPlotter(plotter);
+  }
+
+  const grid = plot1dAutomaton(plotter, width, height, nextCellState, colors, deadCellState, iterations, initialState, startAtLine);
+
+  // and finally save the image
+  saveImageBuffer(buffer, width, height, path);
+
+  return grid;
+};
+
+export const plot2dCA = (
+  path: string,
+  width: number,
+  height: number,
+  nextCellState: Next2dCellStateFunction,
   colors: Color[],
   iterations = 100,
   initialState?: Optional<CellularAutomataGrid>,
   deadCellState?: Optional<number>,
-  wrapPlotter?: Wrapper<ComplexPlotter>,
-) => {
+  wrapPlotter?: Wrapper<PixelPlotter>,
+): CellularAutomataGrid => {
   // we create a buffer and a standard plotter
-  let buffer: PlotBuffer = new Float32Array(width * height * 4);
-  let plotter = makeUnmappedBufferPlotter(buffer, width, height);
+  const buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
+  let plotter = makePlotter(buffer, width, height);
   if (wrapPlotter != null) {
     plotter = wrapPlotter(plotter);
   }
 
   const grid = plot2dAutomaton(plotter, width, height, nextCellState, colors, deadCellState, iterations, initialState);
 
-  // we make sure that the colors are proper RGB
-  buffer = convertUnitToRGBA(buffer);
-
   // and finally save the image
-  await saveImageBuffer(buffer, width, height, path);
+  saveImageBuffer(buffer, width, height, path);
 
   return grid;
 };
 
-export const plot2dHexCA = async (
+export const plot2dHexCA = (
   path: string,
   width: number,
   height: number,
-  nextCellState: NextCellStateFunction,
+  nextCellState: Next2dCellStateFunction,
   colors: Color[],
   iterations = 100,
   initialState?: Optional<CellularAutomataGrid>,
   hexagonalRadius = 10,
   hexagonBorder = 3,
   deadCellState?: Optional<number>,
-  wrapPlotter?: Wrapper<ComplexPlotter>,
-) => {
+  wrapPlotter?: Wrapper<PixelPlotter>,
+): CellularAutomataGrid => {
   // we compute the size of the final buffer, according to ther hexagon size
   const hexagonalRadiusWithBorder = hexagonalRadius + hexagonBorder;
 
   const w = Math.sqrt(3) * hexagonalRadiusWithBorder;
   const h = 2 * hexagonalRadiusWithBorder;
+  const skewness = (height * 0.5 * 0.5);
 
   const bufferWidth = Math.trunc(width * w);
   const bufferHeight = Math.trunc(height * h * 0.75);
 
   // we create a buffer for drawing
-  let buffer: PlotBuffer = new Float32Array(bufferWidth * bufferHeight * 4);
+  const buffer = fillPicture(new Float32Array(bufferWidth * bufferHeight * 4), 0, 0, 0, 1);
 
   // the plotter is a regular buffer plotter, encapsulated by a plotter that draws hexagon
-  const canvasPlotter = makePixelToComplexPlotter(makeUnmappedBufferPlotter(buffer, bufferWidth, bufferHeight));
-  const hexagonPlotter: PixelPlotter = (x, y, color) => {
+  const canvasPlotter = makePlotter(buffer, bufferWidth, bufferHeight);
+  const hexagonPlotter = (x: number, y: number, color: Color) => {
     drawFilledNgon(6, x, y, hexagonalRadius + 1, color, canvasPlotter);
   };
-
-  // the final plotter encapsulates the hexagon plotter
-  // with a logic for converting the hex grid coordinates to the buffer coordinates
-  const skewness = (height * 0.5 * 0.5);
-  let plotter: ComplexPlotter = (z, color) => {
-    const x = Math.trunc((z.re - skewness) * w + z.im * w * 0.5);
-    const y = Math.trunc(z.im * 0.75 * h);
-    if (x >= 0 && x < bufferWidth && y >= 0 && y < bufferHeight) {
-      hexagonPlotter(x, y, color);
+  
+  // the final plotter encapsulates the hexagon plotter with a logic for converting the hex grid coordinates to the buffer coordinates
+  let plotter: PixelPlotter = (x, y, color) => {
+    const fx = Math.trunc((x - skewness) * w + y * w * 0.5);
+    const fy = Math.trunc(y * 0.75 * h);
+    if (fx >= 0 && fx < bufferWidth && fy >= 0 && fy < bufferHeight) {
+      hexagonPlotter(fx, fy, color);
+      return true;
     }
+    return false;
   };
 
   if (wrapPlotter != null) {
@@ -506,47 +548,45 @@ export const plot2dHexCA = async (
 
   const grid = plot2dAutomaton(plotter, width, height, nextCellState, colors, deadCellState, iterations, initialState);
 
-  // we make sure that the colors are proper RGB
-  buffer = convertUnitToRGBA(buffer);
-
   // and finally save the image
-  await saveImageBuffer(buffer, bufferWidth, bufferHeight, path);
+  saveImageBuffer(buffer, bufferWidth, bufferHeight, path);
 
   return grid;
 };
 
-export const plotSymmetrical2dHexCA = async (
+export const plotSymmetrical2dHexCA = (
   path: string,
   width: number,
   height: number,
-  nextCellState: NextCellStateFunction,
+  nextCellState: Next2dCellStateFunction,
   colors: Color[],
   iterations = 100,
   initialState?: Optional<CellularAutomataGrid>,
   hexagonalRadius = 10,
   hexagonBorder = 3,
   deadCellState?: Optional<number>,
-  wrapPlotter?: Wrapper<ComplexPlotter>,
-) => {
+  wrapPlotter?: Wrapper<PixelPlotter>,
+): CellularAutomataGrid => {
   // we compute the size of the final buffer, according to a fixed hexagon size
   const hexagonalRadiusWithBorder = hexagonalRadius + hexagonBorder;
 
   const w = Math.sqrt(3) * hexagonalRadiusWithBorder;
   const h = 2 * hexagonalRadiusWithBorder;
+  const skewness = (height * 0.5 * 0.5);
 
   const bufferWidth = Math.trunc(width * w);
   const bufferHeight = Math.trunc(height * h * 0.75);
 
   // we create a buffer for drawing
-  let buffer: PlotBuffer = new Float32Array(bufferWidth * bufferHeight * 4);
+  const buffer = fillPicture(new Float32Array(bufferWidth * bufferHeight * 4), 0, 0, 0, 1);
 
   // the plotter is a regular buffer plotter, encapsulated by a plotter that draws hexagon
-  const canvasPlotter = makePixelToComplexPlotter(makeUnmappedBufferPlotter(buffer, bufferWidth, bufferHeight));
-  const hexagonPlotter: PixelPlotter = (x, y, color) => {
+  const canvasPlotter = makePlotter(buffer, bufferWidth, bufferHeight);
+  const hexagonPlotter = (x: number, y: number, color: Color) => {
     drawFilledNgon(6, x, y, hexagonalRadius + 1, color, canvasPlotter);
   };
 
-  // we create a plotter that wrap the previous one for adding D6-symmetry
+  // we create a plotter that wraps the hexagon plotter for adding D6-symmetry
   const d6Transforms = makeDihedralSymmetry(6);
   const d6SymmetryPlotter: PixelPlotter = (x, y, color) => {
     // we recenter the coordinates to 0, 0
@@ -554,8 +594,10 @@ export const plotSymmetrical2dHexCA = async (
     const y0 = y - bufferHeight / 2;
 
     // we plot all the hexagon, with the symmetry transformations
+    let drawn = false;
     if (x >= 0 && x < bufferWidth && y >= 0 && y < bufferHeight) {
       hexagonPlotter(Math.trunc(x), Math.trunc(y), color);
+      drawn = true;
     }
     d6Transforms.forEach((f) => {
       const fz = f(complex(x0, y0));
@@ -563,24 +605,25 @@ export const plotSymmetrical2dHexCA = async (
       const fy = fz.im + bufferHeight / 2;
       if (fx >= 0 && fx < bufferWidth && fy >= 0 && fy < bufferHeight) {
         hexagonPlotter(Math.trunc(fx), Math.trunc(fy), color);
+        drawn = true;
       }
     });
+    return drawn;
   };
 
-  // the final plotter encapsulates the symmetrical plotter
-  // with a logic for converting the hex grid coordinates to the buffer coordinates
-  const skewness = (height * 0.5 * 0.5);
-  let plotter: ComplexPlotter = (z, color) => {
-    const x = (z.re - skewness) * w + z.im * w * 0.5;
-    const y = z.im * 0.75 * h;
-    d6SymmetryPlotter(x, y, color);
+  // the final plotter encapsulates the symmetrical plotter with a logic for converting the hex grid coordinates to the buffer coordinates
+  let plotter: PixelPlotter = (x, y, color) => {
+    const fx = Math.trunc((x - skewness) * w + y * w * 0.5);
+    const fy = Math.trunc(y * 0.75 * h);
+    return d6SymmetryPlotter(fx, fy, color);
   };
 
   if (wrapPlotter != null) {
     plotter = wrapPlotter(plotter);
   }
 
-  const prunedNextCellState: NextCellStateFunction = (stateGrid, gridWidth, gridHeight, currentState, x, y) => {
+  const prunedNextCellState: Next2dCellStateFunction = (stateGrid, gridWidth, gridHeight, currentState, x, y) => {
+    // TODO maybe we can externalize this into lattice functions (including rhombic, etc.)
     const hx = (x - skewness) * w + y * w * 0.5;
     const hy = y * 0.75 * h;
 
@@ -595,25 +638,135 @@ export const plotSymmetrical2dHexCA = async (
 
   const grid = plot2dAutomaton(plotter, width, height, prunedNextCellState, colors, deadCellState, iterations, initialState);
 
-  // we make sure that the colors are proper RGB
-  buffer = convertUnitToRGBA(buffer);
-
   // and finally save the image
-  await saveImageBuffer(buffer, bufferWidth, bufferHeight, path);
+  saveImageBuffer(buffer, bufferWidth, bufferHeight, path);
 
   return grid;
 };
 
-export const plotDomainColoring2 = async (
+export const plot2dHexMultistateCASvg = async (
   path: string,
-  bitmap: PlotBuffer,
+  width: number,
+  height: number,
+  svgWidth: number,
+  svgHeight: number,
+  nextCellState: Next2dCellStateFunction,
+  colors: Color[],
+  makeTiles: (scale: number, doc: SvgDocument) => PixelPlotter[],
+  iterations = 100,
+  initialState?: Optional<CellularAutomataGrid>,
+  hexagonalRadius = 12,
+  hexagonBorder = 1,
+  scale = 1,
+  deadCellState?: Optional<number>,
+): Promise<CellularAutomataGrid> => {
+  // we compute the size of the final buffer, according to ther hexagon size
+  const hexagonalRadiusWithBorder = (hexagonalRadius + hexagonBorder) * scale;
+
+  const w = Math.sqrt(3) * hexagonalRadiusWithBorder;
+  const h = 2 * hexagonalRadiusWithBorder;
+  const skewness = (height * 0.5 * 0.5);
+
+  const bufferWidth = Math.trunc(width * w);
+  const bufferHeight = Math.trunc(height * h * 0.75);
+
+  // the plotter is a SVG plotter
+  const document = makeSvgDocument();
+  document.viewbox(0, 0, bufferWidth, bufferHeight);
+  document.attr({ width: svgWidth, height: svgHeight, style: 'background-color: #000' });
+  
+  const statePlotters = makeTiles(scale, document);
+
+  // the final plotter introduce a logic for converting the hex grid coordinates to the buffer coordinates
+  // it will also delegate the plotting to a subplotter corresponding to the cell state (each subplotter draws a different shape)
+  const plotter: PixelPlotter = (x, y, color, cellState) => {
+    const fx = Math.trunc((x - skewness) * w + y * w * 0.5);
+    const fy = Math.trunc(y * 0.75 * h);
+    if (fx >= 0 && fx < bufferWidth && fy >= 0 && fy < bufferHeight) {
+      statePlotters[cellState](fx, fy, color);
+      return true;
+    }
+    return false;
+  };
+
+  const grid = plot2dAutomaton(plotter, width, height, nextCellState, colors, deadCellState, iterations, initialState);
+
+  // and save the image as svg
+  saveSvgToFile(document, `${path}.svg`)
+
+  // and finally convert the svg to a png
+  await sharp(`${path}.svg`)
+    .png()
+    .flatten({ background: { r: 0, g: 0, b: 0 } })
+    .toFile(path);
+
+  return grid;
+};
+
+export const plot2dMultistateCASvg = async (
+  path: string,
+  width: number,
+  height: number,
+  svgWidth: number,
+  svgHeight: number,
+  nextCellState: Next2dCellStateFunction,
+  colors: Color[],
+  makeTiles: (scale: number, doc: SvgDocument) => PixelPlotter[],
+  iterations = 100,
+  initialState?: Optional<CellularAutomataGrid>,
+  tileSize = 10,
+  tileBorder = 0,
+  scale = 1,
+  deadCellState?: Optional<number>,
+): Promise<CellularAutomataGrid> => {
+  // we compute the size of the final buffer, according to the tile size
+  tileSize = (tileSize + tileBorder) * scale;
+  const bufferWidth = Math.trunc(width * tileSize);
+  const bufferHeight = Math.trunc(height * tileSize);
+
+  // the plotter is a SVG plotter
+  const document = makeSvgDocument();
+  document.viewbox(0, 0, bufferWidth, bufferHeight);
+  document.attr({ width: svgWidth, height: svgHeight, style: 'background-color: #000' });
+  
+  const statePlotters = makeTiles(scale, document);
+
+  // the final plotter introduce a logic for converting the hex grid coordinates to the buffer coordinates
+  // it will also delegate the plotting to a subplotter corresponding to the cell state (each subplotter draws a different shape)
+  const plotter: PixelPlotter = (x, y, color, cellState) => {
+    const fx = Math.trunc(x * tileSize);
+    const fy = Math.trunc(y * tileSize);
+    if (fx >= 0 && fx < bufferWidth && fy >= 0 && fy < bufferHeight) {
+      statePlotters[cellState](fx, fy, color);
+      return true;
+    }
+    return false;
+  };
+
+  const grid = plot2dAutomaton(plotter, width, height, nextCellState, colors, deadCellState, iterations, initialState);
+
+  // and save the image as svg
+  saveSvgToFile(document, `${path}.svg`)
+
+  // and finally convert the svg to a png
+  await sharp(`${path}.svg`)
+    .png()
+    .flatten({ background: { r: 0, g: 0, b: 0 } })
+    .toFile(path);
+
+  return grid;
+};
+
+export const plotDomainColoring2 = (
+  path: string,
+  bitmap: Float32Array,
   width: number,
   height: number,
   f: ComplexToComplexFunction,
   domain: PlotDomain = BI_UNIT_DOMAIN
-) => {
+): void => {
   const image = createImage(width, height, 0, 0, 0, 255);
-  const buffer = image.getImage().data;
+  const buffer = image.buffer;
 
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
@@ -644,47 +797,92 @@ export const plotDomainColoring2 = async (
     }
   }
 
-  await saveImage(image, path);
+  saveImage(image, path);
 };
 
-export const plotDomainColoring = async (
+export const plotDomainColoring = (
   path: string,
   bitmapPath: string,
   f: ComplexToComplexFunction,
   domain: PlotDomain = BI_UNIT_DOMAIN
-) => {
-  const picture = await readImage(bitmapPath);
+): void => {
+  const picture = readImage(bitmapPath);
   const width = picture.width;
   const height = picture.height;
   const bitmap = picture.buffer;
-
-  await plotDomainColoring2(path, bitmap, width, height, f, domain);
+  plotDomainColoring2(path, bitmap, width, height, f, domain);
 };
 
-export const plotDomainReverseColoring = async (
+export const plotDomainReverseColoring = (
   path: string,
   bitmapPath: string,
   f: ComplexToComplexFunction,
   domain: PlotDomain = BI_UNIT_DOMAIN,
   stripe = true,
-) => {
-  const picture = await readImage(bitmapPath, 255);
+): void => {
+  const picture = readImage(bitmapPath);
   const width = picture.width;
   const height = picture.height;
   const bitmap = picture.buffer;
 
   const newBitmap = makeInvertCollageHorizontal(bitmap, width, height, stripe);
-  await plotDomainColoring2(path, convertUnitToRGBA(newBitmap), width, height, f, domain);
+  plotDomainColoring2(path, newBitmap, width, height, f, domain);
 };
 
-export const plotDomainReverseColoring2 = async (
+export const plotDomainReverseColoring2 = (
   path: string,
-  bitmap: PlotBuffer,
+  bitmap: Float32Array,
   width: number,
   height: number,
   f: ComplexToComplexFunction,
   domain: PlotDomain = BI_UNIT_DOMAIN
-) => {
-  const newBitmap = makeInvertCollageHorizontal(bitmap.map(x => x / 255), width, height);
-  await plotDomainColoring2(path, convertUnitToRGBA(newBitmap), width, height, f, domain);
+): void => {
+  const newBitmap = makeInvertCollageHorizontal(bitmap, width, height);
+  plotDomainColoring2(path, newBitmap, width, height, f, domain);
+};
+
+const makeHitmapZPlotter = (buffer: Float32Array, hitmap: Uint32Array, width: number, height: number, domain: PlotDomain): ComplexPlotter => {
+  return (z, color) => {
+    const fz = mapComplexDomainToPixel(z, domain, width, height);
+    let x = fz.re;
+    let y = fz.im;
+    if (x < 0 || y < 0 || x >= width || y >= height) {
+      return false;
+    }
+    x = Math.trunc(x);
+    y = Math.trunc(y);
+
+    const idx1 = (x + y * width);
+    hitmap[idx1] += 1;
+
+    const idx2 = idx1 * 4;
+    buffer[idx2 + 0] = color[0];
+    buffer[idx2 + 1] = color[1];
+    buffer[idx2 + 2] = color[2];
+    buffer[idx2 + 3] = color[3];
+    return true;
+  };
+};
+
+const makeAdditiveHitmapZPlotter = (buffer: Float32Array, hitmap: Uint32Array, width: number, height: number, domain: PlotDomain): ComplexPlotter => {
+  return (z, color) => {
+    const fz = mapComplexDomainToPixel(z, domain, width, height);
+    let x = fz.re;
+    let y = fz.im;
+    if (x < 0 || y < 0 || x >= width || y >= height) {
+      return false;
+    }
+    x = Math.trunc(x);
+    y = Math.trunc(y);
+
+    const idx1 = (x + y * width);
+    hitmap[idx1] += 1;
+
+    const idx2 = idx1 * 4;
+    buffer[idx2 + 0] += color[0];
+    buffer[idx2 + 1] += color[1];
+    buffer[idx2 + 2] += color[2];
+    buffer[idx2 + 3] = color[3];
+    return true;
+  };
 };
