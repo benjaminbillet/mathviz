@@ -1,8 +1,9 @@
-import { randomIntegerWeighted, randomIntegerUniform, random } from './random';
+import { randomIntegerWeighted, randomIntegerUniform, random, pickRandom } from './random';
 import * as affine from '../utils/affine';
-import { ComplexToComplexFunction, IterableRealFunction, RealToRealFunction, TransformMatrix, Struct, Collection } from './types';
-import { Matrix } from 'mathjs';
-import { ComplexNumber } from './complex';
+import { Optional, ComplexToComplexFunction, IterableRealFunction, RealToRealFunction, TransformMatrix, Struct, Collection, Circle } from './types';
+import { complex, ComplexNumber } from './complex';
+import { euclidean, euclidean2d } from './distance';
+import { Matrix } from './matrix';
 
 export const clamp = (x: number, min: number, max: number) => {
   return Math.max(min, Math.min(x, max));
@@ -33,6 +34,32 @@ export const shuffleArray = <T> (a: Collection<T>): Collection<T> => {
     a[j] = x;
   }
   return a;
+};
+
+export enum ExpandMode {
+  ROTATE,
+  COPY,
+  RANDOM
+};
+export const expandArray = <T> (a: Collection<T>, newSize: number, mode = ExpandMode.RANDOM): Collection<T> => {
+  if (newSize <= a.length) {
+    return a.slice(0, newSize);
+  }
+  const result = [ ...a ];
+  for (let i = a.length; i < newSize; i++) {
+    switch (mode) {
+      case ExpandMode.ROTATE:
+        result.push(a[i % a.length]);
+        break;
+      case ExpandMode.COPY:
+        result.push(a[a.length - 1]);
+        break;
+      case ExpandMode.RANDOM:
+        result.push(pickRandom(a));
+        break;
+    }
+  }
+  return result;
 };
 
 export const findAllSubsets = (arr: any[]) => {
@@ -85,23 +112,31 @@ export const mapRange = (v: number, xmin: number, xmax: number, fxmin: number, f
   return fxmin + x * fxDelta;
 };
 
-export const makeTransformMatrix = (): TransformMatrix => {
-  let transformMatrix: Matrix = affine.IDENTITY;
+export const makeTransformMatrix = (initial = affine.IDENTITY): TransformMatrix => {
+  let transformMatrix: Matrix = initial;
+  let func: Optional<ComplexToComplexFunction> = null;
   const stack: Matrix[] = [];
   return {
     push: () => stack.push(transformMatrix),
     pop: () => {
-      transformMatrix = stack.pop() || affine.IDENTITY;
+      func = null;
+      transformMatrix = stack.pop() || initial;
       return transformMatrix;
     },
     transform: (...transforms: Matrix[]) => {
+      func = null;
       transformMatrix = affine.combine(
         transformMatrix,
         ...transforms,
       );
       return transformMatrix;
     },
-    apply: (z: ComplexNumber) => affine.applyAffine2dFromMatrix(transformMatrix, z),
+    apply: (z: ComplexNumber) => {
+      if (func == null) {
+        func = affine.makeAffine2dFromMatrix(transformMatrix);
+      }
+      return func(z);
+    }
   };
 };
 
@@ -110,4 +145,31 @@ export const evenify = (x: number) => {
     return x;
   }
   return x + 1;
+}
+
+// http://mathforum.org/library/drmath/view/53027.html
+export const findCircleCenter = (x1: number, y1: number, x2: number, y2: number, radius: number, exterior: boolean) => {
+  const q = euclidean2d(x1, y1, x2, y2);
+  const x3 = (x1 + x2) / 2;
+  const y3 = (y1 + y2) / 2;
+
+  const basex = euclidean(radius, q / 2) * (y1 - y2) / q;
+  const basey = euclidean(radius, q / 2) * (x2 - x1) / q;
+
+  if (exterior) {
+    return [ x3 - basex, y3 - basey ]; 
+  }
+  return [ x3 + basex, y3 + basey ]; 
+}
+
+// http://www.ambrsoft.com/trigocalc/circle3d.htm
+export const findCircle = (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number): Circle => {
+  const a = x1 * (y2 - y3) - y1 * (x2 - x3) + x2 * y3 - x3 * y2;
+  const b = (x1 * x1 + y1 * y1) * (y3 - y2) + (x2 * x2 + y2 * y2) * (y1 - y3) + (x3 * x3 + y3 * y3) * (y2 - y1);
+  const c = (x1 * x1 + y1 * y1) * (x2 - x3) + (x2 * x2 + y2 * y2) * (x3 - x1) + (x3 * x3 + y3 * y3) * (x1 - x2);
+  const d = (x1 * x1 + y1 * y1) * (x3 * y2 - x2 * y3) + (x2 * x2 + y2 * y2) * (x1 * y3 - x3 * y1) + (x3 * x3 + y3 * y3) * (x2 * y1 - x1 * y2);
+
+  const center = complex(-b / (2 * a), -c / (2 * a));
+  const radius = Math.sqrt((b * b + c * c - 4 * a * d) / (4 * a * a));
+  return { center, radius };
 }

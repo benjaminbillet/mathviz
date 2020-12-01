@@ -1,56 +1,68 @@
-import PngImage from 'pngjs-image';
+import { PNG } from 'pngjs';
+import fs from 'fs';
+
 import { ComplexNumber } from './complex';
-import { clampInt } from './misc';
-import { PlotBuffer, PlotDomain } from './types';
+import { clamp, mapRange } from './misc';
+import { PlotDomain } from './types';
+import { convertRGBAToUnit, convertUnitToRGBA } from './color';
 
+export type Image = {
+  width: number,
+  height: number,
+  buffer: Float32Array,
+}
 
-export const createImage = (width: number, height: number, r = 0, g = 0, b = 0, a = 255) => {
-  const image = PngImage.createImage(width, height);
-  fillPicture(image.getImage().data, width, height, r, g, b, a);
-  return image;
+export const fillPicture = (buffer: Float32Array, r = 0, g = 0, b = 0, a = 1) => {
+  for (let i = 0; i < buffer.length; i += 4) {
+    buffer[i + 0] = r;
+    buffer[i + 1] = g;
+    buffer[i + 2] = b;
+    buffer[i + 3] = a;
+  }
+  return buffer;
 };
 
-export const saveImage = async (image, path: string) => {
-  return new Promise((resolve, reject) => {
-    image.writeImage(path, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
+export const fillAlpha = (buffer: Float32Array, a = 1) => {
+  for (let i = 0; i < buffer.length; i += 4) {
+    buffer[i + 3] = a;
+  }
+  return buffer;
 };
 
-export const saveImageBuffer = async (buffer: PlotBuffer, width: number, height: number, path: string) => {
-  const image = PngImage.createImage(width, height);
-  image.getImage().data.set(buffer);
-  await saveImage(image, path);
+export const createImage = (width: number, height: number, r = 0, g = 0, b = 0, a = 1) => {
+  const buffer = fillPicture(new Float32Array(width * height * 4), r, g, b, a);
+  return { width, height, buffer };
 };
 
-export const readImage = async (path: string, scale = 1): Promise<{ buffer: PlotBuffer, width: number, height: number}> => {
-  return new Promise((resolve, reject) => {
-    PngImage.readImage(path, (err, image) => {
-      if (err) {
-        reject(err);
-      } else {
-        const width = image.getWidth();
-        const height = image.getHeight();
-        const imageData = image.getImage().data;
-
-        let buffer = imageData;
-        if (scale != 1) {
-          buffer = new Float32Array(imageData.length);
-          imageData.forEach((x, i) => buffer[i] = x / scale);
-        }
-
-        const result = { width, height, buffer };
-        resolve(result);
-      }
-    });
-  });
+export const saveImage = (image: Image, path: string) => {
+  saveImageBuffer(image.buffer, image.width, image.height, path);
 };
 
+export const saveImageBuffer = (buffer: Float32Array, width: number, height: number, path: string) => {
+  const pngData = PNG.sync.write({ width, height, data: convertUnitToRGBA(buffer) });
+  fs.writeFileSync(path, pngData);
+};
+
+export const saveSingleChannelBuffer = (buffer: Float32Array, width: number, height: number, path: string) => {
+  const output = new Float32Array(width * height * 4).fill(1);
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height; j++) {
+      const inIdx = i + j * width;
+      const outIdx = (i + j * width) * 4;
+      output[outIdx + 0] = buffer[inIdx];
+      output[outIdx + 1] = buffer[inIdx];
+      output[outIdx + 2] = buffer[inIdx];
+      output[outIdx + 3] = 1;
+    }
+  }
+  saveImageBuffer(output, width, height, path);
+};
+
+export const readImage = (path: string): Image => {
+  const pngData = fs.readFileSync(path);
+  const { width, height, data } = PNG.sync.read(pngData);
+  return { width, height, buffer: convertRGBAToUnit(data) };
+};
 
 export const mapPixelToDomain = (x: number, y: number, width: number, height: number, domain: PlotDomain) => {
   const domainWidth = domain.xmax - domain.xmin;
@@ -144,21 +156,9 @@ export const getPictureSize = (max: number, domain: PlotDomain, even = false) =>
   return result;
 };
 
-export const fillPicture = (buffer: Buffer, width: number, height: number, r = 0, g = 0, b = 0, a = 255) => {
-  for (let i = 0; i < width; i++) {
-    for (let j = 0; j < height; j++) {
-      const idx = (i + j * width) * 4;
-      buffer[idx + 0] = r;
-      buffer[idx + 1] = g;
-      buffer[idx + 2] = b;
-      buffer[idx + 3] = a;
-    }
-  }
-};
+export type ForEachPixelFunction = (r: number, g: number, b: number, a: number, x: number, y: number, idx: number, buffer: Float32Array) => void;
 
-export type ForEachPixelFunction = (r: number, g: number, b: number, a: number, x: number, y: number, idx: number, buffer: PlotBuffer) => void;
-
-export const forEachPixel = (buffer: PlotBuffer, width: number, height: number, f: ForEachPixelFunction) => {
+export const forEachPixel = (buffer: Float32Array, width: number, height: number, f: ForEachPixelFunction) => {
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
       const idx = (i + j * width) * 4;
@@ -167,9 +167,9 @@ export const forEachPixel = (buffer: PlotBuffer, width: number, height: number, 
   }
 };
 
-export type ReducePixelFunction = (current: number, r: number, g: number, b: number, a: number, x: number, y: number, idx: number, buffer: PlotBuffer) => number;
+export type ReducePixelFunction = (current: number, r: number, g: number, b: number, a: number, x: number, y: number, idx: number, buffer: Float32Array) => number;
 
-export const reducePixels = (buffer: PlotBuffer, width: number, height: number, f: ReducePixelFunction, initialValue = 0) => {
+export const reducePixels = (buffer: Float32Array, width: number, height: number, f: ReducePixelFunction, initialValue = 0) => {
   let current = initialValue;
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
@@ -180,8 +180,7 @@ export const reducePixels = (buffer: PlotBuffer, width: number, height: number, 
   return current;
 };
 
-
-export const normalizeBuffer = (buffer: PlotBuffer, width: number, height: number, factor = 1) => {
+export const normalizeBuffer = (buffer: Float32Array, width: number, height: number, outMin = 0, outMax = 1) => {
   let min = Number.MAX_SAFE_INTEGER;
   let max = Number.MIN_SAFE_INTEGER;
   forEachPixel(buffer, width, height, (r, g, b) => {
@@ -189,41 +188,45 @@ export const normalizeBuffer = (buffer: PlotBuffer, width: number, height: numbe
     max = Math.max(max, r, g, b);
   });
 
-  if (min === max) {
+  if (min === outMin && max === outMax) {
     return buffer;
   }
 
+  return mapRangeBuffer(buffer, width, height, min, max, outMin, outMax);
+};
+
+export const mapRangeBuffer = (buffer: Float32Array, width: number, height: number, inMin = 0, inMax = 1, outMin = 0, outMax = 1) => {
   forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => {
-    buffer[idx + 0] = ((r - min) / (max - min)) * factor;
-    buffer[idx + 1] = ((g - min) / (max - min)) * factor;
-    buffer[idx + 2] = ((b - min) / (max - min)) * factor;
+    buffer[idx + 0] = mapRange(r, inMin, inMax, outMin, outMax);
+    buffer[idx + 1] = mapRange(g, inMin, inMax, outMin, outMax);
+    buffer[idx + 2] = mapRange(b, inMin, inMax, outMin, outMax);
     buffer[idx + 3] = a;
   });
   return buffer;
 };
 
-export const clampBuffer = (buffer: PlotBuffer, width: number, height: number, min: number, max: number) => {
+export const clampBuffer = (buffer: Float32Array, width: number, height: number, min: number, max: number) => {
   forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => {
-    buffer[idx + 0] = Math.max(min, Math.min(r, max));
-    buffer[idx + 1] = Math.max(min, Math.min(g, max));
-    buffer[idx + 2] = Math.max(min, Math.min(b, max));
+    buffer[idx + 0] = clamp(r, min, max);
+    buffer[idx + 1] = clamp(g, min, max);
+    buffer[idx + 2] = clamp(b, min, max);
     buffer[idx + 3] = a;
   });
   return buffer;
 };
 
-export const getPixelValue = (buffer: PlotBuffer, width: number, height: number, x: number, y: number, offset: number) => {
-  const idx = (clampInt(x, 0, width - 1) + clampInt(y, 0, height - 1) * width) * 4 + offset;
+export const getPixelValue = (buffer: Float32Array, width: number, height: number, x: number, y: number, offset: number) => {
+  const idx = (clamp(x, 0, width - 1) + clamp(y, 0, height - 1) * width) * 4 + offset;
   return buffer[idx];
 };
 
-export const setPixelValue = (buffer: PlotBuffer, width: number, height: number, x: number, y: number, offset: number) => {
-  const idx = (clampInt(x, 0, width - 1) + clampInt(y, 0, height - 1) * width) * 4 + offset;
+export const setPixelValue = (buffer: Float32Array, width: number, height: number, x: number, y: number, offset: number) => {
+  const idx = (clamp(x, 0, width - 1) + clamp(y, 0, height - 1) * width) * 4 + offset;
   return buffer[idx];
 };
 
-export const setPixelValues = (buffer: PlotBuffer, width: number, height: number, x: number, y: number, r: number, g: number, b: number, a = 255) => {
-  const idx = (clampInt(x, 0, width - 1) + clampInt(y, 0, height - 1) * width) * 4;
+export const setPixelValues = (buffer: Float32Array, width: number, height: number, x: number, y: number, r: number, g: number, b: number, a = 1) => {
+  const idx = (clamp(x, 0, width - 1) + clamp(y, 0, height - 1) * width) * 4;
   buffer[idx + 0] = r;
   buffer[idx + 1] = g;
   buffer[idx + 2] = b;

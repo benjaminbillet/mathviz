@@ -1,6 +1,7 @@
 import * as approx from './approx';
 
 export const TWO_PI = Math.PI * 2;
+export const SQRT_TWO_PI = Math.sqrt(Math.PI * 2);
 
 const mathFull = {
   sin: Math.sin,

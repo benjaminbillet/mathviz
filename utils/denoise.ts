@@ -2,9 +2,8 @@ import { clamp, clampInt } from './misc';
 import { getLuminance } from './color';
 import { makeGaussian } from './random';
 import { makeGaussianKernel } from './convolution';
-import { PlotBuffer } from './types';
 
-export const bilateralFilter = (input: PlotBuffer, output: PlotBuffer, width: number, height: number, kernSize: number, sigma1: number, sigma2: number) => {
+export const bilateralFilter = (input: Float32Array, output: Float32Array, width: number, height: number, kernSize: number, sigma1: number, sigma2: number) => {
   const kern = makeGaussianKernel(kernSize, sigma1);
   const lumGaussian = makeGaussian(sigma2);
   const kernHalfSize = Math.trunc(kernSize / 2);

@@ -1,6 +1,6 @@
 import { complex, ComplexNumber } from './complex';
 import { makeBoundingBox, makePolygon, withinPolygon } from './polygon';
-import { Color, PixelPlotter, PlotBuffer, Polygon } from './types';
+import { Color, PixelPlotter, Polygon } from './types';
 
 export const drawFilledCircle = (x0: number, y0: number, radius: number, color: Color, plot: PixelPlotter) => {
   const limit = radius * radius;
@@ -298,7 +298,7 @@ export const drawWuCircle = (x0: number, y0: number, radius: number, color: Colo
   }
 };
 
-export const fillShape = (buffer: PlotBuffer, width: number, height: number, color: Color, x: number, y: number) => {
+export const fillShape = (buffer: Float32Array, width: number, height: number, color: Color, x: number, y: number) => {
   if (x < 0 || x >= width || y < 0 || y >= height) {
     return;
   }

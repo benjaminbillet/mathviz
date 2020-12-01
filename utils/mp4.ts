@@ -2,7 +2,7 @@ import fs from 'fs';
 import { Converter } from 'ffmpeg-stream';
 import { saveImageBuffer } from './picture';
 import { mkdirs } from './fs';
-import { AnimationAccumulator, PlotBuffer } from './types';
+import { AnimationAccumulator } from './types';
 
 export const buildAnimationAccumulator = (path: string, width: number, height: number, fps = 20, overwrite = false): AnimationAccumulator => {
   const tmpFolder = `${path}.tmp`;
@@ -16,7 +16,7 @@ export const buildAnimationAccumulator = (path: string, width: number, height: n
   let i = 0;
 
   return {
-    accumulate: async (frame: PlotBuffer) => {
+    accumulate: async (frame: Float32Array) => {
       const frameFile = `${tmpFolder}/frame-${i}.png`;
       if (overwrite || fs.existsSync(frameFile) === false) {
         await saveImageBuffer(frame, width, height, frameFile);

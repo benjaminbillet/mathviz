@@ -1,7 +1,7 @@
 import { clampInt } from './misc';
 import { euclidean } from './distance';
 import { random } from './random';
-import { BinaryMorphOperation, BiRealToRealFunction, PlotBuffer } from './types';
+import { BinaryMorphOperation, BiRealToRealFunction } from './types';
 
 export const Cross3x3Element = [
   0, 1, 0,
@@ -190,7 +190,7 @@ export const makeStructureElementNoisyCircle = (size: number) => {
 };
 
 
-const morph = (output: PlotBuffer, width: number, height: number, operation: BinaryMorphOperation) => {
+const morph = (output: Float32Array, width: number, height: number, operation: BinaryMorphOperation) => {
   for (let x = 0; x < width; x++) {
     for (let y = 0; y < height; y++) {
       const idx = (x + y * width) * 4;
@@ -203,23 +203,23 @@ const morph = (output: PlotBuffer, width: number, height: number, operation: Bin
   return output;
 };
 
-export const complement = (input: PlotBuffer, output: PlotBuffer, width: number, height: number) => {
+export const complement = (input: Float32Array, output: Float32Array, width: number, height: number) => {
   return morph(output, width, height, (x, y, idx) => 1 - input[idx]);
 };
 
-export const union = (input1: PlotBuffer, input2: PlotBuffer, output: PlotBuffer, width: number, height: number) => {
+export const union = (input1: Float32Array, input2: Float32Array, output: Float32Array, width: number, height: number) => {
   return morph(output, width, height, (x, y, idx) => input1[idx] || input2[idx]);
 };
 
-export const intersection  = (input1: PlotBuffer, input2: PlotBuffer, output: PlotBuffer, width: number, height: number) => {
+export const intersection  = (input1: Float32Array, input2: Float32Array, output: Float32Array, width: number, height: number) => {
   return morph(output, width, height, (x, y, idx) => input1[idx] && input2[idx]);
 };
 
-export const substract  = (input1: PlotBuffer, input2: PlotBuffer, output: PlotBuffer, width: number, height: number) => {
+export const substract  = (input1: Float32Array, input2: Float32Array, output: Float32Array, width: number, height: number) => {
   return morph(output, width, height, (x, y, idx) => input1[idx] && (1 - input2[idx]));
 };
 
-const erodeOperation = (input: PlotBuffer, width: number, height: number, x: number, y: number, element: PlotBuffer, elementSize: number) => {
+const erodeOperation = (input: Float32Array, width: number, height: number, x: number, y: number, element: Float32Array, elementSize: number) => {
   for (let ex = 0; ex < elementSize; ex++) {
     for (let ey = 0; ey < elementSize; ey++) {
       const x2 = clampInt(x + ex, 0, width - 1);
@@ -235,14 +235,14 @@ const erodeOperation = (input: PlotBuffer, width: number, height: number, x: num
   }
   return 1;
 };
-export const erode = (input: PlotBuffer, output: PlotBuffer, width: number, height: number, element = Square3x3Element) => {
+export const erode = (input: Float32Array, output: Float32Array, width: number, height: number, element = Square3x3Element) => {
   const elementSize = Math.trunc(Math.sqrt(element.length));
   const elementHalfSize = Math.trunc(elementSize / 2);
   const parameterizedErosion: BinaryMorphOperation = (x, y) => erodeOperation(input, width, height, x - elementHalfSize, y - elementHalfSize, element, elementSize);
   return morph(output, width, height, parameterizedErosion);
 };
 
-export const dilate = (input: PlotBuffer, output: PlotBuffer, width: number, height: number, element = Square3x3Element) => {
+export const dilate = (input: Float32Array, output: Float32Array, width: number, height: number, element = Square3x3Element) => {
   const elementSize = Math.trunc(Math.sqrt(element.length));
   const elementHalfSize = Math.trunc(elementSize / 2);
   return morph(output, width, height, (x, y) => {
@@ -264,22 +264,22 @@ export const dilate = (input: PlotBuffer, output: PlotBuffer, width: number, hei
   });
 };
 
-export const opening = (input: PlotBuffer, output: PlotBuffer, width: number, height: number, element = Square3x3Element) => {
+export const opening = (input: Float32Array, output: Float32Array, width: number, height: number, element = Square3x3Element) => {
   const dilated = erode(input, new Uint8Array(input.length), width, height, element);
   return dilate(dilated, output, width, height, element);
 };
 
-export const closing = (input: PlotBuffer, output: PlotBuffer, width: number, height: number, element = Square3x3Element) => {
+export const closing = (input: Float32Array, output: Float32Array, width: number, height: number, element = Square3x3Element) => {
   const eroded = dilate(input, new Uint8Array(input.length), width, height, element);
   return erode(eroded, output, width, height, element);
 };
 
-export const boundary = (input: PlotBuffer, output: PlotBuffer, width: number, height: number, element = Square3x3Element) => {
+export const boundary = (input: Float32Array, output: Float32Array, width: number, height: number, element = Square3x3Element) => {
   const eroded = erode(input, new Uint8Array(input.length), width, height, element);
   return substract(input, eroded, output, width, height);
 };
 
-export const iterativeThinning = (input: PlotBuffer, output: PlotBuffer, width: number, height: number, iterations = 5) => {
+export const iterativeThinning = (input: Float32Array, output: Float32Array, width: number, height: number, iterations = 5) => {
   const elementSize = 3;
   const elementHalfSize = 1;
 

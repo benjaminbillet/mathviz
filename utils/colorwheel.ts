@@ -1,13 +1,11 @@
 
 import * as D3Color from 'd3-color';
-import { convertUnitToRGBA } from './color';
 import { BI_UNIT_DOMAIN } from './domain';
 import { toDegree } from './math';
-import { mapPixelToComplexDomain, saveImageBuffer } from './picture';
-import { PlotBuffer } from './types';
+import { fillPicture, mapPixelToComplexDomain } from './picture';
 
-export const plotColorWheel1 = (width: number, height: number): PlotBuffer => {
-  const buffer = new Float32Array(width * height * 4);
+export const plotColorWheel1 = (width: number, height: number) => {
+  const buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
   const palette = [
     [ 90, 200, 60 ],
     [ 20, 50, 165 ],
@@ -21,11 +19,11 @@ export const plotColorWheel1 = (width: number, height: number): PlotBuffer => {
   const stripes = 5;
   const palettes = new Array(stripes).fill(0).map((_, i) => {
     return palette.map(color => {
-      const hsl = D3Color.hsl(D3Color.rgb(...color));
+      const hsl = D3Color.hsl(D3Color.rgb(color[0], color[1], color[2]));
       hsl.l *= 1 + ((stripes - 1 - i) / stripes * 0.5);
       hsl.s -= ((stripes - 1 - i) / (stripes * 4));
       const rgb = D3Color.rgb(hsl);
-      return [ Math.trunc(rgb.r), Math.trunc(rgb.g), Math.trunc(rgb.b) ];
+      return [ Math.trunc(rgb.r) / 255, Math.trunc(rgb.g) / 255, Math.trunc(rgb.b) / 255, 1 ];
     });
   });
 
@@ -35,7 +33,6 @@ export const plotColorWheel1 = (width: number, height: number): PlotBuffer => {
       let color = [ 0, 0, 0 ];
 
       const idx = (i + j * width) * 4;
-      buffer[idx + 3] = 255;
 
       const r = z.modulus();
       if (r < 1) {
@@ -55,8 +52,8 @@ export const plotColorWheel1 = (width: number, height: number): PlotBuffer => {
 };
 
 
-export const plotColorWheel2 = (width: number, height: number): PlotBuffer => {
-  const buffer = new Float32Array(width * height * 4).fill(0);
+export const plotColorWheel2 = (width: number, height: number) => {
+  const buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
   const palette = [
     [ 90, 200, 60 ],
     [ 20, 50, 165 ],
@@ -91,17 +88,17 @@ export const plotColorWheel2 = (width: number, height: number): PlotBuffer => {
           blend2 = (1 - r) * 3;
         }
 
-        buffer[idx + 0] = Math.min(255, color[0] * blend * blend2 + 255 * (1 - blend) * 2);
-        buffer[idx + 1] = Math.min(255, color[1] * blend * blend2 + 255 * (1 - blend) * 2);
-        buffer[idx + 2] = Math.min(255, color[2] * blend * blend2 + 255 * (1 - blend) * 2);
+        buffer[idx + 0] = Math.min(255, color[0] * blend * blend2 + 255 * (1 - blend) * 2) / 255;
+        buffer[idx + 1] = Math.min(255, color[1] * blend * blend2 + 255 * (1 - blend) * 2) / 255;
+        buffer[idx + 2] = Math.min(255, color[2] * blend * blend2 + 255 * (1 - blend) * 2) / 255;
       }
     }
   }
   return buffer;
 };
 
-export const plotColorWheel3 = (width: number, height: number, lightFade: boolean): PlotBuffer => {
-  const buffer = new Float32Array(width * height * 4).fill(0);
+export const plotColorWheel3 = (width: number, height: number, lightFade: boolean) => {
+  const buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
 
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
@@ -117,7 +114,7 @@ export const plotColorWheel3 = (width: number, height: number, lightFade: boolea
         
         const hsl = D3Color.hsl(theta, 1, lightFade ? 1 - r : 0.5);
         const rgb = D3Color.rgb(hsl);
-        const color = [ Math.trunc(rgb.r), Math.trunc(rgb.g), Math.trunc(rgb.b) ];
+        const color = [ Math.trunc(rgb.r) / 255, Math.trunc(rgb.g) / 255, Math.trunc(rgb.b) / 255, 1 ];
 
         buffer[idx + 0] = color[0];
         buffer[idx + 1] = color[1];
@@ -128,15 +125,14 @@ export const plotColorWheel3 = (width: number, height: number, lightFade: boolea
   return buffer;
 };
 
-export const plotColorWheel4 = (width: number, height: number, nbStripes = 5): PlotBuffer => {
-  const buffer = new Float32Array(width * height * 4).fill(0);
+export const plotColorWheel4 = (width: number, height: number, nbStripes = 5) => {
+  const buffer = fillPicture(new Float32Array(width * height * 4), 0, 0, 0, 1);
 
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
       const z = mapPixelToComplexDomain(i, j, width, height, BI_UNIT_DOMAIN);
 
       const idx = (i + j * width) * 4;
-      buffer[idx + 3] = 255;
 
       const r = z.modulus();
       if (r < 1) {
@@ -147,7 +143,7 @@ export const plotColorWheel4 = (width: number, height: number, nbStripes = 5): P
 
         const hsl = D3Color.hsl(theta, 1, 0.33 + stripe / nbStripes);
         const rgb = D3Color.rgb(hsl);
-        const color = [ Math.trunc(rgb.r), Math.trunc(rgb.g), Math.trunc(rgb.b) ];
+        const color = [ Math.trunc(rgb.r) / 255, Math.trunc(rgb.g) / 255, Math.trunc(rgb.b) / 255, 1 ];
 
         buffer[idx + 0] = color[0];
         buffer[idx + 1] = color[1];
@@ -157,6 +153,3 @@ export const plotColorWheel4 = (width: number, height: number, nbStripes = 5): P
   }
   return buffer;
 };
-
-
-saveImageBuffer(plotColorWheel4(1000, 1000), 1000, 1000, 'machin4.png');
