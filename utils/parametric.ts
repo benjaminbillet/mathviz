@@ -16,6 +16,48 @@ export const cissoid = (n: number) => {
   return complex(x, x * Math.tan(n));
 };
 
+export const epicycloid = (n: number, k = 19/5) => {
+  const r = 1;
+  const R = k * r;
+
+  return complex(
+    (R + r) * Math.cos(n) - r * Math.cos(n * (R + r) / r),
+    (R + r) * Math.sin(n) - r * Math.sin(n * (R + r) / r)
+  );
+};
+
+export const epitrochoid = (n: number, r = 1, R = 3, d = 0.5) => {
+  return complex(
+    (R + r) * Math.cos(n) - d * Math.cos(n * (R + r) / r),
+    (R + r) * Math.sin(n) - d * Math.sin(n * (R + r) / r)
+  );
+};
+
+export const hypocycloid = (n: number, k = 19/5) => {
+  const r = 1;
+  const R = k * r;
+
+  return complex(
+    (R - r) * Math.cos(n) + r * Math.cos(n * (R - r) / r),
+    (R - r) * Math.sin(n) - r * Math.sin(n * (R - r) / r)
+  );
+};
+
+export const hypotrochoid = (n: number, r = 3, R = 5, d = 5) => {
+  return complex(
+    (R - r) * Math.cos(n) + d * Math.cos(n * (R - r) / r),
+    (R - r) * Math.sin(n) - d * Math.sin(n * (R - r) / r)
+  );
+};
+
+export const logSpiral = (n: number, a = 1, alpha = 1.22) => { // alpha is an angle
+  const b = 1 / Math.tan(alpha); // cotangeant
+  return complex(
+    a * Math.exp(b * n) * Math.cos(n),
+    a * Math.exp(b * n) * Math.sin(n),
+  );
+};
+
 export const kampyle = (n: number) => {
   const x = 1 / Math.sin(n);
   return complex(x, x * Math.tan(n));
