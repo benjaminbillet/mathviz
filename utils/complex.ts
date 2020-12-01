@@ -1,4 +1,5 @@
 import math from '../utils/math';
+import { dot2 } from './vector';
 
 export const i = (): ComplexNumber => {
   return complex(0, 1);
@@ -61,7 +62,7 @@ export const add = (z1: ComplexNumber, z2: ComplexNumber | number, out?: Complex
   if (out == null) {
     out = complex();
   }
-  if (typeof z2 === "number") {
+  if (typeof z2 === 'number') {
     out.re = z1.re + z2;
     out.im = z1.im;
     return out;
@@ -75,7 +76,7 @@ export const sub = (z1: ComplexNumber, z2: ComplexNumber | number, out?: Complex
   if (out == null) {
     out = complex();
   }
-  if (typeof z2 === "number") {
+  if (typeof z2 === 'number') {
     out.re = z1.re - z2;
     out.im = z1.im;
     return out;
@@ -91,7 +92,7 @@ export const mul = (z1: ComplexNumber, z2: ComplexNumber | number, out?: Complex
     out = complex();
   }
 
-  if (typeof z2 === "number") {
+  if (typeof z2 === 'number') {
     out.re = z1.re * z2;
     out.im = z1.im * z2;
     return out;
@@ -184,7 +185,7 @@ export const div = (z1: ComplexNumber, z2: ComplexNumber | number, out?: Complex
     out = complex();
   }
 
-  if (typeof z2 === "number") {
+  if (typeof z2 === 'number') {
     out.re = z1.re / z2;
     out.im = z1.im / z2;
     return out;
@@ -263,8 +264,34 @@ export const equals = (z1: ComplexNumber, z2: ComplexNumber): boolean => {
 };
 
 export const normalize = (z: ComplexNumber, out?: ComplexNumber) => {
-  return div(z, modulus(z), out);
+  const m = modulus(z);
+  if (m !== 0) {
+    return div(z, m, out);
+  }
+  return complex(0, 0, out);
 }
+
+export const trunc = (z: ComplexNumber, out?: ComplexNumber) => {
+  if (out == null) {
+    out = complex();
+  }
+  out.re = Math.trunc(z.re);
+  out.im = Math.trunc(z.im);
+  return out;
+}
+
+export const round = (z: ComplexNumber, out?: ComplexNumber) => {
+  if (out == null) {
+    out = complex();
+  }
+  out.re = Math.round(z.re);
+  out.im = Math.round(z.im);
+  return out;
+}
+
+export const dot = (z1: ComplexNumber, z2: ComplexNumber): number => {
+  return dot2(z1.re, z1.im, z2.re, z2.im);
+};
 
 export class ComplexNumber {
   re: number = 0;
@@ -379,4 +406,16 @@ export class ComplexNumber {
   toString() {
     return `${this.re}+${this.im}i`
   }
+
+  trunc(out?: ComplexNumber) {
+    return trunc(this, out);
+  }
+
+  round(out?: ComplexNumber) {
+    return round(this, out);
+  }
+
+  dot(z: ComplexNumber): number {
+    return dot(this, z);
+  };
 };
