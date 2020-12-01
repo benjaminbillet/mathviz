@@ -1,4 +1,5 @@
 import { complex } from './complex';
+import { SQRT_TWO_PI } from './math';
 import { RealToRealFunction, BiRealToRealFunction } from './types';
 
 export const randomScalar = (min = -1, max = 1) => {
@@ -162,10 +163,10 @@ export const makeCumulative = (distribution: number[]) => {
 
 export const makeGaussian = (sigma = 1, mu = 0): RealToRealFunction => {
   const twoSigmaSquared = 2 * sigma * sigma;
-  const oneOverSqrtOfTwoPiSigmaSquared = 1 / Math.sqrt(twoSigmaSquared * Math.PI);
+  const oneOverSqrtOfTwoPiSigma = 1 / (sigma * SQRT_TWO_PI);
   return (x) => {
     const d = Math.pow(x - mu, 2);
-    return oneOverSqrtOfTwoPiSigmaSquared * Math.exp(-d / twoSigmaSquared);
+    return oneOverSqrtOfTwoPiSigma * Math.exp(-d / twoSigmaSquared);
   };
 };
 
@@ -178,31 +179,44 @@ export const makeGaussian2d = (sigma = 1, xmu = 0, ymu = 0): BiRealToRealFunctio
   };
 };
 
-// a fast, seedable and not-that-bad PRNG
-export const makeMulberry32 = (seed: number) => {
-  return () => {
-    let t = (seed += 0x6D2B79F5);
-    t = Math.imul(t ^ t >>> 15, t | 1);
-    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  };
-};
+// https://github.com/bryc/code/blob/master/jshash/PRNGs.md
 
-// a global shared mulberry32 generator
-let randomState = new Date().getTime();
-export const random = () => {
-  if (Number.isNaN(randomState) || Number.isFinite(randomState) === false) {
-    throw new Error('PRNG state diverged');
+const xmur3 = (str: string) => {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+    h = h << 13 | h >>> 19;
   }
-  let t = (randomState += 0x6D2B79F5);
-  t = Math.imul(t ^ t >>> 15, t | 1);
-  t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-  return ((t ^ t >>> 14) >>> 0) / 4294967296;
-};
-export const setRandomSeed = (seed: number) => {
-  randomState = seed;
-};
+  return () => {
+    h = Math.imul(h ^ h >>> 16, 2246822507);
+    h = Math.imul(h ^ h >>> 13, 3266489909);
+    return (h ^= h >>> 16) >>> 0;
+  }
+}
 
+export const makeXoshiro128ss = (seed: string) => {
+  const seedGen = xmur3(seed);
+  let a = seedGen();
+  let b = seedGen();
+  let c = seedGen();
+  let d = seedGen();
+  return () => {
+    var t = b << 9, r = a * 5; r = (r << 7 | r >>> 25) * 9;
+    c ^= a; d ^= b;
+    b ^= c; a ^= d; c ^= t;
+    d = d << 11 | d >>> 21;
+    return (r >>> 0) / 4294967296;
+  }
+}
+
+// a global shared pseudo random generator
+let prng = makeXoshiro128ss(new Date().toString())
+export const random = () => {
+  return prng();
+};
+export const setRandomSeed = (seed: string) => {
+  prng = makeXoshiro128ss(seed);
+};
 
 export const DefaultNormalDistribution = randomNormal(0, 1);
 export const DefaultUniformDistribution = randomUniform();
