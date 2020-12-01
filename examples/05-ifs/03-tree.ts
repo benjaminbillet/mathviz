@@ -1,12 +1,12 @@
-import { makeIdentity } from '../transform';
-import { mkdirs } from '../utils/fs';
-import { plotIfs, plotIfsGrid } from './util';
-import { makeBinaryTree, BINARY_TREE_DOMAIN } from '../ifs/binary-tree';
-import { makePythagoreanTree } from '../ifs/pythagorean-tree';
-import { BI_UNIT_DOMAIN } from '../utils/domain';
-import { getPictureSize } from '../utils/picture';
+import { makeIdentity } from '../../transform';
+import { mkdirs } from '../../utils/fs';
+import { plotIfs, plotIfsGrid } from '../util';
+import { makeBinaryTree, BINARY_TREE_DOMAIN } from '../../ifs/binary-tree';
+import { makePythagoreanTree } from '../../ifs/pythagorean-tree';
+import { BI_UNIT_DOMAIN } from '../../utils/domain';
+import { getPictureSize } from '../../utils/picture';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/ifs`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/ifs`;
 mkdirs(OUTPUT_DIRECTORY);
 
 const phi = (1 + Math.sqrt(5)) / 2; // golden ratio

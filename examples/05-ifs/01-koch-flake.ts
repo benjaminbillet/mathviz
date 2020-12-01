@@ -1,9 +1,9 @@
-import { makeKochFlakeIfs, makeKochCurveIfs, makeFlowsnakeIfs, makeKochAntiFlakeIfs, KOCH_CURVE_DOMAIN, FLOWSNAKE_DOMAIN, KOCH_ANTIFLAKE_DOMAIN } from '../ifs/koch-curve';
-import { makeIdentity, makeEpicycloidFunction, makeHypocycloidFunction, makeIteratedMandelbrotFunction, makePopCornFunction, makeDiamond, makeDiskFunction, makeFanFunction, makeRingsFunction } from '../transform';
-import { mkdirs } from '../utils/fs';
-import { plotIfs } from './util';
+import { makeKochFlakeIfs, makeKochCurveIfs, makeFlowsnakeIfs, makeKochAntiFlakeIfs, KOCH_CURVE_DOMAIN, FLOWSNAKE_DOMAIN, KOCH_ANTIFLAKE_DOMAIN } from '../../ifs/koch-curve';
+import { makeIdentity, makeEpicycloidFunction, makeHypocycloidFunction, makeIteratedMandelbrotFunction, makePopCornFunction, makeDiamond, makeDiskFunction, makeFanFunction, makeRingsFunction } from '../../transform';
+import { mkdirs } from '../../utils/fs';
+import { plotIfs } from '../util';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/ifs`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/ifs`;
 mkdirs(OUTPUT_DIRECTORY);
 
 // the number of points is high, it can take a lot of time to get a picture

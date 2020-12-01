@@ -8,12 +8,14 @@
 
 import { complex } from '../utils/complex';
 
-import { mapDomainToPixel } from '../utils/picture';
+import { mapComplexDomainToPixel, mapDomainToPixel } from '../utils/picture';
 import { randomIntegerWeighted } from '../utils/random';
 import { pickColorMapValue, RainbowColormap } from '../utils/color';
-import { Ifs, IterableComplexFunction, Optional, PlotBuffer, PlotDomain, Transform2D } from '../utils/types';
+import { Ifs, IterableComplexFunction, Optional, PlotDomain, Transform2D } from '../utils/types';
+import { drawBresenhamLine } from '../utils/raster';
+import { makePlotter } from '../utils/plotter';
 
-export const simpleIfsChaosPlot = (buffer: PlotBuffer, width: number, height: number, ifs: Ifs, finalTransform: Optional<Transform2D>, domain: PlotDomain, iterations: number) => {
+export const simpleIfsChaosPlot = (buffer: Float32Array, hitmap: Uint32Array, width: number, height: number, ifs: Ifs, finalTransform: Optional<Transform2D>, domain: PlotDomain, iterations: number): Float32Array => {
   // we get the list of functions and the associated probabilities
   const { functions, probabilities } = ifs;
 
@@ -46,17 +48,20 @@ export const simpleIfsChaosPlot = (buffer: PlotBuffer, width: number, height: nu
     const color = pickColorMapValue(selected / functions.length, RainbowColormap);
 
     // the buffer is 1-dimensional and each pixel has 4 components (r, g, b, a)
-    const idx = (x + y * width) * 4;
-    buffer[idx + 0] = color[0];
-    buffer[idx + 1] = color[1];
-    buffer[idx + 2] = color[2];
-    buffer[idx + 3] = 255;
+    const idx1 = (x + y * width);
+    hitmap[idx1] += 1;
+
+    const idx2 = idx1 * 4;
+    buffer[idx2 + 0] = color[0];
+    buffer[idx2 + 1] = color[1];
+    buffer[idx2 + 2] = color[2];
+    buffer[idx2 + 3] = color[3];
   }
 
   return buffer;
 };
 
-export const simpleWalkChaosPlot = (buffer: PlotBuffer, width: number, height: number, walk: IterableComplexFunction, finalTransform: Optional<Transform2D>, domain: PlotDomain, iterations: number) => {
+export const simpleWalkChaosPlot = (buffer: Float32Array, hitmap: Uint32Array, width: number, height: number, walk: IterableComplexFunction, finalTransform: Optional<Transform2D>, domain: PlotDomain, iterations: number): Float32Array => {
   let zn = null; // z0
   for (let i = 0; i < iterations; i++) {
     // at each iteration we get the next step of the random walk...
@@ -77,12 +82,34 @@ export const simpleWalkChaosPlot = (buffer: PlotBuffer, width: number, height: n
     }
 
     // the buffer is 1-dimensional and each pixel has 4 components (r, g, b, a)
-    const idx = (x + y * width) * 4;
-    buffer[idx + 0] = 1;
-    buffer[idx + 1] = 1;
-    buffer[idx + 2] = 1;
-    buffer[idx + 3] += 1;
+    const idx1 = (x + y * width);
+    hitmap[idx1] += 1;
+
+    const idx2 = idx1 * 4;
+    buffer[idx2 + 0] = 1;
+    buffer[idx2 + 1] = 1;
+    buffer[idx2 + 2] = 1;
+    buffer[idx2 + 3] = 1;
   }
 
   return buffer;
 };
+
+export const simpleWalkChaosLinePlot = (buffer: Float32Array, width: number, height: number, walk: IterableComplexFunction, domain: PlotDomain, iterations: number): Float32Array => {
+  const plotter = makePlotter(buffer, width, height);
+  let zn = walk(); // z0
+  for (let i = 0; i < iterations; i++) {
+    // at each iteration we get the next step of the random walk...
+    const oldZn = zn;
+    zn = walk();
+
+    // ... then the destination is mapped to the pixel domain
+    const p1 = mapComplexDomainToPixel(oldZn, domain, width, height);
+    const p2 = mapComplexDomainToPixel(zn, domain, width, height);
+
+    drawBresenhamLine(p1.re, p1.im, p2.re, p2.im, [1,1,1,1], plotter);
+  }
+
+  return buffer;
+};
+

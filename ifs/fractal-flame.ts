@@ -4,7 +4,7 @@ import { makeIdentity } from '../transform';
 import { mapDomainToPixel, normalizeBuffer } from '../utils/picture';
 import { BI_UNIT_DOMAIN } from '../utils/domain';
 import { makeColorMapFunction, buildColorMap, mixColorLinear } from '../utils/color';
-import { Color, ColorMapFunction, ColorSteal, ComplexPlotter, IterableRealFunction, PlotBuffer, Transform2D, TransformMaker } from '../utils/types';
+import { Color, ColorMapFunction, ColorSteal, ComplexPlotter, IterableRealFunction, Transform2D, TransformMaker } from '../utils/types';
 import { ComplexNumber } from '../utils/complex';
 
 export const generateTransformationSet = (nb: number, transformMakers: TransformMaker[], baseTransformMakers?: TransformMaker[]) => {
@@ -18,7 +18,7 @@ export const generateTransformationSet = (nb: number, transformMakers: Transform
   });
 };
 
-export const makeBitmapColorSteal = (bitmap: PlotBuffer, bitmapWidth: number, bitmapHeight: number, domain = BI_UNIT_DOMAIN): ColorSteal => {
+export const makeBitmapColorSteal = (bitmap: Float32Array, bitmapWidth: number, bitmapHeight: number, domain = BI_UNIT_DOMAIN): ColorSteal => {
   const normalized = normalizeBuffer(new Float32Array(bitmap), bitmapWidth, bitmapHeight);
   return (x: number, y: number) => {
     let [ px, py ] = mapDomainToPixel(x, y, domain, bitmapWidth, bitmapHeight);
@@ -26,13 +26,13 @@ export const makeBitmapColorSteal = (bitmap: PlotBuffer, bitmapWidth: number, bi
     py = clampInt(py, 0, bitmapHeight);
 
     const idx = (px + py * bitmapWidth) * 4;
-    return <Color> normalized.slice(idx, idx + 3);
+    return [ normalized[idx + 0], normalized[idx + 1], normalized[idx + 2], normalized[idx + 3] ];
   };
 };
 
 const getColorMapFunction = (colors: ColorMapFunction | Color[]): ColorMapFunction => {
   if (Array.isArray(colors)) {
-    return makeColorMapFunction(buildColorMap(colors), 255);
+    return makeColorMapFunction(buildColorMap(colors));
   }
   return colors;
 }
@@ -74,7 +74,7 @@ export const plotFlame = (
 ) => {
   for (let i = 0; i < nbPoints; i++) {
     let z = initialPointPicker(); // pick an initial point
-    let pixelColor: Color = [ 0, 0, 0 ];
+    let pixelColor: Color = [ 0, 0, 0, 1 ];
     for (let j = 0; j < nbIterations; j++) {
       // at each iteration, we pick a function and an associated color from the ifs...
       const selected = randomInt();
@@ -91,11 +91,11 @@ export const plotFlame = (
       pixelColor = colorMerge(color, pixelColor);
 
       // we draw the pixel (the returned value is the pixel coordinate array)
-      const mapped = plotter(fz, pixelColor);
+      const drawn = plotter(fz, pixelColor);
 
       // pixels that are outside the image (i.e., the plotter returned null) are not plotted
       // and we escape by jumping to another point
-      if (mapped == null && resetIfOverflow) {
+      if (drawn === false && resetIfOverflow) {
         z = initialPointPicker();
       }
     }
@@ -113,7 +113,7 @@ export const iterateFlamePoint = (
   nbIterations = 10000,
   colorMerge = mixColorLinear,
 ) => {
-  let pixelColor: Color = [ 0, 0, 0 ];
+  let pixelColor: Color = [ 0, 0, 0, 1 ];
   for (let j = 0; j < nbIterations; j++) {
     // at each iteration, we pick a function and an associated color from the ifs...
     const selected = randomInt();
@@ -149,7 +149,7 @@ export const plotFlameWithColorStealing = (
 ) => {
   for (let i = 0; i < nbPoints; i++) {
     let z = initialPointPicker(); // pick an initial point
-    let pixelColor: Color = [ 0, 0, 0 ];
+    let pixelColor: Color = [ 0, 0, 0, 1 ];
     for (let j = 0; j < nbIterations; j++) {
       // at each iteration, we pick a function and an associated color from the ifs...
       const selected = randomInt();

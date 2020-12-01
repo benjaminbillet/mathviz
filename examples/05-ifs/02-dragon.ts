@@ -1,13 +1,13 @@
-import { makeIdentity, makeIteratedMandelbrotFunction } from '../transform';
-import { mkdirs } from '../utils/fs';
-import { plotIfs } from './util';
-import { makeHeighwayDragonIfs, HEIGHWAY_DRAGON_DOMAIN, GOLDEN_DRAGON_DOMAIN, FUDGEFLAKE_DOMAIN, TERDRAGON_DOMAIN, TWIN_DRAGON_DOMAIN, makeTwinDragonIfs, makeTerdragonIfs, makeFudgeFlake, makeGoldenDragonIfs } from '../ifs/heighway-dragon';
-import * as affine from '../utils/affine';
-import { compose2dRandomizedFunctions, compose2dFunctions } from '../utils/misc';
-import { TWONDRAGON_DOMAIN, makeTwondragon } from '../ifs/twondragon';
-import { scaleDomain } from '../utils/domain';
+import { makeIdentity, makeIteratedMandelbrotFunction } from '../../transform';
+import { mkdirs } from '../../utils/fs';
+import { plotIfs } from '../util';
+import { makeHeighwayDragonIfs, HEIGHWAY_DRAGON_DOMAIN, GOLDEN_DRAGON_DOMAIN, FUDGEFLAKE_DOMAIN, TERDRAGON_DOMAIN, TWIN_DRAGON_DOMAIN, makeTwinDragonIfs, makeTerdragonIfs, makeFudgeFlake, makeGoldenDragonIfs } from '../../ifs/heighway-dragon';
+import * as affine from '../../utils/affine';
+import { compose2dRandomizedFunctions, compose2dFunctions } from '../../utils/misc';
+import { TWONDRAGON_DOMAIN, makeTwondragon } from '../../ifs/twondragon';
+import { scaleDomain } from '../../utils/domain';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/ifs`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/ifs`;
 mkdirs(OUTPUT_DIRECTORY);
 
 // the number of points is high, it can take a lot of time to get a picture

@@ -1,20 +1,20 @@
-import { makeIdentity, makeIteratedMandelbrotFunction } from '../transform';
-import { mkdirs } from '../utils/fs';
-import { plotIfs } from './util';
-import * as affine from '../utils/affine';
-import { compose2dFunctions } from '../utils/misc';
-import { BI_UNIT_DOMAIN } from '../utils/domain';
-import { makeDragon1, DRAGON1_DOMAIN, makeDragon2, makeDragon3, makeDragon4, DRAGON2_DOMAIN, DRAGON3_DOMAIN, DRAGON4_DOMAIN } from '../ifs/misc-dragon';
-import { TREE1_DOMAIN, TREE2_DOMAIN, TREE3_DOMAIN, TREE4_DOMAIN, makeTree1, makeTree2, makeTree3, makeTree4 } from '../ifs/misc-tree';
-import { VORTEX1_DOMAIN, VORTEX2_DOMAIN, VORTEX3_DOMAIN, makeVortex1, makeVortex2, makeVortex3 } from '../ifs/misc-vortex';
-import { CORAL1_DOMAIN, makeCoral1 } from '../ifs/coral';
-import { makeMapleLeaf, MAPLE_LEAF_DOMAIN } from '../ifs/maple-leaf';
-import { makeMauldinGasketIfs, MAULDIN_GASKET_DOMAIN } from '../ifs/mauldin-gasket';
-import { APOLLONY_DOMAIN, makeApollonyGasketIfs } from '../ifs/apollony';
-import { makeSierpinskiCarpet, makeSierpinskiNGon, makeSierpinskiPedalTriangle, makeSierpinskiPentagon, makeSierpinskiTriangle, SIERPINSKI_CARPET_DOMAIN, SIERPINSKI_NGON_DOMAIN, SIERPINSKI_PEDAL_TRIANGLE_DOMAIN, SIERPINSKI_PENTAGON_DOMAIN, SIERPINSKI_TRIANGLE_DOMAIN } from '../ifs/sierpinski';
-import { makeMcWorterPentigree, makeMcWorterPentigree2ndForm, makePentadentrite2ndForm, MCWORTER_PENTIGREE_DOMAIN, MCWORTER_PENTIGREE_2NDFORM_DOMAIN, PENTADENDRITE_2NDFORM_DOMAIN } from '../ifs/mcworter-pentigree';
+import { makeIdentity, makeIteratedMandelbrotFunction } from '../../transform';
+import { mkdirs } from '../../utils/fs';
+import { plotIfs } from '../util';
+import * as affine from '../../utils/affine';
+import { compose2dFunctions } from '../../utils/misc';
+import { BI_UNIT_DOMAIN } from '../../utils/domain';
+import { makeDragon1, DRAGON1_DOMAIN, makeDragon2, makeDragon3, makeDragon4, DRAGON2_DOMAIN, DRAGON3_DOMAIN, DRAGON4_DOMAIN } from '../../ifs/misc-dragon';
+import { TREE1_DOMAIN, TREE2_DOMAIN, TREE3_DOMAIN, TREE4_DOMAIN, makeTree1, makeTree2, makeTree3, makeTree4 } from '../../ifs/misc-tree';
+import { VORTEX1_DOMAIN, VORTEX2_DOMAIN, VORTEX3_DOMAIN, makeVortex1, makeVortex2, makeVortex3 } from '../../ifs/misc-vortex';
+import { CORAL1_DOMAIN, makeCoral1 } from '../../ifs/coral';
+import { makeMapleLeaf, MAPLE_LEAF_DOMAIN } from '../../ifs/maple-leaf';
+import { makeMauldinGasketIfs, MAULDIN_GASKET_DOMAIN } from '../../ifs/mauldin-gasket';
+import { APOLLONY_DOMAIN, makeApollonyGasketIfs } from '../../ifs/apollony';
+import { makeSierpinskiCarpet, makeSierpinskiNGon, makeSierpinskiPedalTriangle, makeSierpinskiPentagon, makeSierpinskiTriangle, SIERPINSKI_CARPET_DOMAIN, SIERPINSKI_NGON_DOMAIN, SIERPINSKI_PEDAL_TRIANGLE_DOMAIN, SIERPINSKI_PENTAGON_DOMAIN, SIERPINSKI_TRIANGLE_DOMAIN } from '../../ifs/sierpinski';
+import { makeMcWorterPentigree, makeMcWorterPentigree2ndForm, makePentadentrite2ndForm, MCWORTER_PENTIGREE_DOMAIN, MCWORTER_PENTIGREE_2NDFORM_DOMAIN, PENTADENDRITE_2NDFORM_DOMAIN } from '../../ifs/mcworter-pentigree';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/ifs`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/ifs`;
 mkdirs(OUTPUT_DIRECTORY);
 
 // the number of points is high, it can take a lot of time to get a picture
