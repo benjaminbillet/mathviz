@@ -1,14 +1,14 @@
-import { mkdirs } from '../utils/fs';
-import { plotAttractor } from './util';
-import { makeSymmetricIcon, makeSymmetricIconWithNpTerm } from '../attractors/symmetric-icons';
-import { makeMixedColorSteal } from '../ifs/fractal-flame';
-import { complex } from '../utils/complex';
-import { MAVERICK } from '../utils/palette';
-import { estimateAttractorDomain } from '../attractors/plot';
-import { setRandomSeed } from '../utils/random';
-import { scaleDomain } from '../utils/domain';
+import { mkdirs } from '../../utils/fs';
+import { plotAttractor } from '../util';
+import { makeSymmetricIcon, makeSymmetricIconWithNpTerm } from '../../attractors/symmetric-icons';
+import { makeMixedColorSteal } from '../../ifs/fractal-flame';
+import { complex } from '../../utils/complex';
+import { MAVERICK } from '../../utils/palette';
+import { estimateAttractorDomain } from '../../attractors/plot';
+import { setRandomSeed } from '../../utils/random';
+import { scaleDomain } from '../../utils/domain';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/attractors`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/attractors`;
 mkdirs(OUTPUT_DIRECTORY);
 
 //   λ      α      β      γ      ω      d
@@ -35,12 +35,13 @@ const SYMMETRIC_ICONS_COEFFS = [
   [ 1.5,   -1.0,   0.1,  -0.805, 0.0,   3 ],
 ];
 
-setRandomSeed(100);
 const nbIterations = 100000000;
 const initialPointPicker = () => complex(0.01, 0.01);
 
 
 for (let i = 0; i < SYMMETRIC_ICONS_COEFFS.length; i++) {
+  setRandomSeed('dioptase');
+
   const coeffs = SYMMETRIC_ICONS_COEFFS[i];
   const attractor = makeSymmetricIcon(coeffs[0], coeffs[1], coeffs[2], coeffs[3], coeffs[4], coeffs[5]);
 
@@ -67,6 +68,8 @@ const SYMMETRIC_ICONS_NPTERM_COEFFS = [
 ];
 
 for (let i = 0; i < SYMMETRIC_ICONS_NPTERM_COEFFS.length; i++) {
+  setRandomSeed('dioptase');
+
   const coeffs = SYMMETRIC_ICONS_NPTERM_COEFFS[i];
   const attractor = makeSymmetricIconWithNpTerm(coeffs[0], coeffs[1], coeffs[2], coeffs[3], coeffs[4], coeffs[5], coeffs[6]);
 

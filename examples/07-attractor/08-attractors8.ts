@@ -1,16 +1,16 @@
-import { mkdirs } from '../utils/fs';
-import { plotAttractorMultipoint, plotAutoscaledAttractor } from './util';
-import { makeIterationColorSteal } from '../ifs/fractal-flame';
-import { complex } from '../utils/complex';
-import { MAVERICK } from '../utils/palette';
-import { setRandomSeed, randomComplex } from '../utils/random';
-import { scaleDomain, BI_UNIT_DOMAIN } from '../utils/domain';
-import { makePopcorn } from '../attractors/popcorn';
+import { mkdirs } from '../../utils/fs';
+import { plotAttractorMultipoint, plotAutoscaledAttractor } from '../util';
+import { makeIterationColorSteal } from '../../ifs/fractal-flame';
+import { complex } from '../../utils/complex';
+import { MAVERICK } from '../../utils/palette';
+import { setRandomSeed, randomComplex } from '../../utils/random';
+import { scaleDomain, BI_UNIT_DOMAIN } from '../../utils/domain';
+import { makePopcorn } from '../../attractors/popcorn';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/attractors`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/attractors`;
 mkdirs(OUTPUT_DIRECTORY);
 
-setRandomSeed(100);
+setRandomSeed('dioptase');
 
 const nbIterations = 1000000;
 const initialPointPicker = () => complex(0.5, 1);

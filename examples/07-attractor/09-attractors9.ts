@@ -1,15 +1,15 @@
-import { mkdirs } from '../utils/fs';
-import { plotAttractor } from './util';
-import { makeMixedColorSteal } from '../ifs/fractal-flame';
-import { complex } from '../utils/complex';
-import { CATERPILLAR } from '../utils/palette';
-import { estimateAttractorDomain } from '../attractors/plot';
-import { setRandomSeed } from '../utils/random';
-import { scaleDomain } from '../utils/domain';
-import { makeIdentity } from '../transform';
-import { makePeterDeJungAttractor, makeJohnnySvenssonAttractor } from '../attractors/peter-de-jong';
+import { mkdirs } from '../../utils/fs';
+import { plotAttractor } from '../util';
+import { makeMixedColorSteal } from '../../ifs/fractal-flame';
+import { complex } from '../../utils/complex';
+import { CATERPILLAR } from '../../utils/palette';
+import { estimateAttractorDomain } from '../../attractors/plot';
+import { setRandomSeed } from '../../utils/random';
+import { scaleDomain } from '../../utils/domain';
+import { makeIdentity } from '../../transform';
+import { makePeterDeJungAttractor, makeJohnnySvenssonAttractor } from '../../attractors/peter-de-jong';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/attractors`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/attractors`;
 mkdirs(OUTPUT_DIRECTORY);
 
 // a       b       c       d
@@ -40,7 +40,7 @@ for (let i = 0; i < PETER_DE_JUNG_COEFFS.length; i++) {
   const attractor = makePeterDeJungAttractor(coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
   const initialPointPicker = () => complex(0.1, 0.1);
 
-  setRandomSeed(100);
+  setRandomSeed('dioptase');
 
   // we compute automatically the domain of the attractor
   const domain = scaleDomain(estimateAttractorDomain(attractor, initialPointPicker, makeIdentity(), 1000000), 1.2);
@@ -58,7 +58,7 @@ for (let i = 0; i < JOHNNY_SVENSSON_COEFFS.length; i++) {
   const attractor = makeJohnnySvenssonAttractor(coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
   const initialPointPicker = () => complex(0.1, 0.1);
 
-  setRandomSeed(100);
+  setRandomSeed('dioptase');
 
   // we compute automatically the domain of the attractor
   const domain = scaleDomain(estimateAttractorDomain(attractor, initialPointPicker, makeIdentity(), 1000000), 1.2);

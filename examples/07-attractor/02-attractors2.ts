@@ -1,15 +1,15 @@
-import { mkdirs } from '../utils/fs';
-import { plotAttractor } from './util';
-import { makeMixedColorSteal } from '../ifs/fractal-flame';
-import { complex } from '../utils/complex';
-import { MAVERICK } from '../utils/palette';
-import { estimateAttractorDomain } from '../attractors/plot';
-import { setRandomSeed } from '../utils/random';
-import { scaleDomain } from '../utils/domain';
-import { makeGumowskiMira } from '../attractors/gumowski-mira';
-import { makeIdentity } from '../transform';
+import { mkdirs } from '../../utils/fs';
+import { plotAttractor } from '../util';
+import { makeMixedColorSteal } from '../../ifs/fractal-flame';
+import { complex } from '../../utils/complex';
+import { MAVERICK } from '../../utils/palette';
+import { estimateAttractorDomain } from '../../attractors/plot';
+import { setRandomSeed } from '../../utils/random';
+import { scaleDomain } from '../../utils/domain';
+import { makeGumowskiMira } from '../../attractors/gumowski-mira';
+import { makeIdentity } from '../../transform';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/attractors`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/attractors`;
 mkdirs(OUTPUT_DIRECTORY);
 
 // x0       y0       a       mu
@@ -39,11 +39,12 @@ const GUMOWSKI_MIRA_COEFFS = [
 ];
 
 
-setRandomSeed(100);
 const nbIterations = 10000000;
 
 
 for (let i = 0; i < GUMOWSKI_MIRA_COEFFS.length; i++) {
+  setRandomSeed('dioptase');
+
   const coeffs = GUMOWSKI_MIRA_COEFFS[i];
   const initialPointPicker = () => complex(coeffs[0], coeffs[1]);
   const attractor = makeGumowskiMira(coeffs[2], coeffs[3]);

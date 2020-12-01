@@ -1,15 +1,15 @@
-import { mkdirs } from '../utils/fs';
-import { plotAttractorMultipoint } from './util';
-import { makeMixedColorSteal } from '../ifs/fractal-flame';
-import { complex } from '../utils/complex';
-import { CATERPILLAR } from '../utils/palette';
-import { estimateAttractorDomain } from '../attractors/plot';
-import { setRandomSeed, randomComplex } from '../utils/random';
-import { scaleDomain } from '../utils/domain';
-import { makeIdentity } from '../transform';
-import { makeHopalong } from '../attractors/hopalong';
+import { mkdirs } from '../../utils/fs';
+import { plotAttractorMultipoint } from '../util';
+import { makeMixedColorSteal } from '../../ifs/fractal-flame';
+import { complex } from '../../utils/complex';
+import { CATERPILLAR } from '../../utils/palette';
+import { estimateAttractorDomain } from '../../attractors/plot';
+import { setRandomSeed, randomComplex } from '../../utils/random';
+import { scaleDomain } from '../../utils/domain';
+import { makeIdentity } from '../../transform';
+import { makeHopalong } from '../../attractors/hopalong';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/attractors`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/attractors`;
 mkdirs(OUTPUT_DIRECTORY);
 
 const HOPALONG_COEFFS = [
@@ -37,7 +37,7 @@ for (let i = 0; i < HOPALONG_COEFFS.length; i++) {
     initialPointPicker = randomComplex;
   }
 
-  setRandomSeed(100);
+  setRandomSeed('dioptase');
 
   // we compute automatically the domain of the attractor
   const domain = scaleDomain(estimateAttractorDomain(attractor, () => complex(0, 0), makeIdentity(), 1000000), 1.2);

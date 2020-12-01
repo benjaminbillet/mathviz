@@ -1,16 +1,20 @@
-import { mkdirs } from '../utils/fs';
-import { plotAutoscaledAttractor } from './util';
-import { complex } from '../utils/complex';
-import { MAVERICK } from '../utils/palette';
-import { makeZaslavsky } from '../attractors/zaslavsky';
-import { makeKrasnoselskijPerturbatedIterator } from '../attractors/perturbation';
-import { ComplexToComplexFunction } from '../utils/types';
+import { mkdirs } from '../../utils/fs';
+import { plotAutoscaledAttractor } from '../util';
+import { complex } from '../../utils/complex';
+import { MAVERICK } from '../../utils/palette';
+import { makeZaslavsky } from '../../attractors/zaslavsky';
+import { makeKrasnoselskijPerturbatedIterator } from '../../attractors/perturbation';
+import { ComplexToComplexFunction } from '../../utils/types';
+import { setRandomSeed } from '../../utils/random';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/attractors`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/attractors`;
 mkdirs(OUTPUT_DIRECTORY);
 
 const nbIterations = 10000000;
 const initialPointPicker = () => complex(1, 1);
+
+setRandomSeed('dioptase');
+
 
 // regular zaslavsky function
 plotAutoscaledAttractor(`${OUTPUT_DIRECTORY}/zaslavsky1.png`, 2048, 2048, makeZaslavsky(4, 7), initialPointPicker, MAVERICK, nbIterations, nbIterations);
