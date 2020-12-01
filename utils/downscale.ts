@@ -1,7 +1,7 @@
 import { clampInt } from './misc';
 import { normalizeKernel } from './convolution';
 import { makeLanczos, makeMitchellNetravali, makeCubicBSpline, makeCatmullRom, makeMitchellNetravali2 } from './interpolation';
-import { PlotBuffer, RealToRealFunction } from './types';
+import { RealToRealFunction } from './types';
 
 const makeKernel = (size: number, separableFilter: RealToRealFunction, scaleX = 1, scaleY = 1) => {
   const halfSize = Math.trunc(size / 2);
@@ -29,13 +29,13 @@ export const DownscaleSamplers = {
   NearestNeighbor: () => [ 1 ],
 };
 
-export const downscale = (input: PlotBuffer, width: number, height: number, scale: number, kernelSampler = DownscaleSamplers.Lanczos3) => {
+export const downscale = (input: Float32Array, width: number, height: number, scale: number, kernelSampler = DownscaleSamplers.Lanczos3) => {
   const outputWidth = Math.trunc(scale * width);
   const outputHeight = Math.trunc(scale * height);
   return downscale2(input, width, height, outputWidth, outputHeight, kernelSampler);
 };
 
-export const downscale2 = (input: PlotBuffer, width: number, height: number, outputWidth: number, outputHeight: number, kernelSampler = DownscaleSamplers.Lanczos3): PlotBuffer => {
+export const downscale2 = (input: Float32Array, width: number, height: number, outputWidth: number, outputHeight: number, kernelSampler = DownscaleSamplers.Lanczos3) => {
   const scaleX = outputWidth / width;
   const scaleY = outputHeight / height;
 
@@ -70,6 +70,7 @@ export const downscale2 = (input: PlotBuffer, width: number, height: number, out
       output[idx + 0] = r;
       output[idx + 1] = g;
       output[idx + 2] = b;
+      output[idx + 3] = 1; // TODO alpha?
     }
   }
 

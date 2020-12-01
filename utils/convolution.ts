@@ -1,96 +1,147 @@
 import { clampInt } from './misc';
 import { makeGaussian2d } from './random';
-import { Kernel, Optional, PlotBuffer } from './types';
+import { Kernel, Optional } from './types';
 
-export const Invert3x3Kernel = [
+export const Invert3x3Kernel = new Float32Array([
   0,  0,  0,
   0, -1,  0,
   0,  0,  0,
-];
+]);
 
-export const Sharpen3x3Kernel = [
+export const Sharpen3x3Kernel = new Float32Array([
   0,  -1,  0,
   -1,  5, -1,
   0,  -1,  0,
-];
+]);
 
-export const AvgBlur3x3Kernel = [
+export const AvgBlur3x3Kernel = new Float32Array([
   1/9, 1/9, 1/9,
   1/9, 1/9, 1/9,
   1/9, 1/9, 1/9,
-];
+]);
 
-export const HorizontalDerivative3x3Kernel = [
+export const HorizontalDerivative3x3Kernel = new Float32Array([
   0,  0, 0,
   -1, 1, 0,
   0,  0, 0,
-];
+]);
 
-export const VerticalDerivative3x3Kernel = [
+export const VerticalDerivative3x3Kernel = new Float32Array([
   0, -1, 0,
   0,  1, 0,
   0,  0, 0,
-];
+]);
 
-export const EdgeDetect3x3Kernel = [
+export const EdgeDetect3x3Kernel = new Float32Array([
   0,  1, 0,
   1, -4, 1,
   0,  1, 0,
-];
+]);
 
-export const SharpEdgeDetect3x3Kernel = [
+export const SharpEdgeDetect3x3Kernel = new Float32Array([
   1,  2,  1,
   2, -12, 2,
   1,  2,  1,
-];
+]);
 
-export const Outline3x3Kernel = [
+export const Outline3x3Kernel = new Float32Array([
   -1, -1, -1,
   -1,  8, -1,
   -1, -1, -1,
-];
+]);
 
-export const Emboss3x3Kernel = [
+export const Emboss3x3Kernel = new Float32Array([
   -2, -1, 0,
   -1,  1, 1,
   0,   1, 2,
-];
+]);
 
-export const SobelVertical3x3Kernel = [
+export const SobelVertical3x3Kernel = new Float32Array([
   -1, 0, 1,
   -2, 0, 2,
   -1, 0, 1,
-];
+]);
 
-export const SobelHorizontal3x3Kernel = [
+export const SobelHorizontal3x3Kernel = new Float32Array([
   -1, -2, -1,
   0,   0,  0,
   1,   2,  1,
-];
+]);
 
-export const PrewittVertical3x3Kernel = [
-  -1, 0, 1,
-  -1, 0, 1,
-  -1, 0, 1,
-];
+export const SobelVertical5x5Kernel = new Float32Array([
+  -5,  -4,  0, 4,  5,
+  -8,  -10, 0, 10, 8,
+  -10, -20, 0, 10, 20,
+  -8,  -10, 0, 10, 8,
+  -5,  -4,  0, 4,  5,
+]);
 
-export const PrewittHorizontal3x3Kernel = [
+export const SobelHorizontal5x5Kernel = new Float32Array([
+  -5, -8,  -10, -8,  -5,
+  -4, -10, -20, -10, -4,
+  0,   0,   0,   0,   0,
+  4,   10,  20,  10,  4,
+  5,   8,   10,  8,   5,
+]);
+
+// https://stackoverflow.com/questions/9567882/sobel-filter-kernel-of-large-size/41065243#41065243
+export const makeSobelVerticalKernel = (size = 3) => {
+  const kernel = new Float32Array(size * size);
+  const halfSize = Math.trunc(size / 2);
+  for (let i = -halfSize; i <= halfSize; i++) {
+    for (let j = -halfSize; j <= halfSize; j++) {
+      const x = i + halfSize;
+      const y = j + halfSize;
+      let v = 0;
+      if (i !== 0 || j !== 0) {
+        v = i / (i * i + j * j);
+      }
+      kernel[x + y * size] = v;
+    }
+  }
+  return kernel;
+};
+
+export const makeSobelHorizontalKernel = (size = 3) => {
+  const kernel = new Float32Array(size * size);
+  const halfSize = Math.trunc(size / 2);
+  for (let i = -halfSize; i <= halfSize; i++) {
+    for (let j = -halfSize; j <= halfSize; j++) {
+      const x = i + halfSize;
+      const y = j + halfSize;
+      let v = 0;
+      if (i !== 0 || j !== 0) {
+        v = j / (i * i + j * j);
+      }
+      kernel[x + y * size] = v;
+    }
+  }
+  return kernel;
+};
+
+export const PrewittVertical3x3Kernel = new Float32Array([
+  -1, 0, 1,
+  -1, 0, 1,
+  -1, 0, 1,
+]);
+
+export const PrewittHorizontal3x3Kernel = new Float32Array([
   -1, -1, -1,
   0,   0,  0,
   1,   1,  1,
-];
+]);
 
-export const Lighten3x3Kernel = [
+export const Lighten3x3Kernel = new Float32Array([
   0, 0,    0,
   0, 12/9, 0,
   0, 0,    0,
-];
+]);
 
-export const Darken3x3Kernel = [
+export const Darken3x3Kernel = new Float32Array([
   0, 0,   0,
   0, 6/9, 0,
   0, 0,   0,
-];
+]);
 
 /* export const makeEpanechnikovKernel = (size = 3) => {
   const kernel = new Array(size);
@@ -108,7 +159,7 @@ export const Darken3x3Kernel = [
   return kernel;
 };*/
 
-export const makeGaussianKernel = (size = 3, sigma?: Optional<number>): Kernel => {
+export const makeGaussianKernel = (size = 3, sigma?: Optional<number>) => {
   const kernel = new Float32Array(size * size);
   if (sigma == null) {
     sigma = size/3;
@@ -126,12 +177,12 @@ export const makeGaussianKernel = (size = 3, sigma?: Optional<number>): Kernel =
   return kernel;
 };
 
-export const normalizeKernel = (kern: Kernel): Kernel => {
+export const normalizeKernel = (kern: Kernel) => {
   const sum = kern.reduce((cur, x) => cur + x, 0);
   return kern.map(x => x / sum);
 };
 
-export const convolve = (input: PlotBuffer, output: PlotBuffer, width: number, height: number, kern: Kernel, divisor = 1, offset = 0) => {
+export const convolve = (input: Float32Array, output: Float32Array, width: number, height: number, kern: Kernel, divisor = 1, offset = 0) => {
   const kernSize = Math.trunc(Math.sqrt(kern.length));
   const kernHalfSize = Math.trunc(kernSize / 2);
   for (let x = 0; x < width; x++) {
@@ -157,6 +208,7 @@ export const convolve = (input: PlotBuffer, output: PlotBuffer, width: number, h
       output[idx + 0] = r / divisor + offset;
       output[idx + 1] = g / divisor + offset;
       output[idx + 2] = b / divisor + offset;
+      output[idx + 3] = 1 // TODO alpha
     }
   }
   return output;
