@@ -61,6 +61,6 @@ const makeRandomJumpColorFunction = (colors: Color[], minJump = -1, maxJump = 1)
     } else if (iterations < 0) {
       iterations += colors.length;
     }
-    return [ c[0] / 255, c[1] / 255, c[2] / 255 ];
+    return [ c[0], c[1], c[2], c[3] ];
   };
 };
