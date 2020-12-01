@@ -1,21 +1,20 @@
-import { BI_UNIT_DOMAIN, scaleDomain } from '../utils/domain';
-import { mkdirs } from '../utils/fs';
-import { plotDomainColoring, plotDomainReverseColoring } from './util';
-import { randomInteger, randomScalar, setRandomSeed } from '../utils/random';
-import { makeCMMWallpaperFunction, makeP31MWallpaperFunction, makeP3WallpaperFunction, makeP4WallpaperFunction, makeP6WallpaperFunction, makePGWallpaperFunction, makePMMWallpaperFunction } from '../symmetry/wallpaper-group';
-import { ComplexToComplexFunction } from '../utils/types';
-import { eulerComplex } from '../utils/complex';
-import { makeCMPMWallpaperFunction, makeP4GCMMWallpaperFunction, makeCMMPGGWallpaperFunction, makeP6P3WallpaperFunction } from '../symmetry/color-reversing-wallpaper-group';
+import { BI_UNIT_DOMAIN, scaleDomain } from '../../utils/domain';
+import { mkdirs } from '../../utils/fs';
+import { plotDomainColoring, plotDomainReverseColoring } from '../util';
+import { randomInteger, randomScalar, setRandomSeed } from '../../utils/random';
+import { makeCMMWallpaperFunction, makeP31MWallpaperFunction, makeP3WallpaperFunction, makeP4WallpaperFunction, makeP6WallpaperFunction, makePGWallpaperFunction, makePMMWallpaperFunction } from '../../symmetry/wallpaper-group';
+import { ComplexToComplexFunction } from '../../utils/types';
+import { eulerComplex } from '../../utils/complex';
+import { makeCMPMWallpaperFunction, makeP4GCMMWallpaperFunction, makeCMMPGGWallpaperFunction, makeP6P3WallpaperFunction } from '../../symmetry/color-reversing-wallpaper-group';
 
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/wallpaper`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/wallpaper`;
 mkdirs(OUTPUT_DIRECTORY);
 
-const seed = 100; // randomInteger(100, 100000);
-setRandomSeed(seed);
+setRandomSeed('dioptase');
 
 const scale = 3;
-const bitmapPath = `${__dirname}/vegetables.png`;
+const bitmapPath = `${__dirname}/../vegetables.png`;
 
 const nbTerms = 3;
 const nValues = new Array(nbTerms).fill(null).map(() => randomInteger(-3, 5));

@@ -1,19 +1,17 @@
-import { BI_UNIT_DOMAIN, scaleDomain } from '../utils/domain';
-import { mkdirs } from '../utils/fs';
-import { plotDomainReverseColoring } from './util';
-import { randomComplex, randomInteger, setRandomSeed } from '../utils/random';
-import { makeCMMCMWallpaperFunction, makeCMMP2WallpaperFunction, makeCMP1WallpaperFunction, makeCMPGWallpaperFunction, makeCMPMWallpaperFunction, makeP1P1WallpaperFunction, makeP2P1WallpaperFunction, makeP2P2WallpaperFunction, makeP4GCMMWallpaperFunction, makeP4GPGGWallpaperFunction, makeP4MCMMWallpaperFunction, makeP4MPMMWallpaperFunction, makeP4P2WallpaperFunction, makePGGPGWallpaperFunction, makePGP1WallpaperFunction, makePGPGWallpaperFunction, makePMCMWallpaperFunction, makePMGPGWallpaperFunction, makePMGPMWallpaperFunction, makePMMCMMWallpaperFunction, makePMMPMWallpaperFunction, makePMP1WallpaperFunction, makePMPGWallpaperFunction, makePMPM1WallpaperFunction, makePMPM2WallpaperFunction, makeP4P4WallpaperFunction, makeP4MP4WallpaperFunction, makeP4GP4WallpaperFunction, makeP4MP4MWallpaperFunction, makeP4MP4GWallpaperFunction, saveInvertCollageHorizontal, makePMMP2WallpaperFunction, makePMGP2WallpaperFunction, makePGGP2WallpaperFunction, makePMMPMMWallpaperFunction, makeCMMPMMWallpaperFunction, makePMMPMGWallpaperFunction, makePMGPMGWallpaperFunction, makeCMMPMGWallpaperFunction, makePMGPGGWallpaperFunction, makeCMMPGGWallpaperFunction, makeP6MP6WallpaperFunction, makeP6MP3M1WallpaperFunction, makeP31MP3WallpaperFunction, makeP6P3WallpaperFunction, makeP6P31MWallpaperFunction, makeP3M1P3WallpaperFunction } from '../symmetry/color-reversing-wallpaper-group';
+import { BI_UNIT_DOMAIN, scaleDomain } from '../../utils/domain';
+import { mkdirs } from '../../utils/fs';
+import { plotDomainReverseColoring } from '../util';
+import { randomComplex, randomInteger, setRandomSeed } from '../../utils/random';
+import { makeCMMCMWallpaperFunction, makeCMMP2WallpaperFunction, makeCMP1WallpaperFunction, makeCMPGWallpaperFunction, makeCMPMWallpaperFunction, makeP1P1WallpaperFunction, makeP2P1WallpaperFunction, makeP2P2WallpaperFunction, makeP4GCMMWallpaperFunction, makeP4GPGGWallpaperFunction, makeP4MCMMWallpaperFunction, makeP4MPMMWallpaperFunction, makeP4P2WallpaperFunction, makePGGPGWallpaperFunction, makePGP1WallpaperFunction, makePGPGWallpaperFunction, makePMCMWallpaperFunction, makePMGPGWallpaperFunction, makePMGPMWallpaperFunction, makePMMCMMWallpaperFunction, makePMMPMWallpaperFunction, makePMP1WallpaperFunction, makePMPGWallpaperFunction, makePMPM1WallpaperFunction, makePMPM2WallpaperFunction, makeP4P4WallpaperFunction, makeP4MP4WallpaperFunction, makeP4GP4WallpaperFunction, makeP4MP4MWallpaperFunction, makeP4MP4GWallpaperFunction, saveInvertCollageHorizontal, makePMMP2WallpaperFunction, makePMGP2WallpaperFunction, makePGGP2WallpaperFunction, makePMMPMMWallpaperFunction, makeCMMPMMWallpaperFunction, makePMMPMGWallpaperFunction, makePMGPMGWallpaperFunction, makeCMMPMGWallpaperFunction, makePMGPGGWallpaperFunction, makeCMMPGGWallpaperFunction, makeP6MP6WallpaperFunction, makeP6MP3M1WallpaperFunction, makeP31MP3WallpaperFunction, makeP6P3WallpaperFunction, makeP6P31MWallpaperFunction, makeP3M1P3WallpaperFunction } from '../../symmetry/color-reversing-wallpaper-group';
 
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/color-reversing-wallpaper`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/color-reversing-wallpaper`;
 mkdirs(OUTPUT_DIRECTORY);
 
-const seed = 94666 //randomInteger(100, 100000);
-console.log(seed);
-setRandomSeed(94666);
+setRandomSeed('dioptase');
 
 const scale = 2;
-const bitmapPath = `${__dirname}/ada-big.png`;
+const bitmapPath = `${__dirname}/../ada-big.png`;
 
 const nbTerms = 3;
 const nValues = new Array(nbTerms).fill(null).map(() => randomInteger(-3, 7));

@@ -1,19 +1,18 @@
-import { BI_UNIT_DOMAIN, scaleDomain } from '../utils/domain';
-import { mkdirs } from '../utils/fs';
-import { plotDomainColoring, plotDomainColoring2 } from './util';
-import { randomComplex, randomInteger, setRandomSeed } from '../utils/random';
-import { makeCMMWallpaperFunction, makeCMWallpaperFunction, makeP1WallpaperFunction, makeP2WallpaperFunction, makeP31MWallpaperFunction, makeP3M1WallpaperFunction, makeP3WallpaperFunction, makeP4GWallpaperFunction, makeP4MWallpaperFunction, makeP4WallpaperFunction, makeP6MWallpaperFunction, makeP6WallpaperFunction, makePGGWallpaperFunction, makePGWallpaperFunction, makePMGWallpaperFunction, makePMMWallpaperFunction, makePMWallpaperFunction } from '../symmetry/wallpaper-group';
-import { plotColorWheel1 } from '../utils/colorwheel';
+import { BI_UNIT_DOMAIN, scaleDomain } from '../../utils/domain';
+import { mkdirs } from '../../utils/fs';
+import { plotDomainColoring, plotDomainColoring2 } from '../util';
+import { randomComplex, randomInteger, setRandomSeed } from '../../utils/random';
+import { makeCMMWallpaperFunction, makeCMWallpaperFunction, makeP1WallpaperFunction, makeP2WallpaperFunction, makeP31MWallpaperFunction, makeP3M1WallpaperFunction, makeP3WallpaperFunction, makeP4GWallpaperFunction, makeP4MWallpaperFunction, makeP4WallpaperFunction, makeP6MWallpaperFunction, makeP6WallpaperFunction, makePGGWallpaperFunction, makePGWallpaperFunction, makePMGWallpaperFunction, makePMMWallpaperFunction, makePMWallpaperFunction } from '../../symmetry/wallpaper-group';
+import { plotColorWheel1 } from '../../utils/colorwheel';
 
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/wallpaper`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/wallpaper`;
 mkdirs(OUTPUT_DIRECTORY);
 
-const seed = 100;
-setRandomSeed(seed);
+setRandomSeed('dioptase');
 
 const scale = 1;
-const bitmapPath = `${__dirname}/ada-big.png`;
+const bitmapPath = `${__dirname}/../ada-big.png`;
 
 const nbTerms = 3;
 const nValues = new Array(nbTerms).fill(null).map(() => randomInteger(0, 10));

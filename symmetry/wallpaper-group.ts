@@ -1,7 +1,6 @@
 import { complex, ComplexNumber, eulerComplex } from '../utils/complex';
 import { TWO_PI } from '../utils/math';
 import { ComplexToComplexFunction } from '../utils/types';
-import { makeP111RosetteFunction, makeP11GRosetteFunction, makeP11MRosetteFunction, makeP1M1RosetteFunction, makeP211RosetteFunction, makeP2MGRosetteFunction, makeP2MMRosetteFunction } from './rosette-group';
 
 const SQRT_3 = Math.sqrt(3);
 

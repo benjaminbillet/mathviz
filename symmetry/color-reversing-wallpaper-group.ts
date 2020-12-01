@@ -1,24 +1,23 @@
 import { applyInvert } from '../effects/invert';
 import { applyTransform } from '../effects/transform';
 import { makeAffine2dFromMatrix, rotate } from '../utils/affine';
-import { convertUnitToRGBA } from '../utils/color';
 import { ComplexNumber } from '../utils/complex';
 import { downscale2 } from '../utils/downscale';
 import { readImage, saveImageBuffer } from '../utils/picture';
-import { ComplexToComplexFunction, PlotBuffer } from '../utils/types';
+import { ComplexToComplexFunction } from '../utils/types';
 import { makeCnm, makeEnmGenericLattice, makeSnm, makeTnm, makeWnm } from './wallpaper-group';
 
-export const saveInvertCollageHorizontal = async (inputPath: string, outputPath: string, stripe = true) => {
-  const picture = await readImage(inputPath, 255);
+export const saveInvertCollageHorizontal = (inputPath: string, outputPath: string, stripe = true) => {
+  const picture = readImage(inputPath);
   const width = picture.width;
   const height = picture.height;
   const bitmap = picture.buffer;
 
   const output = makeInvertCollageHorizontal(bitmap, width, height, stripe);
-  await saveImageBuffer(convertUnitToRGBA(output), width, height, outputPath);
+  saveImageBuffer(output, width, height, outputPath);
 }
 
-export const makeInvertCollageHorizontal = (bitmap: PlotBuffer, width: number, height: number, stripe = true): PlotBuffer => {
+export const makeInvertCollageHorizontal = (bitmap: Float32Array, width: number, height: number, stripe = true) => {
   let stripeSize = Math.trunc(width * 2 / 50)
   if (stripe === false) {
     stripeSize = 0;
@@ -27,7 +26,7 @@ export const makeInvertCollageHorizontal = (bitmap: PlotBuffer, width: number, h
 
   const newWidth = stripeSize + width * 2;
 
-  let output: PlotBuffer = new Float32Array(newWidth * height * 4);
+  let output = new Float32Array(newWidth * height * 4);
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
       const srcIdx = (i + j * width) * 4;
@@ -50,7 +49,7 @@ export const makeInvertCollageHorizontal = (bitmap: PlotBuffer, width: number, h
   return output;
 }
 
-const makeInvertCollageVertical = (bitmap: PlotBuffer, width: number, height: number) => {
+const makeInvertCollageVertical = (bitmap: Float32Array, width: number, height: number) => {
   const inverted = applyTransform(applyInvert(bitmap, width, height), width, height, makeAffine2dFromMatrix(rotate(Math.PI)));
 
   const output = new Float32Array(width * height * 2 * 4);
@@ -101,13 +100,13 @@ const checkParams = (nValues: number[], mValues: number[], aValues: ComplexNumbe
       }
     });
   } else if (checkOddN) {
-    nValues.forEach((n, i) => {
+    nValues.forEach((n) => {
       if (n % 2 === 0) {
         throw new Error('n must be odd');
       }
     });
   } else if (checkOddM) {
-    mValues.forEach((m, i) => {
+    mValues.forEach((m) => {
       if (m % 2 === 0) {
         throw new Error('m must be odd');
       }
