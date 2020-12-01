@@ -1,10 +1,10 @@
 import { ComplexNumber } from '../utils/complex';
-import { OrbitTrap } from '../utils/types';
+import { ComplexToColorFunction, OrbitTrap } from '../utils/types';
 
-export const makePhoenix = (c: ComplexNumber, p: ComplexNumber, d = 2, bailout = 2, maxIterations = 100) => {
+export const makePhoenix = (c: ComplexNumber, p: ComplexNumber, d = 2, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const squaredBailout = bailout * bailout;
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zold = new ComplexNumber(0, 0);
     let zn = z0;
 
@@ -36,12 +36,12 @@ export const makePhoenix = (c: ComplexNumber, p: ComplexNumber, d = 2, bailout =
   };
 };
 
-export const makeContinuousPhoenix = (c: ComplexNumber, p: ComplexNumber, d = 2, bailout = 2, maxIterations = 100) => {
+export const makeContinuousPhoenix = (c: ComplexNumber, p: ComplexNumber, d = 2, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const invLogD = 1 / Math.log(d);
   const logBailout = Math.log(bailout);
   const squaredBailout = bailout * bailout;
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zold = new ComplexNumber(0, 0);
     let zn = z0;
     let iterations = 0;
@@ -72,10 +72,10 @@ export const makeContinuousPhoenix = (c: ComplexNumber, p: ComplexNumber, d = 2,
   };
 };
 
-export const makeOrbitTrapPhoenix = (c: ComplexNumber, p: ComplexNumber, trap: OrbitTrap, d = 2, bailout = 2, maxIterations = 100) => {
+export const makeOrbitTrapPhoenix = (c: ComplexNumber, p: ComplexNumber, trap: OrbitTrap, d = 2, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const squaredBailout = bailout * bailout;
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zold = new ComplexNumber(0, 0);
     let zn = z0;
     let iterations = 0;
@@ -107,12 +107,12 @@ export const makeOrbitTrapPhoenix = (c: ComplexNumber, p: ComplexNumber, trap: O
 
 const stripeAverage = (z: ComplexNumber, stripeDensity: number) => 0.5 * Math.sin(stripeDensity * Math.atan2(z.im, z.re)) + 0.5;
 
-export const makeStripeAveragePhoenixLinear = (c: ComplexNumber, p: ComplexNumber, d = 2, bailout = 100, maxIterations = 100, stripeDensity = 10) => {
+export const makeStripeAveragePhoenixLinear = (c: ComplexNumber, p: ComplexNumber, d = 2, bailout = 100, maxIterations = 100, stripeDensity = 10): ComplexToColorFunction => {
   const invLogD = 1 / Math.log(d);
   const logBailout = Math.log(bailout);
   const squaredBailout = bailout * bailout;
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zold = new ComplexNumber(0, 0);
     let zn = z0;
 

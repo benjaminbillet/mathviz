@@ -7,12 +7,12 @@
 // Note: in the zₙ₊₁ = z̅ₙ² + c sequence, z̅ₙ² can be replaced by z̅ₙᵈ (d > 2) to create multibar sets.
 
 import { ComplexNumber } from '../utils/complex';
-import { OrbitTrap } from '../utils/types';
+import { ComplexToColorFunction, OrbitTrap } from '../utils/types';
 
-export const makeMandelbar = (d = 3, bailout = 2, maxIterations = 100) => {
+export const makeMandelbar = (d = 3, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const squaredBailout = bailout * bailout;
 
-  return (u: ComplexNumber) => {
+  return (u) => {
     let zn = new ComplexNumber(0, 0);
 
     // we analyze the behavior of zₙ only for a maximum number of iterations
@@ -33,12 +33,12 @@ export const makeMandelbar = (d = 3, bailout = 2, maxIterations = 100) => {
   };
 };
 
-export const makeContinousMandelbar = (d = 3, bailout = 2, maxIterations = 100) => {
+export const makeContinousMandelbar = (d = 3, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const invLogD = 1 / Math.log(d);
   const logBailout = Math.log(bailout);
   const squaredBailout = bailout * bailout;
 
-  return (u: ComplexNumber) => {
+  return (u) => {
     let zn = new ComplexNumber(0, 0);
     let iterations = 0;
     let squaredMagnitude = zn.squaredModulus();
@@ -59,10 +59,10 @@ export const makeContinousMandelbar = (d = 3, bailout = 2, maxIterations = 100) 
   };
 };
 
-export const makeOrbitTrapMandelbar = (trap: OrbitTrap, d = 3, bailout = 2, maxIterations = 100) => {
+export const makeOrbitTrapMandelbar = (trap: OrbitTrap, d = 3, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const squaredBailout = bailout * bailout;
 
-  return (u: ComplexNumber) => {
+  return (u) => {
     let zn = new ComplexNumber(0, 0);
     let iterations = 0;
     let squaredMagnitude = zn.squaredModulus();

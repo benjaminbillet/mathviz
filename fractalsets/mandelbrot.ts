@@ -7,12 +7,12 @@
 // Note: in the  zₙ₊₁ = zₙ² + u sequence, zₙ² can be replaced by zₙᵈ (d > 2) to create multibrot sets.
 
 import { ComplexNumber } from '../utils/complex';
-import { OrbitTrap, RealToRealFunction } from '../utils/types';
+import { ComplexToColorFunction, OrbitTrap, RealToRealFunction } from '../utils/types';
 
-export const makeMandelbrot = (d = 2, bailout = 2, maxIterations = 100) => {
+export const makeMandelbrot = (d = 2, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const squaredBailout = bailout * bailout;
 
-  return (u: ComplexNumber) => {
+  return (u) => {
     let zn = new ComplexNumber(0, 0);
 
     // we analyze the behavior of zₙ only for a maximum number of iterations
@@ -33,12 +33,12 @@ export const makeMandelbrot = (d = 2, bailout = 2, maxIterations = 100) => {
   };
 };
 
-export const makeContinousMandelbrot = (d = 2, bailout = 2, maxIterations = 100) => {
+export const makeContinousMandelbrot = (d = 2, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const invLogD = 1 / Math.log(d);
   const logBailout = Math.log(bailout);
   const squaredBailout = bailout * bailout;
 
-  return (u: ComplexNumber) => {
+  return (u) => {
     let zn = new ComplexNumber(0, 0);
     let iterations = 0;
     let squaredMagnitude = zn.squaredModulus();
@@ -60,10 +60,10 @@ export const makeContinousMandelbrot = (d = 2, bailout = 2, maxIterations = 100)
   };
 };
 
-export const makeOrbitTrapMandelbrot = (trap: OrbitTrap, d = 2, bailout = 2, maxIterations = 100) => {
+export const makeOrbitTrapMandelbrot = (trap: OrbitTrap, d = 2, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const squaredBailout = bailout * bailout;
 
-  return (u: ComplexNumber) => {
+  return (u) => {
     let zn = new ComplexNumber(0, 0);
     let iterations = 0;
     let squaredMagnitude = zn.squaredModulus();
@@ -87,12 +87,12 @@ export const makeOrbitTrapMandelbrot = (trap: OrbitTrap, d = 2, bailout = 2, max
 
 const stripeAverage = (z: ComplexNumber, stripeDensity: number) => 0.5 * Math.sin(stripeDensity * Math.atan2(z.im, z.re)) + 0.5;
 
-export const makeStripeAverageMandelbrotLinear = (d = 2, bailout = 100, maxIterations = 100, stripeDensity = 10) => {
+export const makeStripeAverageMandelbrotLinear = (d = 2, bailout = 100, maxIterations = 100, stripeDensity = 10): ComplexToColorFunction => {
   const invLogD = 1 / Math.log(d);
   const logBailout = Math.log(bailout);
   const squaredBailout = bailout * bailout;
 
-  return (u: ComplexNumber) => {
+  return (u) => {
     let zn = new ComplexNumber(0, 0);
 
     let iterations = 0;
@@ -130,12 +130,12 @@ const h1: RealToRealFunction = x => 0.5 * (x + 4 * x * x - 3 * x * x * x);
 const h2: RealToRealFunction = x => 0.5 * (2 - 5 * x * x + 3 * x * x * x);
 const h3: RealToRealFunction = x => 0.5 * (-x + 2 * x * x - x * x * x);
 
-export const makeStripeAverageMandelbrotCatmullrom = (d = 2, bailout = 100, maxIterations = 100, stripeDensity = 10) => {
+export const makeStripeAverageMandelbrotCatmullrom = (d = 2, bailout = 100, maxIterations = 100, stripeDensity = 10): ComplexToColorFunction => {
   const invLogD = 1 / Math.log(d);
   const logBailout = Math.log(bailout);
   const squaredBailout = bailout * bailout;
 
-  return (u: ComplexNumber) => {
+  return (u) => {
     let zn = new ComplexNumber(0, 0);
 
     let iterations = 0;

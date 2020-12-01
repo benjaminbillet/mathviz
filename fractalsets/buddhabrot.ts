@@ -3,20 +3,20 @@ import { MANDELBROT_DOMAIN } from './mandelbrot';
 import { buildConstrainedColorMap, makeColorMapFunction } from '../utils/color';
 import { forEachPixel, mapPixelToDomain, mapDomainToPixel, reducePixels } from '../utils/picture';
 import { complex, powN, add } from '../utils/complex';
-import { ColorMapFunction, ComplexToBoolFunction, PixelPlotter, PlotBuffer, PlotDomain } from '../utils/types';
+import { ColorMapFunction, ComplexToBoolFunction, PixelPlotter, PlotDomain } from '../utils/types';
 
 
 const DEFAULT_COLOR_FUNC = makeColorMapFunction(buildConstrainedColorMap(
-  [ [ 89, 0, 89 ], [ 255, 235, 255 ], [ 255, 235, 255 ] ],
+  [ [ 0.35, 0, 0.35, 1 ], [ 1, 0.92, 1, 1 ], [ 1, 0.92, 1, 1 ] ],
   [ 0, 0.33, 1 ],
-), 255);
+));
 
 const DEFAULT_ANTI_COLOR_FUNC = makeColorMapFunction(buildConstrainedColorMap(
-  [ [ 89, 0, 89 ], [ 255, 235, 255 ], [ 255, 235, 255 ] ],
+  [ [ 0.35, 0, 0.35, 1 ], [ 1, 0.92, 1, 1 ], [ 1, 0.92, 1, 1 ] ],
   [ 0, 0.1, 1 ],
-), 255);
+));
 
-const makeSymmetricPlotter = (buffer: PlotBuffer, width: number, height: number, domain: PlotDomain): PixelPlotter => {
+const makeSymmetricPlotter = (buffer: Float32Array, width: number, height: number, domain: PlotDomain): PixelPlotter => {
   return (x, y) => {
     const [ fx, fy ] = mapDomainToPixel(x, y, domain, width, height);
     const idx = (fx + fy * width) * 4;
@@ -30,7 +30,7 @@ const makeSymmetricPlotter = (buffer: PlotBuffer, width: number, height: number,
   };
 };
 
-const postColorize = (buffer: PlotBuffer, width: number, height: number, colorfunc: ColorMapFunction) => {
+const postColorize = (buffer: Float32Array, width: number, height: number, colorfunc: ColorMapFunction) => {
   const max = reducePixels(buffer, width, height, (max, r, g, b, a) => Math.max(max, a), Number.MIN_SAFE_INTEGER);
 
   forEachPixel(buffer, width, height, (r, g, b, a, i, j, idx) => {

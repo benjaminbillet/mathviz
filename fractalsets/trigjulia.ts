@@ -1,7 +1,8 @@
 import { sin, ComplexNumber } from '../utils/complex';
+import { ComplexToColorFunction } from '../utils/types';
 
-export const makeTrigJulia = (c: ComplexNumber, trigFunc = sin, bailout = 50, maxIterations = 100) => {
-  return (z0: ComplexNumber) => {
+export const makeTrigJulia = (c: ComplexNumber, trigFunc = sin, bailout = 50, maxIterations = 100): ComplexToColorFunction => {
+  return (z0) => {
     let zn = z0;
     let iterations = 0;
 
@@ -17,11 +18,11 @@ export const makeTrigJulia = (c: ComplexNumber, trigFunc = sin, bailout = 50, ma
 
 const stripeAverage = (z: ComplexNumber, stripeDensity: number) => 0.5 * Math.sin(stripeDensity * Math.atan2(z.im, z.re)) + 0.5;
 
-export const makeStripeAverageTrigJuliaLinear = (c: ComplexNumber, trigFunc = sin, bailout = 50, maxIterations = 100, stripeDensity = 10) => {
+export const makeStripeAverageTrigJuliaLinear = (c: ComplexNumber, trigFunc = sin, bailout = 50, maxIterations = 100, stripeDensity = 10): ComplexToColorFunction => {
   const invLogD = 1; // 1 / Math.log(2);
   const logBailout = Math.log(bailout);
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zn = z0;
 
     let iterations = 0;

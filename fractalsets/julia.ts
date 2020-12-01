@@ -1,5 +1,5 @@
 import { ComplexNumber } from '../utils/complex';
-import { OrbitTrap } from '../utils/types';
+import { ComplexToColorFunction, OrbitTrap } from '../utils/types';
 
 // a complex number u=x+yi (x, y ∈ [-2, 2]) is in the julia set if:
 // - the sequence zₙ₊₁ = zₙ² + c converges to a complex number with a magnitude (= vector length) ≤ 2
@@ -9,10 +9,10 @@ import { OrbitTrap } from '../utils/types';
 
 // Note: in the zₙ₊₁ = zₙ² + c sequence, zₙ² can be replaced by zₙᵈ (d > 2) to create multijulia sets.
 
-export const makeJulia = (c: ComplexNumber, d = 2, bailout = 2, maxIterations = 100) => {
+export const makeJulia = (c: ComplexNumber, d = 2, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const squaredBailout = bailout * bailout;
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zn = z0;
 
     // we analyze the behavior of zₙ only for a maximum number of iterations
@@ -33,12 +33,12 @@ export const makeJulia = (c: ComplexNumber, d = 2, bailout = 2, maxIterations = 
   };
 };
 
-export const makeContinousJulia = (c: ComplexNumber, d = 2, bailout = 2, maxIterations = 100) => {
+export const makeContinousJulia = (c: ComplexNumber, d = 2, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const invLogD = 1 / Math.log(d);
   const logBailout = Math.log(bailout);
   const squaredBailout = bailout * bailout;
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zn = z0;
     let iterations = 0;
     let squaredMagnitude = zn.squaredModulus();
@@ -59,10 +59,10 @@ export const makeContinousJulia = (c: ComplexNumber, d = 2, bailout = 2, maxIter
   };
 };
 
-export const makeOrbitTrapJulia = (c: ComplexNumber, trap: OrbitTrap, d = 2, bailout = 2, maxIterations = 100) => {
+export const makeOrbitTrapJulia = (c: ComplexNumber, trap: OrbitTrap, d = 2, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   const squaredBailout = bailout * bailout;
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zn = z0;
     let iterations = 0;
     let squaredMagnitude = zn.squaredModulus();
@@ -85,7 +85,7 @@ export const makeOrbitTrapJulia = (c: ComplexNumber, trap: OrbitTrap, d = 2, bai
 
 const stripeAverage = (z: ComplexNumber, stripeDensity: number) => 0.5 * Math.sin(stripeDensity * Math.atan2(z.im, z.re)) + 0.5;
 
-export const makeStripeAverageJuliaLinear = (c: ComplexNumber, d = 2, bailout = 100, maxIterations = 100, stripeDensity = 10) => {
+export const makeStripeAverageJuliaLinear = (c: ComplexNumber, d = 2, bailout = 100, maxIterations = 100, stripeDensity = 10): ComplexToColorFunction => {
   const invLogD = 1 / Math.log(d);
   const logBailout = Math.log(bailout);
   const squaredBailout = bailout * bailout;

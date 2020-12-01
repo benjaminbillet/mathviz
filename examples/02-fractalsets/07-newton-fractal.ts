@@ -1,15 +1,14 @@
-import { buildConstrainedColorMap, makeColorMapFunction } from '../utils/color';
-import { mkdirs } from '../utils/fs';
-import { plotFunction } from './util';
-import { readImage, getPictureSize } from '../utils/picture';
-import { makeBitmapTrap } from '../fractalsets/trap';
-import { complex, ComplexNumber } from '../utils/complex';
-import { zoomDomain } from '../utils/domain';
-import { BOAT, expandPalette } from '../utils/palette';
-import { ComplexToComplexFunction, PlotDomain } from '../utils/types';
-import { findRoots, makeNewton1, makeNewton2, NEWTON_DOMAIN } from '../root-finding-fractal/newton';
+import { buildConstrainedColorMap, makeColorMapFunction } from '../../utils/color';
+import { mkdirs } from '../../utils/fs';
+import { plotFunction } from '../util';
+import { getPictureSize } from '../../utils/picture';
+import { ComplexNumber } from '../../utils/complex';
+import { zoomDomain } from '../../utils/domain';
+import { BOAT, expandPalette } from '../../utils/palette';
+import { ComplexToComplexFunction, PlotDomain } from '../../utils/types';
+import { findRoots, makeNewton1, makeNewton2, NEWTON_DOMAIN } from '../../fractalsets/newton';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/newton`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/newton`;
 mkdirs(OUTPUT_DIRECTORY);
 
 
@@ -18,23 +17,23 @@ const size = 2048;
 
 const buildColorFunction = (nbRoots: number) => {
   const colormap = buildConstrainedColorMap(
-    [ [0,0,0], ...expandPalette(BOAT, nbRoots) ],
+    [ [0,0,0,1], ...expandPalette(BOAT, nbRoots) ],
     [ 0, 0, ...new Array(nbRoots).fill(0).map((_, i) => (i + 1) / nbRoots) ],
   );
-  return makeColorMapFunction(colormap, 255);
+  return makeColorMapFunction(colormap);
 }
 
 
-const plotNewton1 = async (f: ComplexToComplexFunction, fd: ComplexToComplexFunction, roots: ComplexNumber[], maxIterations: number, domain: PlotDomain, smooth = false, suffix = '') => {
+const plotNewton1 = (f: ComplexToComplexFunction, fd: ComplexToComplexFunction, roots: ComplexNumber[], maxIterations: number, domain: PlotDomain, smooth = false, suffix = '') => {
   const [ width, height ] = getPictureSize(size, domain);
   const configuredNewton = makeNewton1(f, fd, roots, maxIterations, 0.0001, smooth);
-  await plotFunction(`${OUTPUT_DIRECTORY}/newton1${suffix}.png`, width, height, configuredNewton, domain, buildColorFunction(roots.length));
+  plotFunction(`${OUTPUT_DIRECTORY}/newton1${suffix}.png`, width, height, configuredNewton, domain, buildColorFunction(roots.length));
 };
 
-const plotNewton2 = async (f: ComplexToComplexFunction, roots: ComplexNumber[], maxIterations: number, domain: PlotDomain, smooth = false, suffix = '') => {
+const plotNewton2 = (f: ComplexToComplexFunction, roots: ComplexNumber[], maxIterations: number, domain: PlotDomain, smooth = false, suffix = '') => {
   const [ width, height ] = getPictureSize(size, domain);
   const configuredNewton = makeNewton2(f, roots, maxIterations, 0.0001, smooth);
-  await plotFunction(`${OUTPUT_DIRECTORY}/newton2${suffix}.png`, width, height, configuredNewton, domain, buildColorFunction(roots.length));
+  plotFunction(`${OUTPUT_DIRECTORY}/newton2${suffix}.png`, width, height, configuredNewton, domain, buildColorFunction(roots.length));
 };
 
 let f: ComplexToComplexFunction = z => z.powN(4).sub(1);

@@ -1,23 +1,23 @@
 import { ComplexNumber } from '../utils/complex';
-import { OrbitTrap } from '../utils/types';
+import { ComplexToColorFunction, OrbitTrap } from '../utils/types';
 
 // http://usefuljs.net/fractals/docs/rational_maps.html
 
 const checkArgs = (p: number, q: number) => {
   if (p < 2) {
-    throw new Error("p < 2");
+    throw new Error('p < 2');
   }
   if (q > -1) {
-    throw new Error("q > -1");
+    throw new Error('q > -1');
   }
 
 }
 
-export const makeRationalMap = (c: ComplexNumber, lambda: ComplexNumber, p = 2, q = -1, bailout = 2, maxIterations = 100) => {
+export const makeRationalMap = (c: ComplexNumber, lambda: ComplexNumber, p = 2, q = -1, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   checkArgs(p, q);
   const squaredBailout = bailout * bailout;
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zn = z0;
     let term1 = new ComplexNumber(0, 0);
     let term2 = new ComplexNumber(0, 0);
@@ -44,14 +44,14 @@ export const makeRationalMap = (c: ComplexNumber, lambda: ComplexNumber, p = 2, 
   };
 };
 
-export const makeContinuousRationalMap = (c: ComplexNumber, lambda: ComplexNumber, p = 2, q = -1, bailout = 2, maxIterations = 100) => {
+export const makeContinuousRationalMap = (c: ComplexNumber, lambda: ComplexNumber, p = 2, q = -1, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   checkArgs(p, q);
 
   const invLogP = 1 / Math.log(p);
   const logBailout = Math.log(bailout);
   const squaredBailout = bailout * bailout;
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zn = z0;
     let term1 = new ComplexNumber(0, 0);
     let term2 = new ComplexNumber(0, 0);
@@ -81,11 +81,11 @@ export const makeContinuousRationalMap = (c: ComplexNumber, lambda: ComplexNumbe
   };
 };
 
-export const makeOrbitTrapRationalMap = (c: ComplexNumber, lambda: ComplexNumber, trap: OrbitTrap, p = 2, q = -1, bailout = 2, maxIterations = 100) => {
+export const makeOrbitTrapRationalMap = (c: ComplexNumber, lambda: ComplexNumber, trap: OrbitTrap, p = 2, q = -1, bailout = 2, maxIterations = 100): ComplexToColorFunction => {
   checkArgs(p, q);
   const squaredBailout = bailout * bailout;
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zn = z0;
     let term1 = new ComplexNumber(0, 0);
     let term2 = new ComplexNumber(0, 0);
@@ -117,14 +117,14 @@ export const makeOrbitTrapRationalMap = (c: ComplexNumber, lambda: ComplexNumber
 
 const stripeAverage = (z: ComplexNumber, stripeDensity: number) => 0.5 * Math.sin(stripeDensity * Math.atan2(z.im, z.re)) + 0.5;
 
-export const makeStripeAverageRationalMapLinear = (c: ComplexNumber, lambda: ComplexNumber, p = 2, q = -1, bailout = 100, maxIterations = 100, stripeDensity = 10) => {
+export const makeStripeAverageRationalMapLinear = (c: ComplexNumber, lambda: ComplexNumber, p = 2, q = -1, bailout = 100, maxIterations = 100, stripeDensity = 10): ComplexToColorFunction => {
   checkArgs(p, q);
 
   const invLogP = 1 / Math.log(p);
   const logBailout = Math.log(bailout);
   const squaredBailout = bailout * bailout;
 
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zn = z0;
     let term1 = new ComplexNumber(0, 0);
     let term2 = new ComplexNumber(0, 0);

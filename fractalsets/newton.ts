@@ -1,14 +1,13 @@
-import { complex, ComplexNumber } from '../utils/complex';
-import { mapPixelToComplexDomain, mapPixelToDomain } from '../utils/picture';
-import { ComplexToComplexFunction } from '../utils/types';
+import { ComplexNumber } from '../utils/complex';
+import { mapPixelToComplexDomain } from '../utils/picture';
+import { ComplexToColorFunction, ComplexToComplexFunction } from '../utils/types';
 
 // https://www.chiark.greenend.org.uk/~sgtatham/newton
 // https://en.wikipedia.org/wiki/Newton_fractal#Generalization_of_Newton_fractals
-
 // https://sites.google.com/site/newtonfractals/applications-generalizations---simon
 
-export const makeNewton1 = (f: ComplexToComplexFunction, fd: ComplexToComplexFunction, roots: ComplexNumber[], maxIterations = 20, tolerance = 0.001, smooth = true) => {
-  return (z0: ComplexNumber) => {
+export const makeNewton1 = (f: ComplexToComplexFunction, fd: ComplexToComplexFunction, roots: ComplexNumber[], maxIterations = 20, tolerance = 0.001, smooth = true): ComplexToColorFunction => {
+  return (z0) => {
     let z = z0;
     for (let i = 0; i < maxIterations; i++) {
       // iterate towards a root
@@ -37,9 +36,9 @@ export const makeNewton1 = (f: ComplexToComplexFunction, fd: ComplexToComplexFun
 
 // a different implementation
 // https://blog.anvetsu.com/posts/fractals-newton-python-matplotlib-numpy/
-export const makeNewton2 = (f: ComplexToComplexFunction, roots: ComplexNumber[], maxIterations = 20, tolerance = 0.001, smooth = true) => {
+export const makeNewton2 = (f: ComplexToComplexFunction, roots: ComplexNumber[], maxIterations = 20, tolerance = 0.001, smooth = true): ComplexToColorFunction => {
   const h = new ComplexNumber(0.000001, 0.000001); // step size for numerical derivative
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let z = z0;
     for (let i = 0; i < maxIterations; i++) {
       // complex numerical derivative
@@ -68,7 +67,7 @@ export const makeNewton2 = (f: ComplexToComplexFunction, roots: ComplexNumber[],
   }
 };
 
-export const findRoots = (f: ComplexToComplexFunction, width: number, height: number, maxIterations = 20, decimals = 3, domain = NEWTON_DOMAIN) => {
+export const findRoots = (f: ComplexToComplexFunction, width: number, height: number, maxIterations = 20, decimals = 3, domain = NEWTON_DOMAIN): ComplexNumber[] => {
   const tolerance = 1 / Math.pow(10, decimals);
   const h = new ComplexNumber(0.000001, 0.000001); // step size for numerical derivative
   const roots: ComplexNumber[] = [];

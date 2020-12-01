@@ -1,10 +1,11 @@
 import { complex, ComplexNumber } from '../utils/complex';
+import { ComplexToColorFunction } from '../utils/types';
 
 // http://paulbourke.net/fractals/thorn
 
-export const makeSecantSea = (c: ComplexNumber, bailout = 100, maxIterations = 100) => {
+export const makeSecantSea = (c: ComplexNumber, bailout = 100, maxIterations = 100): ComplexToColorFunction => {
   const squaredBailout = bailout * bailout;
-  return (z0: ComplexNumber) => {
+  return (z0) => {
     let zn = z0;
 
     // we analyze the behavior of zₙ only for a maximum number of iterations
