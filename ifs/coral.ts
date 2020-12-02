@@ -1,5 +1,5 @@
 import { makeIfs } from './build';
-import * as affine from '../utils/affine';
+import affine from '../utils/affine';
 
 
 export const CORAL1_DOMAIN = { xmin: -6, xmax: 6, ymin: -1, ymax: 11 };

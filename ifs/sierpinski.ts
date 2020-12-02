@@ -1,5 +1,5 @@
 import { makeIfs } from './build';
-import * as affine from '../utils/affine';
+import affine from '../utils/affine';
 import { Optional } from '../utils/types';
 
 export const SIERPINSKI_TRIANGLE_DOMAIN = { xmin: 0, xmax: 1, ymin: 0, ymax: 1 };

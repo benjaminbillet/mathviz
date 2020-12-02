@@ -3,7 +3,7 @@ import math from '../utils/math';
 import { Matrix, mul as mmul } from './matrix';
 import { Affine2D } from './types';
 
-export const applyAffine2dFromMatrix = (matrix: Matrix, z: ComplexNumber) => {
+export const applyAffine2dFromMatrix = (matrix: Matrix, z: ComplexNumber): ComplexNumber => {
   const a11 = matrix.get(0, 0);
   const a12 = matrix.get(0, 1);
   const a13 = matrix.get(0, 2);
@@ -44,7 +44,7 @@ export const getCoeffsFromMatrix = (matrix: Matrix, out?: Float32Array): Float32
   return out;
 };
 
-export const identity = () => {
+export const identity = (): Matrix => {
   return new Matrix(3, 3, [
     1, 0, 0,
     0, 1, 0,
@@ -54,7 +54,7 @@ export const identity = () => {
 export const IDENTITY = identity();
 export const IDENTITY_FUNC: Affine2D = z => z;
 
-export const scale = (x = 1, y = 1) => {
+export const scale = (x = 1, y = 1): Matrix => {
   return new Matrix(3, 3, [
     x, 0, 0,
     0, y, 0,
@@ -62,11 +62,11 @@ export const scale = (x = 1, y = 1) => {
   ]);
 };
 
-export const homogeneousScale = (s = 1) => {
+export const homogeneousScale = (s = 1): Matrix => {
   return scale(s, s);
 };
 
-export const rotate = (angle: number) => { // clockwise
+export const rotate = (angle: number): Matrix => { // clockwise
   const cos = math.cos(angle);
   const sin = math.sin(angle);
   return new Matrix(3, 3, [
@@ -76,7 +76,7 @@ export const rotate = (angle: number) => { // clockwise
   ]);
 };
 
-export const reverseRotate = (angle: number) => { // counter clockwise
+export const reverseRotate = (angle: number): Matrix => { // counter clockwise
   const cos = math.cos(angle);
   const sin = math.sin(angle);
   return new Matrix(3, 3, [
@@ -86,7 +86,7 @@ export const reverseRotate = (angle: number) => { // counter clockwise
   ]);
 };
 
-export const translate = (x = 0, y = 0) => {
+export const translate = (x = 0, y = 0): Matrix => {
   return new Matrix(3, 3, [
     1, 0, x,
     0, 1, y,
@@ -94,7 +94,7 @@ export const translate = (x = 0, y = 0) => {
   ]);
 };
 
-export const shear = (x = 0, y = 0) => {
+export const shear = (x = 0, y = 0): Matrix => {
   x = math.tan(x);
   y = math.tan(y);
   return new Matrix(3, 3, [
@@ -104,7 +104,7 @@ export const shear = (x = 0, y = 0) => {
   ]);
 };
 
-export const reflect = (horizontal = true, vertical = true) => {
+export const reflect = (horizontal = true, vertical = true): Matrix => {
   let x = 1;
   let y = 1;
   if (horizontal) {
@@ -121,7 +121,7 @@ export const reflect = (horizontal = true, vertical = true) => {
   ]);
 };
 
-export const reflectAlong = (angle: number) => {
+export const reflectAlong = (angle: number): Matrix => {
   const m = math.tan(angle - Math.PI / 2);
   const mm = m * m;
   const c = 1 / (1 + mm);
@@ -132,7 +132,7 @@ export const reflectAlong = (angle: number) => {
   ]);
 };
 
-export const combine = (...matrices: Matrix[]) => {
+export const combine = (...matrices: Matrix[]): Matrix => {
   return matrices.reduce((result, m) => mmul(result, m), identity());
 };
 

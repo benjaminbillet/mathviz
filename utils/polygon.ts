@@ -1,10 +1,7 @@
 import { complex, ComplexNumber } from '../utils/complex';
 import { randomComplex, randomInteger } from './random';
 import { euclidean2d, euclideanSquared2d } from './distance';
-import { Box, Circle, ComplexToRealFunction, Optional, Polygon } from './types';
-import { det2 } from './vector';
-import { CENTROID, integrateTriangle, STRANG9 } from './triangle-integration';
-
+import { Box, Circle, Polygon } from './types';
 
 /*
  * Returns a triangle composed of three points in a [0, 1]² complex space

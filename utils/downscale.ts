@@ -26,7 +26,7 @@ export const DownscaleSamplers = {
   MitchellNetravali2: (scaleX = 1, scaleY = 1) => makeKernel(4, makeMitchellNetravali2(), scaleX, scaleY),
   CatmullRom: (scaleX = 1, scaleY = 1) => makeKernel(4, makeCatmullRom(), scaleX, scaleY),
   CubicBSpline: (scaleX = 1, scaleY = 1) => makeKernel(4, makeCubicBSpline(), scaleX, scaleY),
-  NearestNeighbor: () => [ 1 ],
+  NearestNeighbor: () => new Float32Array([ 1 ]),
 };
 
 export const downscale = (input: Float32Array, width: number, height: number, scale: number, kernelSampler = DownscaleSamplers.Lanczos3) => {

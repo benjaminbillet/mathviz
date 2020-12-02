@@ -1,5 +1,5 @@
 import { makeIfs } from './build';
-import * as affine from '../utils/affine';
+import affine from '../utils/affine';
 
 export const BINARY_TREE_DOMAIN = { xmin: -2, xmax: 2, ymin: 0, ymax: 4 };
 export const makeBinaryTree = (theta = Math.PI/3, r = 0.65) => {

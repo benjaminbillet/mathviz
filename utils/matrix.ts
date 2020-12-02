@@ -1,35 +1,35 @@
-export const zeros = (rows: number, cols: number) => {
+export const zeros = (rows: number, cols: number): Matrix => {
   return new Matrix(rows, cols);
 };
 
-export const mat2d = (rows: number, cols: number) => {
+export const mat2d = (rows: number, cols: number): Matrix => {
   return zeros(rows, cols);
 };
 
-export const sqMat2d = (n: number) => {
+export const sqMat2d = (n: number): Matrix => {
   return mat2d(n, n);
 };
 
-export const fill = (m: Matrix, v = 0) => {
+export const fill = (m: Matrix, v = 0): Matrix => {
   m.data.fill(v);
   return m;
 };
 
-export const get = (m: Matrix, row: number, col: number) => {
+export const get = (m: Matrix, row: number, col: number): number => {
   if (row >= m.rows || col >= m.cols) {
     throw new Error('matrix out of bound');
   }
   return m.data[col + row * m.cols];
 };
 
-export const set = (m: Matrix, row: number, col: number, v: number) => {
+export const set = (m: Matrix, row: number, col: number, v: number): void => {
   if (row >= m.rows || col >= m.cols) {
     throw new Error('matrix out of bound');
   }
   m.data[col + row * m.cols] = v;
 };
 
-export const add = (m1: Matrix, m2: Matrix, out?: Matrix) => {
+export const add = (m1: Matrix, m2: Matrix, out?: Matrix): Matrix => {
   if (m1.cols !== m2.cols || m1.rows !== m2.cols) {
     throw new Error('incompatible matrix size');
   }
@@ -40,7 +40,7 @@ export const add = (m1: Matrix, m2: Matrix, out?: Matrix) => {
   return out;
 };
 
-export const sub = (m1: Matrix, m2: Matrix, out?: Matrix) => {
+export const sub = (m1: Matrix, m2: Matrix, out?: Matrix): Matrix => {
   if (m1.cols !== m2.cols || m1.rows !== m2.cols) {
     throw new Error('incompatible matrix size');
   }
@@ -51,7 +51,7 @@ export const sub = (m1: Matrix, m2: Matrix, out?: Matrix) => {
   return out;
 };
 
-export const mul = (m1: Matrix, m2: Matrix | number, out?: Matrix) => {
+export const mul = (m1: Matrix, m2: Matrix | number, out?: Matrix): Matrix => {
   if (typeof m2 === 'number') {
     return nmul(m1, m2);
   }
@@ -73,7 +73,7 @@ export const mul = (m1: Matrix, m2: Matrix | number, out?: Matrix) => {
   return out;
 };
 
-const nmul = (m: Matrix, n: number, out?: Matrix) => {
+const nmul = (m: Matrix, n: number, out?: Matrix): Matrix => {
   if (out == null) {
     out = new Matrix(m.rows, m.cols);
   }
@@ -81,7 +81,7 @@ const nmul = (m: Matrix, n: number, out?: Matrix) => {
   return out;
 };
 
-export const transpose = (m: Matrix, out?: Matrix) => {
+export const transpose = (m: Matrix, out?: Matrix): Matrix => {
   if (out == null) {
     out = new Matrix(m.cols, m.rows);
   }
@@ -111,31 +111,31 @@ export class Matrix {
     }
   }
 
-  set(row: number, col: number, v: number) {
+  set(row: number, col: number, v: number): void {
     set(this, row, col, v);
   }
 
-  get(row: number, col: number) {
+  get(row: number, col: number): number {
     return get(this, row, col);
   }
   
-  add(m: Matrix, out?: Matrix) {
+  add(m: Matrix, out?: Matrix): Matrix {
     return add(this, m, out);
   }
   
-  sub(m: Matrix, out?: Matrix) {
+  sub(m: Matrix, out?: Matrix): Matrix {
     return sub(this, m, out);
   }
 
-  mul(m: Matrix, out?: Matrix) {
+  mul(m: Matrix, out?: Matrix): Matrix {
     return mul(this, m, out);
   }
   
-  transpose(out?: Matrix) {
+  transpose(out?: Matrix): Matrix {
     return transpose(this, out);
   }
 
-  toString() {
+  toString(): string {
     const arr = [];
     for (let i = 0; i < this.rows; i++) {
       const arr2 = [];
@@ -146,4 +146,4 @@ export class Matrix {
     }
     return `[[${arr.join('], [')}]]`;
   }
-};
+}

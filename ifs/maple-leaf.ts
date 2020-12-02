@@ -1,5 +1,5 @@
 import { makeIfs } from './build';
-import * as affine from '../utils/affine';
+import affine from '../utils/affine';
 
 export const MAPLE_LEAF_DOMAIN = { xmin: -4, xmax: 4, ymin: -4, ymax: 4 };
 export const makeMapleLeaf = () => {

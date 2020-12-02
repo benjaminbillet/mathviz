@@ -1,13 +1,13 @@
 import { bilinear, bicubic, bicosine } from './interpolation';
 import { getPixelValue } from './picture';
 
-export const pixelNearestNeighbor = (buffer: Float32Array, width: number, height: number, x: number, y: number, offset: number) => {
+export const pixelNearestNeighbor = (buffer: Float32Array, width: number, height: number, x: number, y: number, offset: number): number => {
   const x1 = Math.trunc(x);
   const y1 = Math.trunc(y);
   return getPixelValue(buffer, width, height, x1, y1, offset);
 };
 
-export const pixelBilinear = (buffer: Float32Array, width: number, height: number, x: number, y: number, offset: number) => {
+export const pixelBilinear = (buffer: Float32Array, width: number, height: number, x: number, y: number, offset: number): number => {
   const x1 = Math.trunc(x);
   const y1 = Math.trunc(y);
 
@@ -19,7 +19,7 @@ export const pixelBilinear = (buffer: Float32Array, width: number, height: numbe
   return bilinear(x - x1, y - y1, p00, p10, p01, p11);
 };
 
-export const pixelBicosine = (buffer: Float32Array, width: number, height: number, x: number, y: number, offset: number) => {
+export const pixelBicosine = (buffer: Float32Array, width: number, height: number, x: number, y: number, offset: number): number => {
   const x1 = Math.trunc(x);
   const y1 = Math.trunc(y);
 
@@ -31,7 +31,7 @@ export const pixelBicosine = (buffer: Float32Array, width: number, height: numbe
   return bicosine(x - x1, y - y1, p00, p10, p01, p11);
 };
 
-export const pixelBicubic = (buffer: Float32Array, width: number, height: number, x: number, y: number, offset: number) => {
+export const pixelBicubic = (buffer: Float32Array, width: number, height: number, x: number, y: number, offset: number): number => {
   const x1 = Math.trunc(x);
   const y1 = Math.trunc(y);
 
@@ -65,7 +65,7 @@ export const UpscaleSamplers = {
   NearestNeighbor: pixelNearestNeighbor,
 };
 
-export const upscale = (input: Float32Array, width: number, height: number, scale: number, sampler = UpscaleSamplers.Bicubic) => {
+export const upscale = (input: Float32Array, width: number, height: number, scale: number, sampler = UpscaleSamplers.Bicubic): Float32Array => {
   if (scale <= 1) {
     return input;
   }
@@ -75,7 +75,7 @@ export const upscale = (input: Float32Array, width: number, height: number, scal
   return upscale2(input, width, height, outputWidth, outputHeight, sampler);
 };
 
-export const upscale2 = (input: Float32Array, width: number, height: number, outputWidth: number, outputHeight: number, sampler = UpscaleSamplers.Bicubic) => {
+export const upscale2 = (input: Float32Array, width: number, height: number, outputWidth: number, outputHeight: number, sampler = UpscaleSamplers.Bicubic): Float32Array => {
   if (outputWidth === width && outputHeight === height) {
     return input;
   }

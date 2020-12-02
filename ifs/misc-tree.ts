@@ -1,5 +1,5 @@
 import { makeIfs } from './build';
-import * as affine from '../utils/affine';
+import affine from '../utils/affine';
 
 export const TREE1_DOMAIN = { xmin: -1, xmax: 1, ymin: -1, ymax: 1 };
 export const makeTree1 = () => {

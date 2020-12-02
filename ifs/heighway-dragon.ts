@@ -1,5 +1,5 @@
 import { makeIfs } from './build';
-import * as affine from '../utils/affine';
+import affine from '../utils/affine';
 
 export const HEIGHWAY_DRAGON_DOMAIN = { xmin: -1/3, xmax: 7/6, ymin: -0.5, ymax: 1 };
 export const makeHeighwayDragonIfs = () => {

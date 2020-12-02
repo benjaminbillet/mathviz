@@ -1,5 +1,5 @@
 import { randomIntegerWeighted, randomIntegerUniform, random, pickRandom } from './random';
-import * as affine from '../utils/affine';
+import affine from '../utils/affine';
 import { Optional, ComplexToComplexFunction, IterableRealFunction, RealToRealFunction, TransformMatrix, Struct, Collection, Circle } from './types';
 import { complex, ComplexNumber } from './complex';
 import { euclidean, euclidean2d } from './distance';

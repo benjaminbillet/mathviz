@@ -39,11 +39,11 @@ export const makeMitchellNetravali = () => makeSpline(1/3, 1/3);
 export const makeMitchellNetravali2 = () => makeSpline(0, 1/2);
 
 
-export const linear = (x: number, v1: number, v2: number) => {
+export const linear = (x: number, v1: number, v2: number): number => {
   return v1 * (1 - x) + v2 * x;
 };
 
-export const bilinear = (x: number, y: number, p00: number, p10: number, p01: number, p11: number) => {
+export const bilinear = (x: number, y: number, p00: number, p10: number, p01: number, p11: number): number => {
   /* const v1 = linear(x, p00, p10);
   const v2 = linear(x, p01, p11);
   return linear(y, v1, v2);*/
@@ -55,12 +55,12 @@ export const bilinear = (x: number, y: number, p00: number, p10: number, p01: nu
   return a00 + a10 * x + a01 * y + a11 * x * y;
 };
 
-export const cosine = (x: number, v1: number, v2: number) => {
+export const cosine = (x: number, v1: number, v2: number): number => {
   const v = (1 - Math.cos(Math.PI * x)) / 2;
   return v1 * (1 - v) + v2 * v;
 };
 
-export const bicosine = (x: number, y: number, p00: number, p10: number, p01: number, p11: number) => {
+export const bicosine = (x: number, y: number, p00: number, p10: number, p01: number, p11: number): number => {
   /* const v1 = cosine(x, p00, p10);
   const v2 = cosine(x, p01, p11);
   return cosine(y, v1, v2);*/
@@ -70,7 +70,7 @@ export const bicosine = (x: number, y: number, p00: number, p10: number, p01: nu
   return bilinear(x, y, p00, p10, p01, p11);
 };
 
-export const cubic = (x: number, v0: number, v1: number, v2: number, v3: number) => {
+export const cubic = (x: number, v0: number, v1: number, v2: number, v3: number): number => {
   const xSquared = x * x;
   const a0 = v3 - v2 - v0 + v1;
   const a1 = v0 - v1 - a0;
@@ -80,7 +80,7 @@ export const cubic = (x: number, v0: number, v1: number, v2: number, v3: number)
 };
 
 // TODO refactor to make clearer
-export const bicubic = (x: number, y: number, p00: number, p01: number, p02: number, p03: number, p10: number, p11: number, p12: number, p13: number, p20: number, p21: number, p22: number, p23: number, p30: number, p31: number, p32: number, p33: number) => {
+export const bicubic = (x: number, y: number, p00: number, p01: number, p02: number, p03: number, p10: number, p11: number, p12: number, p13: number, p20: number, p21: number, p22: number, p23: number, p30: number, p31: number, p32: number, p33: number): number => {
   const yf2 = y * y;
   const xf2 = x * x;
   const xf3 = x * xf2;

@@ -1,5 +1,5 @@
 import { makeIfs } from './build';
-import * as affine from '../utils/affine';
+import affine from '../utils/affine';
 
 export const makePythagoreanTree = (alpha = Math.PI/4) => {
   const cosAlpha = Math.cos(alpha);

@@ -35,7 +35,8 @@ export type Color = [ number, number, number, number ];
 export type ColorMap = Color[];
 export type ColorMapFunction = (x: number) => Color;
 
-export type ComplexToColorFunction = (z: ComplexNumber) => number | Color;
+export type ComplexToColorFunction = (z: ComplexNumber) => Color | BWColor;
+export type ComplexToComplexVectorFunction = (z: ComplexNumber) => ComplexNumber[];
 
 export type RealToBoolFunction = (x: number) => boolean;
 export type ComplexToBoolFunction = (z: ComplexNumber) => boolean;
@@ -149,17 +150,17 @@ export type BinaryMorphOperation = (x: number, y: number, idx: number) => number
 export interface Particle {
   position: ComplexNumber,
   // age: number,
-};
+}
 
 export interface SphereParticle extends Particle {
   radius: number,
-};
+}
 export interface NGonParticle extends Particle {
   polygon: Polygon,
   n: number,
   rotation: number,
   radius: number,
-};
+}
 
 export type DlaUniverse<S extends Particle> = {
   stuckParticles: S[]

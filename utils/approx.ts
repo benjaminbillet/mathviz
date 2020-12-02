@@ -32,19 +32,19 @@ export const fasterLog2 = (() => {
   };
 })();
 
-export const log = (number: number) => {
+export const log = (number: number): number => {
   return 0.6931471805599453 * log2(number);
 };
 
-export const fasterLog = (number: number) => {
+export const fasterLog = (number: number): number => {
   return 0.6931471805599453 * fasterLog2(number);
 };
 
-export const log10 = (number: number) => {
+export const log10 = (number: number): number => {
   return 0.30102999566398114 * log2(number);
 };
 
-export const fasterLog10 = (number: number) => {
+export const fasterLog10 = (number: number): number => {
   return 0.30102999566398114 * fasterLog2(number);
 };
 
@@ -77,11 +77,11 @@ export const fasterPow2 = (() => {
   };
 })();
 
-export const exp = (number: number) => {
+export const exp = (number: number): number => {
   return pow2(1.442695040 * number);
 };
 
-export const fasterExp = (number: number) => {
+export const fasterExp = (number: number): number => {
   return fasterPow2(1.442695040 * number);
 };
 
@@ -99,7 +99,7 @@ export const rsqrt = (() => {
   };
 })();
 
-export const sqrt = (number: number) => {
+export const sqrt = (number: number): number => {
   return 1.0 / rsqrt(number);
 };
 
@@ -125,7 +125,7 @@ const halfsin = (() => {
   };
 })();
 
-export const sin = (number: number) => {
+export const sin = (number: number): number => {
   const k = (number * INVERSE_TWO_PI) | 0;
   const half = (number < 0) ? -0.5 : 0.5;
   return halfsin((half + k) * TWO_PI - number);
@@ -148,17 +148,17 @@ const fasterHalfsin = (() => {
   };
 })();
 
-export const fasterSin = (number: number) => {
+export const fasterSin = (number: number): number => {
   const k = (number * INVERSE_TWO_PI) | 0;
   const half = (number < 0) ? -0.5 : 0.5;
   return fasterHalfsin((half + k) * TWO_PI - number);
 };
 
-export const sinh = (number: number) => {
+export const sinh = (number: number): number => {
   return 0.5 * (exp(number) - exp(-number));
 };
 
-export const fasterSinh = (number: number) => {
+export const fasterSinh = (number: number): number => {
   return 0.5 * (fasterExp(number) - fasterExp(-number));
 };
 
@@ -177,7 +177,7 @@ export const fasterSinh = (number: number) => {
 }*/
 
 
-const halfcos = (number: number) => {
+const halfcos = (number: number): number => {
   const offset = (number > HALF_PI) ? HALF_PI_MINUS_TWOPI : HALF_PI;
   return halfsin(number + offset);
 };
@@ -196,19 +196,19 @@ const fasterHalfcos = (() => {
   };
 })();
 
-export const cos = (number: number) => {
+export const cos = (number: number): number => {
   return sin(number + HALF_PI);
 };
 
-export const fasterCos = (number: number) => {
+export const fasterCos = (number: number): number => {
   return fasterSin(number + HALF_PI);
 };
 
-export const cosh = (number: number) => {
+export const cosh = (number: number): number => {
   return 0.5 * (exp(number) + exp(-number));
 };
 
-export const fasterCosh = (number: number) => {
+export const fasterCosh = (number: number): number => {
   return 0.5 * (fasterExp(number) + fasterExp(-number));
 };
 
@@ -228,29 +228,29 @@ export const fasterCosh = (number: number) => {
 };*/
 
 
-export const tan = (number: number) => {
+export const tan = (number: number): number => {
   const k = (number * INVERSE_TWO_PI) | 0;
   const half = (number < 0) ? -0.5 : 0.5;
   const newNumber = number - (half + k) * TWO_PI;
   return halfsin(newNumber) / halfcos(newNumber);
 };
 
-export const fasterTan = (number: number) => {
+export const fasterTan = (number: number): number => {
   const k = (number * INVERSE_TWO_PI) | 0;
   const half = (number < 0) ? -0.5 : 0.5;
   const newNumber = number - (half + k) * TWO_PI;
   return fasterHalfsin(newNumber) / fasterHalfcos(newNumber);
 };
 
-export const tanh = (number: number) => {
+export const tanh = (number: number): number => {
   return -1.0 + 2.0 / (1.0 + exp(-2.0 * number));
 };
 
-export const fasterTanh = (number: number) => {
+export const fasterTanh = (number: number): number => {
   return -1.0 + 2.0 / (1.0 + fasterExp(-2.0 * number));
 };
 
-export const atan2 = (y: number, x: number) => {
+export const atan2 = (y: number, x: number): number => {
   const sign = 1.0 - ((y < 0.0 ? 1 : 0) << 1);
   let absYandR = y * sign + 2.220446049250313e-16;
   const partSignX = ((x < 0.0 ? 1 : 0) << 1); // [0.0/2.0]

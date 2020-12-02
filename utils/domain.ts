@@ -14,12 +14,12 @@ export const scaleDomain = (domain: PlotDomain, scale = 1): PlotDomain => {
 };
 
 export const transformDomain = (domain: PlotDomain, matrix = IDENTITY): PlotDomain => {
-  const a11 = matrix.get([ 0, 0 ]);
-  const a12 = matrix.get([ 0, 1 ]);
-  const a13 = matrix.get([ 0, 2 ]);
-  const a21 = matrix.get([ 1, 0 ]);
-  const a22 = matrix.get([ 1, 1 ]);
-  const a23 = matrix.get([ 1, 2 ]);
+  const a11 = matrix.get(0, 0);
+  const a12 = matrix.get(0, 1);
+  const a13 = matrix.get(0, 2);
+  const a21 = matrix.get(1, 0);
+  const a22 = matrix.get(1, 1);
+  const a23 = matrix.get(1, 2);
   return {
     xmin: a11 * domain.xmin + a12 * domain.ymin + a13,
     ymin: a21 * domain.xmin + a22 * domain.ymin + a23,

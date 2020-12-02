@@ -2,7 +2,7 @@ import palette from 'google-palette';
 import * as D3Color from 'd3-color';
 
 import { Color, Palette } from './types';
-import { denormalizeColor, normalizeColor } from './color';
+import { denormalizeColor, getRedmeanColorDistance, normalizeColor } from './color';
 
 export const getBigQualitativePalette = (nbColors: number): Palette => {
   return palette('mpn65', nbColors).map((color: Color) => {
@@ -129,6 +129,19 @@ export const expandPalette = (palette: Palette, nbColors: number): Palette => {
 
 export const normalizePalette = (palette: Palette): Palette => {
   return palette.map(color => normalizeColor(color));
+};
+
+export const getClosestColor = (palette: Palette, r: number, g: number, b: number, distance = getRedmeanColorDistance) => {
+  let closest = palette[0];
+  let closestDistance = distance(closest[0], closest[1], closest[2], r, g, b);
+  for (let i = 1; i < palette.length; i++) {
+    const d = distance(palette[i][0], palette[i][1], palette[i][2], r, g, b);
+    if (d < closestDistance) {
+      closest = palette[i];
+      closestDistance = d;
+    }
+  }
+  return closest;
 };
 
 /** Common palettes */

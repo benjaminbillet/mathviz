@@ -5,7 +5,7 @@
 // - f4: scale by r, translate 2/3 right
 
 import { makeIfs } from './build';
-import * as affine from '../utils/affine';
+import affine from '../utils/affine';
 
 export const KOCH_CURVE_DOMAIN = { xmin: 0, xmax: 1, ymin: 0, ymax: 1 };
 export const makeKochCurveIfs = () => {

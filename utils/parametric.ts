@@ -52,6 +52,9 @@ export const hypotrochoid = (n: number, r = 3, R = 5, d = 5) => {
 
 export const logSpiral = (n: number, a = 1, alpha = 1.22) => { // alpha is an angle
   const b = 1 / Math.tan(alpha); // cotangeant
+  if (isNaN(b)) {
+    throw new Error(`undefined for ${n}`);
+  }
   return complex(
     a * Math.exp(b * n) * Math.cos(n),
     a * Math.exp(b * n) * Math.sin(n),
@@ -59,12 +62,19 @@ export const logSpiral = (n: number, a = 1, alpha = 1.22) => { // alpha is an an
 };
 
 export const kampyle = (n: number) => {
-  const x = 1 / Math.sin(n);
+  const x = 1 / Math.cos(n); // secant
+  if (isNaN(x)) {
+    throw new Error(`undefined for ${n}`);
+  }
   return complex(x, x * Math.tan(n));
 };
 
 export const rectangularHyperbola = (n: number) => {
-  return complex(1 / Math.sin(n), Math.tan(n));
+  const x = 1 / Math.sin(n); // cosecant
+  if (isNaN(x)) {
+    throw new Error(`undefined for ${n}`);
+  }
+  return complex(x, Math.tan(n));
 };
 
 export const superformula = (n: number, a = 1, b = 1, m = 6, n1 = 1, n2 = 7, n3 = 8) => {

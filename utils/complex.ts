@@ -294,8 +294,8 @@ export const dot = (z1: ComplexNumber, z2: ComplexNumber): number => {
 };
 
 export class ComplexNumber {
-  re: number = 0;
-  im: number = 0;
+  re = 0;
+  im = 0;
 
   constructor(re: number | ComplexNumber, im?: number) {
     this.set(re, im);
@@ -317,23 +317,23 @@ export class ComplexNumber {
 
   modulus() {
     return modulus(this);
-  };
+  }
 
   squaredModulus() {
     return squaredModulus(this);
-  };
+  }
 
   lnModulus() {
     return lnModulus(this);
-  };
+  }
 
   argument() {
     return argument(this);
-  };
+  }
 
   conjugate(out?: ComplexNumber) {
     return conjugate(this, out);
-  };
+  }
 
   negative(out?: ComplexNumber) {
     return negative(this, out);
@@ -341,59 +341,59 @@ export class ComplexNumber {
 
   add(z: ComplexNumber | number, out?: ComplexNumber) {
     return add(this, z, out);
-  };
+  }
 
   sub(z: ComplexNumber | number, out?: ComplexNumber) {
     return sub(this, z, out);
-  };
+  }
 
   mul(z: ComplexNumber | number, out?: ComplexNumber) {
     return mul(this, z, out);
-  };
+  }
 
   pow2(out?: ComplexNumber) {
     return pow2(this, out);
-  };
+  }
 
   powN(n: number, out?: ComplexNumber) {
     return powN(this, n, out);
-  };
+  }
 
   pow(z: ComplexNumber, out?: ComplexNumber) {
     return pow(this, z, out);
-  };
+  }
 
   ln(out?: ComplexNumber) {
     return ln(this, out);
-  };
+  }
 
   reciprocal(out?: ComplexNumber) {
     return reciprocal(this, out);
-  };
+  }
 
   div(z: ComplexNumber | number, out?: ComplexNumber) {
     return div(this, z, out);
-  };
+  }
 
   sqrt(out?: ComplexNumber) {
     return sqrt(this, out);
-  };
+  }
 
   sin(out?: ComplexNumber) {
     return sin(this, out);
-  };
+  }
   
   cos(out?: ComplexNumber) {
     return cos(this, out);
-  };
+  }
 
   sinh(out?: ComplexNumber) {
     return sinh(this, out);
-  };
+  }
   
   cosh(out?: ComplexNumber) {
     return cosh(this, out);
-  };
+  }
   
   equals(z: ComplexNumber) {
     return equals(this, z);
@@ -417,5 +417,5 @@ export class ComplexNumber {
 
   dot(z: ComplexNumber): number {
     return dot(this, z);
-  };
-};
+  }
+}

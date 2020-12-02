@@ -1,5 +1,5 @@
 import { makeIfs } from './build';
-import * as affine from '../utils/affine';
+import affine from '../utils/affine';
 
 export const MCWORTER_PENTIGREE_DOMAIN = { xmin: -0.2, xmax: 1.2, ymin: -0.4, ymax: 1 };
 export const makeMcWorterPentigree = () => {

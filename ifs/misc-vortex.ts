@@ -1,5 +1,5 @@
 import { makeIfs } from './build';
-import * as affine from '../utils/affine';
+import affine from '../utils/affine';
 
 
 export const VORTEX1_DOMAIN = { xmin: -4, xmax: 4, ymin: -2.5, ymax: 5.5 };

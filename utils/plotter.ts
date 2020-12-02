@@ -94,7 +94,9 @@ export const makeMultiZPlotter = (plotter: ComplexPlotter, transforms: Affine2D[
     // transformed plot
     transforms.forEach((f) => {
       const fz = f(z);
-      drawn = drawn || plotter(fz, color);
+      if (plotter(fz, color)) {
+        drawn = true;
+      }
     });
     return drawn;
   };

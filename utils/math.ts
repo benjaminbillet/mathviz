@@ -36,22 +36,22 @@ const mathApprox = {
 const currentMath = Object.assign({}, mathFull);
 export default currentMath;
 
-export const enableMathApprox = () => {
+export const enableMathApprox = (): void => {
   Object.keys(mathApprox).forEach((key) => {
     currentMath[key] = mathApprox[key];
   });
 };
 
-export const enableMathFull = () => {
+export const enableMathFull = (): void => {
   Object.keys(mathFull).forEach((key) => {
     currentMath[key] = mathFull[key];
   });
 };
 
-export const toRadian = (degrees: number) => {
+export const toRadian = (degrees: number): number => {
   return degrees * Math.PI / 180;
 };
 
-export const toDegree = (radian: number) => {
+export const toDegree = (radian: number): number => {
   return radian * 180 / Math.PI;
 };

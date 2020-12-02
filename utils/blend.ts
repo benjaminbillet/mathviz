@@ -4,9 +4,9 @@ import { fillPicture, forEachPixel } from './picture';
 import { chebyshev2d } from './distance';
 import { distanceCenterMask } from './mask';
 import { cosine, linear } from './interpolation';
-import { BlendFunction, Color } from './types';
+import { Color } from './types';
 
-export const alphaBlendingFunction = (src: Color | Float32Array, dst: Color | Float32Array, out?: Color | Float32Array) => {
+export const alphaBlendingFunction = (src: Color, dst: Color, out?: Color): Color => {
   const srcA = src[3];
   const dstA = dst[3];
   
@@ -33,7 +33,7 @@ export const alphaBlendingFunction = (src: Color | Float32Array, dst: Color | Fl
   return out;
 };
 
-export const blendCosine = (buffer1: Float32Array, buffer2: Float32Array, gradientBuffer: Float32Array, width: number, height: number, gradFactor = 1) => {
+export const blendCosine = (buffer1: Float32Array, buffer2: Float32Array, gradientBuffer: Float32Array, width: number, height: number, gradFactor = 1): Float32Array => {
   const output = new Float32Array(width * height * 4);
   forEachPixel(gradientBuffer, width, height, (r, g, b, a, i, j, idx) => {
     output[idx + 0] = cosine(r * gradFactor, buffer1[idx + 0], buffer2[idx + 0]);
@@ -44,12 +44,12 @@ export const blendCosine = (buffer1: Float32Array, buffer2: Float32Array, gradie
   return output;
 };
 
-export const blendCosineCenter = (buffer1: Float32Array, buffer2: Float32Array, width: number, height: number, distanceFunc = chebyshev2d, gradFactor = 1) => {
-  const mask = distanceCenterMask(distanceFunc, width, height, 4);
+export const blendCosineCenter = (buffer1: Float32Array, buffer2: Float32Array, width: number, height: number, distanceFunc = chebyshev2d, gradFactor = 1): Float32Array => {
+  const mask = distanceCenterMask(distanceFunc, width, height);
   return blendCosine(buffer1, buffer2, mask, width, height, gradFactor);
 };
 
-export const blendLinear = (buffer1: Float32Array, buffer2: Float32Array, gradientBuffer: Float32Array, width: number, height: number, gradFactor = 1) => {
+export const blendLinear = (buffer1: Float32Array, buffer2: Float32Array, gradientBuffer: Float32Array, width: number, height: number, gradFactor = 1): Float32Array => {
   const output = new Float32Array(width * height * 4);
   forEachPixel(gradientBuffer, width, height, (r, g, b, a, i, j, idx) => {
     output[idx + 0] = linear(r * gradFactor, buffer1[idx + 0], buffer2[idx + 0]);
@@ -60,8 +60,8 @@ export const blendLinear = (buffer1: Float32Array, buffer2: Float32Array, gradie
   return output;
 };
 
-export const blendLinearCenter = (buffer1: Float32Array, buffer2: Float32Array, width: number, height: number, distanceFunc = chebyshev2d, gradFactor = 1) => {
-  const mask = distanceCenterMask(distanceFunc, width, height, 4);
+export const blendLinearCenter = (buffer1: Float32Array, buffer2: Float32Array, width: number, height: number, distanceFunc = chebyshev2d, gradFactor = 1): Float32Array => {
+  const mask = distanceCenterMask(distanceFunc, width, height);
   return blendLinear(buffer1, buffer2, mask, width, height, gradFactor);
 };
 
@@ -84,41 +84,41 @@ const pixelBiEach = (buffer1: Float32Array, buffer2: Float32Array, f: PixelBiEac
   }
 };
 
-export const blendAdd = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendAdd = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => Math.min(a + b, 1));
 };
 
-export const blendSubstract = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendSubstract = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => Math.max(a - b, 0));
 };
 
-export const blendMultiply = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendMultiply = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => a * b);
 };
 
-export const blendDivide = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendDivide = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => Math.min(a / b, 1));
 };
 
-export const blendDifference = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendDifference = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, blendDifferenceFunction);
 };
-export const blendDifferenceFunction = (a: number, b: number) => {
+export const blendDifferenceFunction = (a: number, b: number): number => {
   return Math.abs(a - b);
 };
 
-export const blendExclusion = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendExclusion = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => a + b - (2 * a * b));
 };
 
-export const blendScreen = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendScreen = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, blendScreenFunction);
 };
-export const blendScreenFunction = (a: number, b: number) => {
+export const blendScreenFunction = (a: number, b: number): number => {
   return 1 - ((1 - a) * (1 - b));
 };
 
-export const blendOverlay = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendOverlay = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => {
     if (a < 0.5) {
       return 2 * a * b;
@@ -127,11 +127,11 @@ export const blendOverlay = (buffer1: Float32Array, buffer2: Float32Array) => {
   });
 };
 
-export const blendHardLight = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendHardLight = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return blendOverlay(buffer2, buffer1);
 };
 
-export const blendSoftLight = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendSoftLight = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => {
     if (b < 0.5) {
       return 2 * a * b + a * a * (1 - 2 * b);
@@ -140,7 +140,7 @@ export const blendSoftLight = (buffer1: Float32Array, buffer2: Float32Array) => 
   });
 };
 
-export const blendVividLight = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendVividLight = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => {
     if (b < 0.5) {
       b = b * 2;
@@ -151,7 +151,7 @@ export const blendVividLight = (buffer1: Float32Array, buffer2: Float32Array) =>
   });
 };
 
-export const blendPinLight = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendPinLight = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => {
     if (b < 0.5) {
       return Math.min(a, b); // darken
@@ -160,50 +160,50 @@ export const blendPinLight = (buffer1: Float32Array, buffer2: Float32Array) => {
   });
 };
 
-export const blendLighten = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendLighten = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => Math.max(a, b));
 };
 
-export const blendDarken = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendDarken = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => Math.min(a, b));
 };
 
-export const blendAverage = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendAverage = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, blendAverageFunction);
 };
-export const blendAverageFunction = (a: number, b: number) => {
+export const blendAverageFunction = (a: number, b: number): number => {
   return (a + b) * 0.5;
 };
 
-export const blendColorDodge = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendColorDodge = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => a === 1 ? b : Math.min(a / (1 - b), 1));
 };
 
-export const blendLinearDodge = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendLinearDodge = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return blendAdd(buffer1, buffer2);
 };
 
-export const blendColorBurn = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendColorBurn = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => b === 0 ? b : Math.max(1 - ((1 - a) / b), 0));
 };
 
-export const blendLinearBurn = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendLinearBurn = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => a + b - 1);
 };
 
-export const blendPhoenix = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendPhoenix = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => Math.min(a, b) - Math.max(a, b) + 1);
 };
 
-export const blendNegation = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendNegation = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => 1 - Math.abs(1 - a - b));
 };
 
-export const blendReflect = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendReflect = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   return bimap(buffer1, buffer2, (a, b) => b === 1 ? b : Math.min(a * a / (1 - b), 1));
 };
 
-export const blendHue = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendHue = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   const output = new Float32Array(buffer1.length);
   pixelBiEach(buffer1, buffer2, (r1, g1, b1, a1, r2, g2, b2, a2, idx) => {
     const hsl1 = D3Color.hsl(D3Color.rgb(r1 * 255, g1 * 255, b1 * 255));
@@ -217,7 +217,7 @@ export const blendHue = (buffer1: Float32Array, buffer2: Float32Array) => {
   return output;
 };
 
-export const blendSaturation = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendSaturation = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   const output = new Float32Array(buffer1.length);
   pixelBiEach(buffer1, buffer2, (r1, g1, b1, a1, r2, g2, b2, a2, idx) => {
     const hsl1 = D3Color.hsl(D3Color.rgb(r1 * 255, g1 * 255, b1 * 255));
@@ -231,14 +231,12 @@ export const blendSaturation = (buffer1: Float32Array, buffer2: Float32Array) =>
   return output;
 };
 
-export const blendLuminosity = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendLuminosity = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   const output = new Float32Array(buffer1.length);
   pixelBiEach(buffer1, buffer2, (r1, g1, b1, a1, r2, g2, b2, a2, idx) => {
     const hsl1 = D3Color.hsl(D3Color.rgb(r1 * 255, g1 * 255, b1 * 255));
     const hsl2 = D3Color.hsl(D3Color.rgb(r2 * 255, g2 * 255, b2 * 255));
     const blended = D3Color.rgb(D3Color.hsl(hsl1.h, hsl1.s, hsl2.l));
-    if (hsl2.l > 0.9)
-    console.log(hsl1, hsl2, blended)
     output[idx + 0] = blended.r / 255;
     output[idx + 1] = blended.g / 255;
     output[idx + 2] = blended.b / 255;
@@ -247,7 +245,7 @@ export const blendLuminosity = (buffer1: Float32Array, buffer2: Float32Array) =>
   return output;
 };
 
-export const blendColor = (buffer1: Float32Array, buffer2: Float32Array) => {
+export const blendColor = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   const output = new Float32Array(buffer1.length);
   pixelBiEach(buffer1, buffer2, (r1, g1, b1, a1, r2, g2, b2, a2, idx) => {
     const hsl1 = D3Color.hsl(D3Color.rgb(r1 * 255, g1 * 255, b1 * 255));
@@ -260,9 +258,3 @@ export const blendColor = (buffer1: Float32Array, buffer2: Float32Array) => {
   });
   return output;
 };
-
-export const blendWithOpacity = (buffer1: Float32Array, buffer2: Float32Array, f: BlendFunction, opacity: number) => {
-  const buffer3 = f(buffer1, buffer2);
-  buffer3.forEach((x: number, i: number) => opacity * x + (1 - opacity) * buffer1[i]);
-};
-
