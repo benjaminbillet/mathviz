@@ -14,7 +14,7 @@ export const GRAY_SCOTT_KERNEL = [
 
 export const makeGrayScott = (f: number, k: number, da: number, db: number, dt = 1): ReactDiffuseFunction<GrayScottState> => {
   return (stateGrid, gridWidth, gridHeight, currentState, x, y) => {
-    let { a, b } = currentState;
+    const { a, b } = currentState;
 
     // convolution, see http://www.karlsims.com/rd.html
     let laplacianA = 0;
@@ -53,7 +53,7 @@ export type GrayScottParams = {
 
 export const makeAdvancedGrayScott = (getParams: (x: number, y: number) => GrayScottParams, dt = 1): ReactDiffuseFunction<GrayScottState> => {
   return (stateGrid, gridWidth, gridHeight, currentState, x, y) => {
-    let { a, b } = currentState;
+    const { a, b } = currentState;
     const { f, k, da, db, diffusionKernel } = getParams(x, y);
 
     // convolution, see http://www.karlsims.com/rd.html

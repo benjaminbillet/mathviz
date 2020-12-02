@@ -24,7 +24,7 @@ export const reactDiffuse = <S> (gridWidth: number, gridHeight: number, nextStat
     }
   }
 
-  let nextGrid: S[] = new Array();
+  let nextGrid: S[] = [];
 
   for (let i = 0; i < iterations; i++) {
     nextGrid = new Array(gridWidth * gridHeight).fill(null);

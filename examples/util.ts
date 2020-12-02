@@ -8,7 +8,7 @@ import { BI_UNIT_DOMAIN, scaleDomain } from '../utils/domain';
 import { performClahe } from '../effects/clahe';
 import { forEachPixel, mapPixelToDomain, saveImageBuffer, readImage, normalizeBuffer, saveImage, mapDomainToPixel, createImage, fillPicture, mapComplexDomainToPixel, mapPixelToComplexDomain } from '../utils/picture';
 import { withinPolygon } from '../utils/polygon';
-import { randomComplex, randomIntegerWeighted } from '../utils/random';
+import { randomComplex, randomIntegerWeighted, setRandomSeed } from '../utils/random';
 import { expandPalette, getBigQualitativePalette, MAVERICK } from '../utils/palette';
 import { estimateAttractorDomain } from '../attractors/plot';
 import { downscale, downscale2 } from '../utils/downscale';
@@ -16,7 +16,7 @@ import { plotVectorField, DefaultGridShuffle } from '../vector-field/vector-fiel
 import { plot2dAutomaton } from '../automata/cellular/2d-automaton';
 import { drawBresenhamLine, drawFilledCircle, drawFilledNgon } from '../utils/raster';
 import { makeDihedralSymmetry } from '../utils/symmetry';
-import { Attractor, CellularAutomataGrid, Color, ColorMapFunction, ColorSteal, ComplexPlotter, ComplexToColorFunction, ComplexToComplexFunction, Ifs, IterableComplexFunction, IterableRealFunction, Next1dCellStateFunction, Next2dCellStateFunction, NoiseFunction2D, Optional, PixelPlotter, PlotDomain, Polygon, Transform2D, VectorFieldColorFunction, VectorFieldFunction, VectorFieldTimeFunction, Wrapper } from '../utils/types';
+import { Attractor, CellularAutomataGrid, Color, ColorMapFunction, ColorSteal, ComplexPlotter, ComplexToColorFunction, ComplexToComplexFunction, Effect, Ifs, IterableComplexFunction, IterableRealFunction, Next1dCellStateFunction, Next2dCellStateFunction, NoiseFunction2D, Optional, PixelPlotter, PlotDomain, Polygon, Transform2D, VectorFieldColorFunction, VectorFieldFunction, VectorFieldTimeFunction, Wrapper } from '../utils/types';
 import { makeInvertCollageHorizontal } from '../symmetry/color-reversing-wallpaper-group';
 import { plot1dAutomaton } from '../automata/cellular/1d-automaton';
 import { makeMappedZPlotter, makePlotter } from '../utils/plotter';
@@ -839,6 +839,15 @@ export const plotDomainReverseColoring2 = (
 ): void => {
   const newBitmap = makeInvertCollageHorizontal(bitmap, width, height);
   plotDomainColoring2(path, newBitmap, width, height, f, domain);
+};
+
+export const plotEffect = (effect: Effect, sourcePath: string, outputPath: string, ...args: any[]) => {
+  setRandomSeed('dioptase'); // make sure all effects use the same random generation sequence
+  const configuredEffect: Effect = (input, width, height) => effect(input, width, height, ...args);
+
+  const { width, height, buffer } = readImage(sourcePath);
+  const output = configuredEffect(buffer, width, height);
+  saveImageBuffer(output, width, height, outputPath);
 };
 
 const makeHitmapZPlotter = (buffer: Float32Array, hitmap: Uint32Array, width: number, height: number, domain: PlotDomain): ComplexPlotter => {
