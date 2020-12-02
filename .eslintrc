@@ -1,14 +1,16 @@
 {
-  "parser": "babel-eslint",
-  "extends": "google",
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "rules": {
-    "max-len": [2, 200],
-    "object-curly-spacing": ["error", "always"],
-    "array-bracket-spacing": ["error", "always"],
-    "arrow-body-style": "off",
-    "arrow-parens": "off",
-    "indent": ["error", 2],
-    "no-multi-spaces": "off",
-    "require-jsdoc": "off"
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }
