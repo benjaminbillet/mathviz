@@ -7,10 +7,9 @@ import { forEachPixel, normalizeBuffer } from '../utils/picture';
 import { manhattan } from '../utils/distance';
 import { blendLinear } from '../utils/blend';
 import { grayMask } from '../utils/mask';
-import { PlotBuffer } from '../utils/types';
 
 // Re-color the given tensor, by sampling along one axis at a specified frequency.
-export const applyGlowingEdges = (input: PlotBuffer, width: number, height: number) => {
+export const applyGlowingEdges = (input: Float32Array, width: number, height: number) => {
   let output = applyLuminanceMap(input, width, height);
   output = applyPosterize(output, width, height, randomInteger(3, 5));
   output = applySobelDerivative(output, width, height, manhattan);
@@ -19,6 +18,7 @@ export const applyGlowingEdges = (input: PlotBuffer, width: number, height: numb
     output[idx + 0] = Math.min(1, 8 * r) * Math.min(1, 1.25 * input[idx + 0]);
     output[idx + 1] = Math.min(1, 8 * g) * Math.min(1, 1.25 * input[idx + 1]);
     output[idx + 2] = Math.min(1, 8 * b) * Math.min(1, 1.25 * input[idx + 2]);
+    output[idx + 3] = input[idx + 3];
   });
 
   const blurred = convolve(output, new Float32Array(output.length), width, height, makeGaussianKernel(3));
@@ -26,6 +26,7 @@ export const applyGlowingEdges = (input: PlotBuffer, width: number, height: numb
     output[idx + 0] += r;
     output[idx + 1] += g;
     output[idx + 2] += b;
+    output[idx + 3] = a;
   });
   normalizeBuffer(output, width, height);
 
@@ -33,6 +34,7 @@ export const applyGlowingEdges = (input: PlotBuffer, width: number, height: numb
     output[idx + 0] = 1 - ((1 - r) * (1 - input[idx + 0]));
     output[idx + 1] = 1 - ((1 - g) * (1 - input[idx + 1]));
     output[idx + 2] = 1 - ((1 - b) * (1 - input[idx + 2]));
+    output[idx + 3] = input[idx + 3];
   });
 
   return blendLinear(input, output, grayMask(width, height), width, height);

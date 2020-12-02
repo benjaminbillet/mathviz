@@ -4,9 +4,8 @@ import { blendLinear } from '../utils/blend';
 import { makeValueNoise } from '../noise/valueNoise';
 import { blackMask } from '../utils/mask';
 import { normalizeBuffer } from '../utils/picture';
-import { PlotBuffer } from '../utils/types';
 
-export const applyScanlineError = (input: PlotBuffer, width: number, height: number, intensity = 0.025) => {
+export const applyScanlineError = (input: Float32Array, width: number, height: number, intensity = 0.025) => {
   const errorSwerve = makeValueNoise(1, Math.trunc(height * 0.01), width, height, UpscaleSamplers.Bicubic, DefaultExponentialDistribution, true);
   normalizeBuffer(errorSwerve, width, height);
   errorSwerve.forEach((x, i) => errorSwerve[i] = Math.max(x - 0.5, 0));

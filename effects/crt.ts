@@ -6,13 +6,12 @@ import { blendCosine, blendCosineCenter } from '../utils/blend';
 import { makeValueNoise } from '../noise/valueNoise';
 import { uniformMask } from '../utils/mask';
 import { refract } from './refract';
-import { PlotBuffer } from '../utils/types';
 
 // the crt effect will:
 // 1. add distorted scanlines
 // 2. change the hue and saturation of the image
 
-export const applyCrt = (input: PlotBuffer, width: number, height: number, distortionAmount = 0.25) => {
+export const applyCrt = (input: Float32Array, width: number, height: number, distortionAmount = 0.25) => {
   // create a gradient for distortion
   const distortion = makeValueNoise(3, 3, width, height, UpscaleSamplers.Bicubic, DefaultNormalDistribution, true);
   normalizeBuffer(distortion, width, height);
@@ -29,14 +28,14 @@ export const applyCrt = (input: PlotBuffer, width: number, height: number, disto
 
   // create some scanlines
   const thirdHeight = height * 0.333;
-  let scanNoise: PlotBuffer = new Float32Array(width * thirdHeight * 4);
+  let scanNoise = new Float32Array(width * thirdHeight * 4);
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
       const idx = (i + j * width) * 4;
       scanNoise[idx + 0] = j % 2 === 0 ? 0 : 1;
       scanNoise[idx + 1] = j % 2 === 0 ? 0 : 1;
       scanNoise[idx + 2] = j % 2 === 0 ? 0 : 1;
-      scanNoise[idx + 3] = 255;
+      scanNoise[idx + 3] = 1;
     }
   }
   scanNoise = upscale2(scanNoise, width, thirdHeight, width, height, UpscaleSamplers.Bicubic);

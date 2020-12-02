@@ -1,10 +1,9 @@
 
 import { forEachPixel, setPixelValues } from '../utils/picture';
 import { getLuminance } from '../utils/color';
-import { PlotBuffer } from '../utils/types';
 
 // Re-color the given tensor, by sampling along one axis at a specified frequency.
-export const applyColorSampling = (input: PlotBuffer, width: number, height: number, displacement = 0.5): PlotBuffer => {
+export const applyColorSampling = (input: Float32Array, width: number, height: number, displacement = 0.5) => {
   const dimension = Math.min(width, height);
   const output = new Float32Array(input.length);
   forEachPixel(input, width, height, (r, g, b, a, i, j) => {

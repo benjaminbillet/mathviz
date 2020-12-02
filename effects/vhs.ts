@@ -3,14 +3,13 @@ import { randomInteger, DefaultNormalDistribution } from '../utils/random';
 import { blendCosine } from '../utils/blend';
 import { makeValueNoise } from '../noise/valueNoise';
 import { UpscaleSamplers } from '../utils/upscale';
-import { PlotBuffer } from '../utils/types';
 
 // the vhs effect will:
 // 1. add lines of white noise
 // 2. shift lines around the line noise
 // => looks like a paused or rewinding vhs
 
-export const applyVhs = (input: PlotBuffer, width: number, height: number) => {
+export const applyVhs = (input: Float32Array, width: number, height: number) => {
   // generates a scan noise (horizontally-stretched squares) and a white noise
   const scanNoise = makeValueNoise(Math.trunc(width * 0.01) + 1, Math.trunc(height * 0.5) + 1, width, height, UpscaleSamplers.Bilinear, DefaultNormalDistribution, true);
   const whiteNoise = makeValueNoise(Math.trunc(width * 0.1) + 1, Math.trunc(height * 0.5) + 1, width, height, UpscaleSamplers.NearestNeighbor, DefaultNormalDistribution, true);

@@ -3,10 +3,9 @@ import { makeValueNoise } from '../noise/valueNoise';
 import { clampInt } from '../utils/misc';
 import { UpscaleSamplers } from '../utils/upscale';
 import { DefaultNormalDistribution } from '../utils/random';
-import { PlotBuffer } from '../utils/types';
 
 
-export const applyChromaticAberration = (input: PlotBuffer, width: number, height: number, intensity = 5) => {
+export const applyChromaticAberration = (input: Float32Array, width: number, height: number, intensity = 5) => {
   const output = new Float32Array(input);
 
   const distortion = makeValueNoise(3, 3, width, height, UpscaleSamplers.Bicubic, DefaultNormalDistribution, true);

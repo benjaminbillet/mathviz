@@ -1,17 +1,13 @@
 import { normalizeBuffer } from '../utils/picture';
 import { convertUnitToRGBA } from '../utils/color';
-import { applyWormhole } from './wormhole';
-import { SobelHorizontal3x3Kernel, SobelVertical3x3Kernel, convolve, Invert3x3Kernel, makeGaussianKernel, AvgBlur3x3Kernel } from '../utils/convolution';
-import { makeWorleyLogSumNoise } from '../noise/worleyNoise';
+import { SobelHorizontal3x3Kernel, SobelVertical3x3Kernel, convolve } from '../utils/convolution';
 import { euclidean } from '../utils/distance';
 import { applyPosterize } from './posterize';
-import { refract } from './refract';
 import { applyChromaticAberration } from './chromaticAberration';
 import { applyLuminanceMap } from './luminanceMap';
-import { PlotBuffer } from '../utils/types';
 
 
-export const applyNeon = (input: PlotBuffer, width: number, height: number) => {
+export const applyNeon = (input: Float32Array, width: number, height: number) => {
   // create a normalized copy of the input image
   input = new Float32Array(input);
   normalizeBuffer(input, width, height);

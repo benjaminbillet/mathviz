@@ -1,7 +1,6 @@
 import { normalizeBuffer, forEachPixel } from '../utils/picture';
-import { PlotBuffer } from '../utils/types';
 
-export const applyDensityMap = (input: PlotBuffer, width: number, height: number) => {
+export const applyDensityMap = (input: Float32Array, width: number, height: number) => {
   const nbBins = Math.max(width, height);
   const bins = new Uint32Array(nbBins).fill(0);
 

@@ -1,6 +1,6 @@
 import { forEachPixel } from '../utils/picture';
-import { toARGBInteger, fromARGBInteger, getLuminance } from '../utils/color';
-import { Color, PlotBuffer, ARGBBuffer } from '../utils/types';
+import { getLuminance } from '../utils/color';
+import { Color, ARGBBuffer } from '../utils/types';
 
 export const SortMode = {
   SortX: 'sort-x',
@@ -9,7 +9,7 @@ export const SortMode = {
   SortYX: 'sort-yx',
 };
 
-export const findUpperThresoldSliceX = (x: number, y: number, input: PlotBuffer, width: number, height: number, threshold: number): Range => {
+export const findUpperThresoldSliceX = (x: number, y: number, input: Float32Array, width: number, height: number, threshold: number): Range => {
   // iterate along x axis, until finding a value above the threshold or the end of the line
   let xstart = x;
 
@@ -39,7 +39,7 @@ export const findUpperThresoldSliceX = (x: number, y: number, input: PlotBuffer,
 };
 
 
-export const findUpperThresoldSliceY = (x: number, y: number, input: PlotBuffer, width: number, height: number, threshold: number): Range => {
+export const findUpperThresoldSliceY = (x: number, y: number, input: Float32Array, width: number, height: number, threshold: number): Range => {
   // iterate along y axis, until finding a value above the threshold or the end of the line
   let ystart = y;
 
@@ -68,7 +68,7 @@ export const findUpperThresoldSliceY = (x: number, y: number, input: PlotBuffer,
   return { start: ystart, end: yend };
 };
 
-export const findLowerThresoldSliceX = (x: number, y: number, input: PlotBuffer, width: number, height: number, threshold: number): Range => {
+export const findLowerThresoldSliceX = (x: number, y: number, input: Float32Array, width: number, height: number, threshold: number): Range => {
   // iterate along x axis, until finding a value above the threshold or the end of the line
   let xstart = x;
 
@@ -98,7 +98,7 @@ export const findLowerThresoldSliceX = (x: number, y: number, input: PlotBuffer,
 };
 
 
-export const findLowerThresoldSliceY = (x: number, y: number, input: PlotBuffer, width: number, height: number, threshold: number): Range => {
+export const findLowerThresoldSliceY = (x: number, y: number, input: Float32Array, width: number, height: number, threshold: number): Range => {
   // iterate along y axis, until finding a value above the threshold or the end of the line
   let ystart = y;
 
@@ -128,7 +128,7 @@ export const findLowerThresoldSliceY = (x: number, y: number, input: PlotBuffer,
 };
 
 
-export const sortSingleChannelPixels = (xstart: number, xend: number, ystart: number, yend: number, input: PlotBuffer, width: number, height: number) => {
+export const sortSingleChannelPixels = (xstart: number, xend: number, ystart: number, yend: number, input: Float32Array, width: number, height: number) => {
   const sliceWidth = Math.max(1, xend - xstart);
   const sliceHeight = Math.max(1, yend - ystart);
 
@@ -146,7 +146,7 @@ export const sortSingleChannelPixels = (xstart: number, xend: number, ystart: nu
 export type Range = { start: number, end: number };
 export type Slicer = (x: number, y: number, ...args: any[]) => Range;
 
-export type Sorter = (xstart: number, xend: number, ystart: number, yend: number, ...args: any[]) => PlotBuffer;
+export type Sorter = (xstart: number, xend: number, ystart: number, yend: number, ...args: any[]) => Float32Array;
 
 
 export const configureSlicer = (func: Slicer, ...params: any[]): Slicer => {
@@ -236,7 +236,7 @@ export const applyPixelSorting = (input: ARGBBuffer, width: number, height: numb
   return input;
 };
 
-export const applyPixelARGBSortingBlack = (input: PlotBuffer, width: number, height: number, mode = SortMode.SortYX, blackThreshold = -10000000) => {
+export const applyPixelARGBSortingBlack = (input: Float32Array, width: number, height: number, mode = SortMode.SortYX, blackThreshold = -10000000) => {
   const argbBuffer = toARGB(input, width, height);
 
   const xSlicer = configureSlicer(findUpperThresoldSliceX, argbBuffer, width, height, blackThreshold);
@@ -249,7 +249,7 @@ export const applyPixelARGBSortingBlack = (input: PlotBuffer, width: number, hei
 };
 
 
-export const applyPixelARGBSortingWhite = (input: PlotBuffer, width: number, height: number, mode = SortMode.SortYX, whiteThreshold = -6000000) => {
+export const applyPixelARGBSortingWhite = (input: Float32Array, width: number, height: number, mode = SortMode.SortYX, whiteThreshold = -6000000) => {
   const argbBuffer = toARGB(input, width, height);
 
   const xSlicer = configureSlicer(findLowerThresoldSliceX, argbBuffer, width, height, whiteThreshold);
@@ -261,7 +261,7 @@ export const applyPixelARGBSortingWhite = (input: PlotBuffer, width: number, hei
   return fromARGB(argbBuffer, width, height);
 };
 
-export const applyPixelARGBSortingLuminance = (input: PlotBuffer, width: number, height: number, mode = SortMode.SortYX, lumThreshold = 60, lumFunction = getLuminance) => {
+export const applyPixelARGBSortingLuminance = (input: Float32Array, width: number, height: number, mode = SortMode.SortYX, lumThreshold = 60, lumFunction = getLuminance) => {
   const lumBuffer = new Uint8Array(width * height);
   forEachPixel(input, width, height, (r, g, b, a, i, j) => {
     lumBuffer[i + j * width] = lumFunction(r * 255, g * 255, b * 255);
@@ -278,7 +278,7 @@ export const applyPixelARGBSortingLuminance = (input: PlotBuffer, width: number,
   return fromARGB(argbBuffer, width, height);
 };
 
-export const applyPixelARGBSortingBitmap = (input: PlotBuffer, width: number, height: number, bitmap: PlotBuffer, mode = SortMode.SortYX, threshold = 0.5) => {
+export const applyPixelARGBSortingBitmap = (input: Float32Array, width: number, height: number, bitmap: Float32Array, mode = SortMode.SortYX, threshold = 0.5) => {
   const argbBuffer = toARGB(input, width, height);
 
   const xSlicer = configureSlicer(findUpperThresoldSliceX, bitmap, width, height, threshold);
@@ -290,7 +290,7 @@ export const applyPixelARGBSortingBitmap = (input: PlotBuffer, width: number, he
   return fromARGB(argbBuffer, width, height);
 };
 
-const toARGB = (input: PlotBuffer, width: number, height: number): ARGBBuffer => {
+const toARGB = (input: Float32Array, width: number, height: number): ARGBBuffer => {
   const argbBuffer = new Int32Array(width * height);
   forEachPixel(input, width, height, (r, g, b, a, i, j) => {
     argbBuffer[i + j * width] = toARGBInteger(r * 255, g * 255, b * 255, a * 255);
@@ -300,9 +300,8 @@ const toARGB = (input: PlotBuffer, width: number, height: number): ARGBBuffer =>
 
 const fromARGB = (input: ARGBBuffer, width: number, height: number) => {
   const output = new Float32Array(width * height * 4).fill(0);
-  const rgba: Color = new Uint8Array(4).fill(0);
   forEachPixel(output, width, height, (r, g, b, a, i, j, idx) => {
-    fromARGBInteger(input[i + j * width], rgba);
+    const rgba = fromARGBInteger(input[i + j * width]);
     output[idx + 0] = rgba[0] / 255;
     output[idx + 1] = rgba[1] / 255;
     output[idx + 2] = rgba[2] / 255;
@@ -311,3 +310,22 @@ const fromARGB = (input: ARGBBuffer, width: number, height: number) => {
   return output;
 };
 
+const toARGBInteger = (r: number, g: number, b: number, a: number) => {
+  return (a << 24) | (r << 16) | (g << 8) | b;
+};
+
+const fromARGBInteger = (argb: number, output?: Color) => {
+  const r = (argb & (255 << 16)) >> 16;
+  const g = (argb & (255 << 8)) >> 8;
+  const b = (argb & (255));
+  const a = (argb & (255 << 24)) >>> 24; // >>> avoid overflows
+  if (output == null) {
+    return [ r, g, b, a ];
+  }
+  // optimization for reusing arrays instead of reallocating
+  output[0] = r;
+  output[1] = g;
+  output[2] = b;
+  output[3] = a;
+  return output;
+};

@@ -1,6 +1,6 @@
 import { randomInteger, DefaultNormalDistribution, randomNormal, randomScalar } from '../utils/random';
 import { getLuminance } from '../utils/color';
-import { PlotBuffer } from '../utils/types';
+import { fillPicture } from '../utils/picture';
 
 export const DefaultStrideDistribution = randomNormal(1, 0.05);
 
@@ -13,8 +13,8 @@ export const UnrulyBehavior = () => DefaultNormalDistribution() * 0.25 - 0.125;
 // - we define a set of particles, each particle being able to move (one pixel) at each iterations
 // - the direction of particles depends on the luminosity of the source image + some chaos (defined by the behavior parameter)
 // - we draw the path followed by each particle, the coloring of the path depending on the number of iterations
-export const applyThreads = (input: PlotBuffer, width: number, height: number, density = 4, length = 4, period = 1, strideDistribution = DefaultStrideDistribution, behavior = ObedientBehavior) => {
-  const output = new Float32Array(input.length).fill(0);
+export const applyThreads = (input: Float32Array, width: number, height: number, density = 4, length = 4, period = 1, strideDistribution = DefaultStrideDistribution, behavior = ObedientBehavior) => {
+  const output = fillPicture(new Float32Array(input.length), 0, 0, 0, 1);
 
   const nbParticles = Math.max(width, height) * density;
   const iterations = Math.trunc(Math.sqrt(Math.min(width, height)) * length);
@@ -55,8 +55,8 @@ export const applyThreads = (input: PlotBuffer, width: number, height: number, d
 
 // this is simply a rewritten version that works per iteration instead of per thread
 // this is useful if we want to generate one picture per iteration and create animations
-export const applyThreads2 = (input: PlotBuffer, width: number, height: number, density = 4, length = 4, period = 1, strideDistribution = DefaultStrideDistribution, behavior = ObedientBehavior, onIterationFinished = (buffer: PlotBuffer, i: number) => {}) => {
-  const output: PlotBuffer = new Float32Array(input.length).fill(0);
+export const applyThreads2 = (input: Float32Array, width: number, height: number, density = 4, length = 4, period = 1, strideDistribution = DefaultStrideDistribution, behavior = ObedientBehavior, onIterationFinished = (buffer: Float32Array, i: number) => {}) => {
+  const output = fillPicture(new Float32Array(input.length), 0, 0, 0, 1);
 
   const nbParticles = Math.max(width, height) * density;
   const iterations = Math.trunc(Math.sqrt(Math.min(width, height)) * length);
@@ -105,8 +105,8 @@ export const applyThreads2 = (input: PlotBuffer, width: number, height: number, 
   return output;
 };
 
-export const applyCurlyThreads = (input: PlotBuffer, width: number, height: number, density = 4, length = 4, period = 1, strideDistribution = DefaultStrideDistribution) => {
-  const output: PlotBuffer = new Float32Array(input.length).fill(0);
+export const applyCurlyThreads = (input: Float32Array, width: number, height: number, density = 4, length = 4, period = 1, strideDistribution = DefaultStrideDistribution) => {
+  const output = fillPicture(new Float32Array(input.length), 0, 0, 0, 1);
 
   const nbParticles = Math.max(width, height) * density;
   const iterations = Math.trunc(Math.sqrt(Math.min(width, height)) * length);
@@ -151,8 +151,8 @@ export const applyCurlyThreads = (input: PlotBuffer, width: number, height: numb
   return output;
 };
 
-export const applyCurlyThreads2 = (input: PlotBuffer, width: number, height: number, density = 4, length = 4, period = 1, strideDistribution = DefaultStrideDistribution, onIterationFinished = (buffer: PlotBuffer, i: number) => {}) => {
-  const output: PlotBuffer = new Float32Array(input.length).fill(0);
+export const applyCurlyThreads2 = (input: Float32Array, width: number, height: number, density = 4, length = 4, period = 1, strideDistribution = DefaultStrideDistribution, onIterationFinished = (buffer: Float32Array, i: number) => {}) => {
+  const output = fillPicture(new Float32Array(input.length), 0, 0, 0, 1);
 
   const nbParticles = Math.max(width, height) * density;
   const iterations = Math.trunc(Math.sqrt(Math.min(width, height)) * length);

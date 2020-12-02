@@ -4,9 +4,8 @@ import { grayMask } from '../utils/mask';
 import { downscale2 } from '../utils/downscale';
 import { clampInt } from '../utils/misc';
 import { upscale2 } from '../utils/upscale';
-import { PlotBuffer } from '../utils/types';
 
-export const applyBloom = (input: PlotBuffer, width: number, height: number, intensity = 1) => {
+export const applyBloom = (input: Float32Array, width: number, height: number, intensity = 1) => {
   const output = new Float32Array(input.length);
   forEachPixel(input, width, height, (r, g, b, a, i, j, idx) => {
     output[idx + 0] = Math.max(r * 2 - 1, 0);
@@ -37,6 +36,7 @@ export const applyBloom = (input: PlotBuffer, width: number, height: number, int
     output[idx + 0] = 1 - ((1 - r) * (1 - input[idx + 0]));
     output[idx + 1] = 1 - ((1 - g) * (1 - input[idx + 1]));
     output[idx + 2] = 1 - ((1 - b) * (1 - input[idx + 2]));
+    output[idx + 3] = input[idx + 3]
   });
 
   return blendLinear(input, output, grayMask(width, height), width, height);

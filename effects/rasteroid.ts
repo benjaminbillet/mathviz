@@ -5,9 +5,8 @@ import { UpscaleSamplers } from '../utils/upscale';
 import { applySobelDerivative } from './derivative';
 import { applyCrt } from './crt';
 import { applyScanlineError } from './scanlineError';
-import { PlotBuffer } from '../utils/types';
 
-export const applyRasteroid = (input: PlotBuffer, width: number, height: number, distance = euclidean) => {
+export const applyRasteroid = (input: Float32Array, width: number, height: number, distance = euclidean) => {
   const warpFreq = randomInteger(3, 5);
   const warpOctaves = randomInteger(3, 5);
   const warpDisplacement = 0.25 + random() * 0.125;

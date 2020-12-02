@@ -1,8 +1,7 @@
 import { forEachPixel } from '../utils/picture';
 import { getLuminance } from '../utils/color';
-import { PlotBuffer } from '../utils/types';
 
-export const applyLuminanceMap = (input: PlotBuffer, width: number, height: number): PlotBuffer => {
+export const applyLuminanceMap = (input: Float32Array, width: number, height: number) => {
   const output = new Float32Array(width * height * 4);
   forEachPixel(input, width, height, (r, g, b, a, i, j, idx) => {
     const luminance = getLuminance(r, g, b);

@@ -1,9 +1,7 @@
 import { normalizeBuffer } from '../utils/picture';
 import { getLuminance } from '../utils/color';
-import { PlotBuffer } from '../utils/types';
 
-
-export const applyWormhole = (input: PlotBuffer, width: number, height: number, period = 2.5, stride = 0.1) => {
+export const applyWormhole = (input: Float32Array, width: number, height: number, period = 2.5, stride = 0.1) => {
   stride = stride * height;
   const output = new Float32Array(input.length).fill(0);
   for (let i = 0; i < width; i++) {
@@ -29,7 +27,12 @@ export const applyWormhole = (input: PlotBuffer, width: number, height: number, 
     }
   }
   normalizeBuffer(output, width, height);
-  output.forEach((x, i) => output[i] = Math.sqrt(x));
 
+  for (let i = 0; i < input.length; i += 4) {
+    output[i + 0] = Math.sqrt(output[i + 0]);
+    output[i + 1] = Math.sqrt(output[i + 1]);
+    output[i + 2] = Math.sqrt(output[i + 2]);
+    output[i + 3] = input[i + 3];
+  }
   return output;
 };

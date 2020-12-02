@@ -3,10 +3,9 @@ import { convolve, HorizontalDerivative3x3Kernel, VerticalDerivative3x3Kernel } 
 import { refract2 } from './refract';
 import { normalizeBuffer } from '../utils/picture';
 import { makeWorleyNoise } from '../noise/worleyNoise';
-import { PlotBuffer } from '../utils/types';
 
 
-export const applyVoroshard = (input: PlotBuffer, width: number, height: number, intensity = 0.2, distance = euclidean2d, density = 1, nth = 0) => {
+export const applyVoroshard = (input: Float32Array, width: number, height: number, intensity = 0.2, distance = euclidean2d, density = 1, nth = 0) => {
   const displacement = makeWorleyNoise(width, height, distance, density, nth);
 
   const horizontalDerivative = convolve(displacement, new Float32Array(input.length), width, height, HorizontalDerivative3x3Kernel);

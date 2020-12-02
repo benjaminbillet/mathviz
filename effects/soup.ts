@@ -8,9 +8,8 @@ import { makeSoupNoise } from '../noise/soupNoise';
 import { applyPosterize } from './posterize';
 import { applySobelDerivative } from './derivative';
 import { applyInvert } from './invert';
-import { PlotBuffer } from '../utils/types';
 
-export const applySoup1 = (input: PlotBuffer, width: number, height: number, blend = 0.3, distance = euclidean) => {
+export const applySoup1 = (input: Float32Array, width: number, height: number, blend = 0.3, distance = euclidean) => {
   // blur the picture to attenuate details
   input = convolve(input, new Float32Array(input.length), width, height, makeGaussianKernel(10));
   // convert to black
@@ -23,7 +22,7 @@ export const applySoup1 = (input: PlotBuffer, width: number, height: number, ble
   return makeSoupNoise(merged, width, height);
 };
 
-export const applySoup2 = (input: PlotBuffer, width: number, height: number) => {
+export const applySoup2 = (input: Float32Array, width: number, height: number) => {
   // posterize to remove more details
   input = applyPosterize(input, width, height, 10);
   // blur the picture to attenuate details
@@ -34,7 +33,7 @@ export const applySoup2 = (input: PlotBuffer, width: number, height: number) => 
   return makeSoupNoise(input, width, height);
 };
 
-export const applySoup3 = (input: PlotBuffer, width: number, height: number) => {
+export const applySoup3 = (input: Float32Array, width: number, height: number) => {
   // posterize to remove more details
   input = applyPosterize(input, width, height, 10);
   // convert to black
@@ -48,7 +47,7 @@ export const applySoup3 = (input: PlotBuffer, width: number, height: number) => 
   return makeSoupNoise(input, width, height);
 };
 
-export const applySoup4 = (input: PlotBuffer, width: number, height: number) => {
+export const applySoup4 = (input: Float32Array, width: number, height: number) => {
   // blur the picture to attenuate details
   input = convolve(input, new Float32Array(input.length), width, height, makeGaussianKernel(10));
   // posterize to remove more details

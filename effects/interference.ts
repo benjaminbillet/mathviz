@@ -6,10 +6,9 @@ import { refract } from './refract';
 import { upscale2, UpscaleSamplers } from '../utils/upscale';
 import { blendCosine } from '../utils/blend';
 import { uniformMask } from '../utils/mask';
-import { PlotBuffer } from '../utils/types';
 
 
-export const applyInterference = (input: PlotBuffer, width: number, height: number, distortionTileSize = 2, refractInput = true) => {
+export const applyInterference = (input: Float32Array, width: number, height: number, distortionTileSize = 2, refractInput = true) => {
   // builds a distortion gradient with consistent symmetry
   let distortion = makeValueNoise(distortionTileSize, distortionTileSize, distortionTileSize, distortionTileSize, UpscaleSamplers.Bicubic, DefaultNormalDistribution, true);
   normalizeBuffer(distortion, distortionTileSize, distortionTileSize);
@@ -18,14 +17,14 @@ export const applyInterference = (input: PlotBuffer, width: number, height: numb
 
   // create a scan noise (alternated white and black noise)
   const scanNoiseHeight = randomInteger(32, 128);
-  let scanNoise: PlotBuffer = new Float32Array(width * scanNoiseHeight * 4);
+  let scanNoise = new Float32Array(width * scanNoiseHeight * 4);
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
       const idx = (i + j * width) * 4;
       scanNoise[idx + 0] = j % 2 === 0 ? 0 : 1;
       scanNoise[idx + 1] = j % 2 === 0 ? 0 : 1;
       scanNoise[idx + 2] = j % 2 === 0 ? 0 : 1;
-      scanNoise[idx + 3] = 255;
+      scanNoise[idx + 3] = 1;
     }
   }
   scanNoise = upscale2(scanNoise, width, scanNoiseHeight, width, height, UpscaleSamplers.NearestNeighbor);

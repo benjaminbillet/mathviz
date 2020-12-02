@@ -1,7 +1,6 @@
 import { forEachPixel } from '../utils/picture';
-import { PlotBuffer } from '../utils/types';
 
-export const mirror = (input: PlotBuffer, width: number, height: number, vertical = true, horizontal = true) => {
+export const mirror = (input: Float32Array, width: number, height: number, vertical = true, horizontal = true) => {
   let outputWidth = width;
   let outputHeight = height;
   if (vertical) {
@@ -26,7 +25,7 @@ export const mirror = (input: PlotBuffer, width: number, height: number, vertica
     output[idx + 0] = input[idx2 + 0];
     output[idx + 1] = input[idx2 + 1];
     output[idx + 2] = input[idx2 + 2];
-    output[idx + 3] = 255;
+    output[idx + 3] = 1;
   });
   return output;
 };

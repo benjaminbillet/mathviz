@@ -1,7 +1,6 @@
 import { forEachPixel } from '../utils/picture';
-import { PlotBuffer } from '../utils/types';
 
-export const applyInvert = (input: PlotBuffer, width: number, height: number) => {
+export const applyInvert = (input: Float32Array, width: number, height: number) => {
   const output = new Float32Array(width * height * 4);
   forEachPixel(input, width, height, (r, g, b, a, i, j, idx) => {
     output[idx + 0] = 1 - r;

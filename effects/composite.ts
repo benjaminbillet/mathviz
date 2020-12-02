@@ -1,9 +1,8 @@
 import { downscale2, DownscaleSamplers } from '../utils/downscale';
-import { PlotBuffer } from '../utils/types';
 import { upscale2, UpscaleSamplers } from '../utils/upscale';
 
 
-export const applyComposite = (input: PlotBuffer, width: number, height: number, scale = 2) => {
+export const applyComposite = (input: Float32Array, width: number, height: number, scale = 2) => {
   const filterWidth = 4;
   const filterHeight = 4;
   const channelFilter = [

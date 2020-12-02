@@ -2,10 +2,9 @@ import { refract2 } from './refract';
 import { makeValueNoise } from '../noise/valueNoise';
 import { DefaultUniformDistribution } from '../utils/random';
 import { UpscaleSamplers } from '../utils/upscale';
-import { PlotBuffer } from '../utils/types';
 
-export const applyWarp = (input: PlotBuffer, width: number, height: number, freq = 1, octaves = 5, displacement = 0.5, sampler = UpscaleSamplers.Bicubic): PlotBuffer => {
-  let output: PlotBuffer = new Float32Array(input);
+export const applyWarp = (input: Float32Array, width: number, height: number, freq = 1, octaves = 5, displacement = 0.5, sampler = UpscaleSamplers.Bicubic) => {
+  let output = new Float32Array(input);
 
   let freqX = freq;
   let freqY = freq;

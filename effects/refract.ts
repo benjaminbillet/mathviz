@@ -1,9 +1,8 @@
 import { forEachPixel } from '../utils/picture';
 import { getLuminance } from '../utils/color';
 import { UpscaleSamplers } from '../utils/upscale';
-import { PlotBuffer } from '../utils/types';
 
-export const refract = (input: PlotBuffer, displacement: PlotBuffer, width: number, height: number, intensity = 1, sampler = UpscaleSamplers.Bicubic): PlotBuffer => {
+export const refract = (input: Float32Array, displacement: Float32Array, width: number, height: number, intensity = 1, sampler = UpscaleSamplers.Bicubic) => {
   const output = new Float32Array(width * height * 4);
   forEachPixel(displacement, width, height, (r, g, b, a, i, j, idx) => {
     const l = getLuminance(r, g, b) * intensity;
@@ -17,7 +16,7 @@ export const refract = (input: PlotBuffer, displacement: PlotBuffer, width: numb
   return output;
 };
 
-export const refract2 = (input: PlotBuffer, displacementX: PlotBuffer, displacementY: PlotBuffer, width: number, height: number, intensity = 1, sampler = UpscaleSamplers.Bicubic): PlotBuffer => {
+export const refract2 = (input: Float32Array, displacementX: Float32Array, displacementY: Float32Array, width: number, height: number, intensity = 1, sampler = UpscaleSamplers.Bicubic) => {
   const output = new Float32Array(width * height * 4);
   forEachPixel(input, width, height, (r, g, b, a, i, j, idx) => {
     const lx = getLuminance(displacementX[idx + 0], displacementX[idx + 1], displacementX[idx + 2]) * intensity;

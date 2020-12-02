@@ -5,9 +5,8 @@ import { hslMultiply } from '../utils/color';
 import { applyPosterize } from './posterize';
 import { applyBloom } from './bloom';
 import { forEachPixel, normalizeBuffer } from '../utils/picture';
-import { PlotBuffer } from '../utils/types';
 
-export const applyIcification = (input: PlotBuffer, width: number, height: number) => {
+export const applyIcification = (input: Float32Array, width: number, height: number) => {
   let output = applyColorSampling(input, width, height, randomInteger(3, 4));
   output = applyPosterize(output, width, height, 3);
   output = applyGlowingEdges(output, width, height);
