@@ -1,4 +1,4 @@
-import * as D3Color from 'd3-color';
+import { hslToRgb, rgbToHsl } from '../utils/color';
 import { getClosestColor } from '../utils/palette';
 import { forEachPixel } from '../utils/picture';
 import { Color } from '../utils/types';
@@ -43,19 +43,19 @@ export const applyLuminosityPosterize = (input: Float32Array, width: number, hei
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
       const idx = (i + j * width) * 4;
-      const r = input[idx + 0] * 255;
-      const g = input[idx + 1] * 255;
-      const b = input[idx + 2] * 255;
+      const r = input[idx + 0];
+      const g = input[idx + 1];
+      const b = input[idx + 2];
 
-      const hsl = D3Color.hsl(D3Color.rgb(r, g, b));
-      const nearestLum = (Math.floor(hsl.l * levels) / levels) + offset;
+      const [ h, s, l ] = rgbToHsl(r, g, b);
+      const nearestLum = (Math.floor(l * levels) / levels) + offset;
 
-      const quantizedLum = nearestLum + (binWidth/2) * Math.tanh(phiq * (hsl.l - nearestLum));
+      const quantizedLum = nearestLum + (binWidth/2) * Math.tanh(phiq * (l - nearestLum));
 
-      const rgb = D3Color.rgb(D3Color.hsl(hsl.h, hsl.s, quantizedLum));
-      output[idx + 0] = rgb.r / 255;
-      output[idx + 1] = rgb.g / 255;
-      output[idx + 2] = rgb.b / 255;
+      const rgb = hslToRgb(h, s, quantizedLum);
+      output[idx + 0] = rgb[0];
+      output[idx + 1] = rgb[1];
+      output[idx + 2] = rgb[2] ;
       output[idx + 3] = input[idx + 3];
     }
   }
