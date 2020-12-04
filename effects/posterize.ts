@@ -39,6 +39,8 @@ export const applyLuminosityPosterize = (input: Float32Array, width: number, hei
   const binWidth = 1 / levels;
   const offset = binWidth / 2;
 
+  phiq = phiq * 100; // in the original paper, luminosity is between 0 and 100
+
   const output = new Float32Array(input);
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {

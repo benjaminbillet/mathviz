@@ -1,11 +1,11 @@
 import { createSVGWindow } from 'svgdom';
 import createSvgCanvas from 'svg.js';
 import Fs from 'fs';
-import * as D3Color from 'd3-color';
 import { makePolygon } from './polygon';
 import { Color, Polygon } from './types';
 import { eulerComplex } from './complex';
 import { TWO_PI } from './math';
+import { hexColor } from './color';
 
 export type SvgDocument = any; // bogus typing
 
@@ -34,13 +34,13 @@ const drawPolygon = (polygon: Polygon, color: Color, stroke: number, document: S
   const polygonString = polygon.reduce((str, z) => `${str}${Math.round(z.re)},${Math.round(z.im)} `, '').trim();
   document.polygon(polygonString).fill('none').stroke({
     width: stroke,
-    color: D3Color.rgb(...color.map(x => x * 255)).formatHex(),
+    color: hexColor(...color),
   });
 };
 
 const drawFilledPolygon = (polygon: Polygon, color: Color, document: SvgDocument) => {
   const polygonString = polygon.reduce((str, z) => `${str}${z.re},${z.im} `, '').trim();
-  document.polygon(polygonString).fill(D3Color.rgb(...color.map(x => x *255)).formatHex());
+  document.polygon(polygonString).fill(hexColor(...color));
 };
 
 const drawArc = (x0: number, y0: number, radius: number, startAngle: number, endAngle: number, color: Color, stroke: number, document: SvgDocument) => {
@@ -48,7 +48,7 @@ const drawArc = (x0: number, y0: number, radius: number, startAngle: number, end
   const start = eulerComplex(endAngle).mul(radius);
   const end = eulerComplex(startAngle).mul(radius);
 
-  var largeArcFlag = ((endAngle - startAngle) % TWO_PI) <= Math.PI ? 0 : 1;
+  const largeArcFlag = ((endAngle - startAngle) % TWO_PI) <= Math.PI ? 0 : 1;
   const arcString = [
     'M', x0 + start.re, y0 + start.im, 
     'A', radius, radius, 0, largeArcFlag, 0, x0 + end.re, y0 + end.im
@@ -56,23 +56,23 @@ const drawArc = (x0: number, y0: number, radius: number, startAngle: number, end
 
   document.path(arcString).fill('none').stroke({
     width: stroke,
-    color: D3Color.rgb(...color.map(x => x * 255)).formatHex(),
+    color: hexColor(...color),
   });
 };
 
 const drawLine = (x0: number, y0: number, x1: number, y1: number, color: Color, stroke: number, document: SvgDocument) => {
   document.line(x0, y0, x1, y1).fill('none').stroke({
     width: stroke,
-    color: D3Color.rgb(...color.map(x => x * 255)).formatHex(),
+    color: hexColor(...color),
   });
 };
 
 const drawFilledCircle = (x0: number, y0: number, radius: number, color: Color, document: SvgDocument) => {
-  document.circle(radius * 2).attr({ cx: x0, cy: y0 }).fill(D3Color.rgb(...color.map(x => x * 255)).formatHex());
+  document.circle(radius * 2).attr({ cx: x0, cy: y0 }).fill(hexColor(...color));
 };
 
 const drawFilledRectangle = (x0: number, y0: number, width: number, height: number, color: Color, document: SvgDocument) => {
-  document.rect(width, height).attr({ x: x0, y: y0 }).fill(D3Color.rgb(...color.map(x => x * 255)).formatHex());
+  document.rect(width, height).attr({ x: x0, y: y0 }).fill(hexColor(...color));
 };
 
 
@@ -85,7 +85,7 @@ export interface SvgCanvas {
   drawArc: (x0: number, y0: number, radius: number, angle1: number, angle2: number, color: Color, stroke: number) => void,
   drawFilledCircle: (x0: number, y0: number, radius: number, color: Color) => void,
   drawFilledRectangle: (x0: number, y0: number, width: number, height: number, color: Color) => void,
-};
+}
 export const makeSvgCanvas = (document: SvgDocument, scale = 1): SvgCanvas => {
   return {
     drawFilledNgon: (n, x0, y0, radius, color) => drawFilledNgon(n, x0, y0, radius * scale, color, document),

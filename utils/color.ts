@@ -265,6 +265,15 @@ export const hslToRgb = (h: number, s: number, l: number, a = 1) => {
   return normalizeColor([ rgb.r, rgb.g, rgb.b, a * 255 ]);
 }
 
+export const rgbToHsl = (r: number, g: number, b: number, a = 1) => {
+  const hsl = D3Color.hsl(D3Color.rgb(r * 255, g * 255, b * 255));
+  return [ hsl.h, hsl.s, hsl.l, a ];
+}
+
+export const hexColor = (r: number, g: number, b: number, a = 1) => {
+  return D3Color.rgb(r * 255, g * 255, b * 255, a).formatHex();
+}
+
 export const BLACK: Color = [ 0, 0, 0, 1 ];
 export const WHITE: Color = [ 1, 1, 1, 1 ];
 

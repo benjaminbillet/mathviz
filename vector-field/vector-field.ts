@@ -58,3 +58,17 @@ export const encodeVectorFieldAsImage = (vectorField: Float32Array, width: numbe
   }
   return out;
 };
+
+export const decodeImageAsVectorField = (image: Float32Array, width: number, height: number, domain = BI_UNIT_DOMAIN) => {
+  const out = new Float32Array(width * height * 2).fill(0);
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height; j++) {
+      const idx = i + j * width;
+      const z = complex(image[idx * 4 + 0], image[idx * 4 + 1]);
+      out[idx * 2 + 0] = mapRange(z.re, 0, 1, domain.xmin, domain.xmax);
+      out[idx * 2 + 1] = mapRange(z.im, 0, 1, domain.ymin, domain.ymax);
+    }
+  }
+  return out;
+};
+

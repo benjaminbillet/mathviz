@@ -1,10 +1,9 @@
-import * as D3Color from 'd3-color';
-
 import { fillPicture, forEachPixel } from './picture';
 import { chebyshev2d } from './distance';
 import { distanceCenterMask } from './mask';
 import { cosine, linear } from './interpolation';
 import { Color } from './types';
+import { hslToRgb, rgbToHsl } from './color';
 
 export const alphaBlendingFunction = (src: Color, dst: Color, out?: Color): Color => {
   const srcA = src[3];
@@ -206,12 +205,12 @@ export const blendReflect = (buffer1: Float32Array, buffer2: Float32Array): Floa
 export const blendHue = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   const output = new Float32Array(buffer1.length);
   pixelBiEach(buffer1, buffer2, (r1, g1, b1, a1, r2, g2, b2, a2, idx) => {
-    const hsl1 = D3Color.hsl(D3Color.rgb(r1 * 255, g1 * 255, b1 * 255));
-    const hsl2 = D3Color.hsl(D3Color.rgb(r2 * 255, g2 * 255, b2 * 255));
-    const blended = D3Color.rgb(D3Color.hsl(hsl2.h, hsl1.s, hsl1.l));
-    output[idx + 0] = blended.r / 255;
-    output[idx + 1] = blended.g / 255;
-    output[idx + 2] = blended.b / 255;
+    const hsl1 = rgbToHsl(r1, g1, b1);
+    const hsl2 = rgbToHsl(r2, g2, b2);
+    const blended = hslToRgb(hsl2[0], hsl1[1], hsl1[2]);
+    output[idx + 0] = blended[0];
+    output[idx + 1] = blended[1];
+    output[idx + 2] = blended[2];
     output[idx + 3] = a1; // TODO alpha?
   });
   return output;
@@ -220,12 +219,12 @@ export const blendHue = (buffer1: Float32Array, buffer2: Float32Array): Float32A
 export const blendSaturation = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   const output = new Float32Array(buffer1.length);
   pixelBiEach(buffer1, buffer2, (r1, g1, b1, a1, r2, g2, b2, a2, idx) => {
-    const hsl1 = D3Color.hsl(D3Color.rgb(r1 * 255, g1 * 255, b1 * 255));
-    const hsl2 = D3Color.hsl(D3Color.rgb(r2 * 255, g2 * 255, b2 * 255));
-    const blended = D3Color.rgb(D3Color.hsl(hsl1.h, hsl2.s, hsl1.l));
-    output[idx + 0] = blended.r / 255;
-    output[idx + 1] = blended.g / 255;
-    output[idx + 2] = blended.b / 255;
+    const hsl1 = rgbToHsl(r1, g1, b1);
+    const hsl2 = rgbToHsl(r2, g2, b2);
+    const blended = hslToRgb(hsl1[0], hsl2[1], hsl1[2]);
+    output[idx + 0] = blended[0];
+    output[idx + 1] = blended[1];
+    output[idx + 2] = blended[2];
     output[idx + 3] = a1; // TODO alpha?
   });
   return output;
@@ -234,12 +233,12 @@ export const blendSaturation = (buffer1: Float32Array, buffer2: Float32Array): F
 export const blendLuminosity = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   const output = new Float32Array(buffer1.length);
   pixelBiEach(buffer1, buffer2, (r1, g1, b1, a1, r2, g2, b2, a2, idx) => {
-    const hsl1 = D3Color.hsl(D3Color.rgb(r1 * 255, g1 * 255, b1 * 255));
-    const hsl2 = D3Color.hsl(D3Color.rgb(r2 * 255, g2 * 255, b2 * 255));
-    const blended = D3Color.rgb(D3Color.hsl(hsl1.h, hsl1.s, hsl2.l));
-    output[idx + 0] = blended.r / 255;
-    output[idx + 1] = blended.g / 255;
-    output[idx + 2] = blended.b / 255;
+    const hsl1 = rgbToHsl(r1, g1, b1);
+    const hsl2 = rgbToHsl(r2, g2, b2);
+    const blended = hslToRgb(hsl1[0], hsl1[1], hsl2[2]);
+    output[idx + 0] = blended[0];
+    output[idx + 1] = blended[1];
+    output[idx + 2] = blended[2];
     output[idx + 3] = a1; // TODO alpha?
   });
   return output;
@@ -248,12 +247,12 @@ export const blendLuminosity = (buffer1: Float32Array, buffer2: Float32Array): F
 export const blendColor = (buffer1: Float32Array, buffer2: Float32Array): Float32Array => {
   const output = new Float32Array(buffer1.length);
   pixelBiEach(buffer1, buffer2, (r1, g1, b1, a1, r2, g2, b2, a2, idx) => {
-    const hsl1 = D3Color.hsl(D3Color.rgb(r1 * 255, g1 * 255, b1 * 255));
-    const hsl2 = D3Color.hsl(D3Color.rgb(r2 * 255, g2 * 255, b2 * 255));
-    const blended = D3Color.rgb(D3Color.hsl(hsl2.h, hsl2.s, hsl1.l));
-    output[idx + 0] = blended.r / 255;
-    output[idx + 1] = blended.g / 255;
-    output[idx + 2] = blended.b / 255;
+    const hsl1 = rgbToHsl(r1, g1, b1);
+    const hsl2 = rgbToHsl(r2, g2, b2);
+    const blended = hslToRgb(hsl2[0], hsl2[1], hsl1[2]);
+    output[idx + 0] = blended[0];
+    output[idx + 1] = blended[1];
+    output[idx + 2] = blended[2];
     output[idx + 3] = a1; // TODO alpha?
   });
   return output;
