@@ -1,7 +1,7 @@
 import { makeIdentity, makeEpicycloidFunction, makeIteratedMandelbrotFunction, makeExponential } from '../../transform';
 import { mkdirs } from '../../utils/fs';
 import { plotIfs } from '../util';
-import * as affine from '../../utils/affine';
+import affine from '../../utils/affine';
 import { compose2dFunctions } from '../../utils/misc';
 import { CULCITA_FERN_DOMAIN, CYCLOSORUS_FERN_DOMAIN, BARNSLEY_FERN_DOMAIN, CULCITA_FERN_COEFFICIENTS, CULCITA_FERN_PROBABILITIES, CYCLOSORUS_FERN_PROBABILITIES, BARNSLEY_FERN_PROBABILITIES, BARNSLEY_FERN_COEFFICIENTS, CYCLOSORUS_FERN_COEFFICIENTS, makeFernIfs } from '../../ifs/barnsley-fern';
 import { BI_UNIT_DOMAIN } from '../../utils/domain';

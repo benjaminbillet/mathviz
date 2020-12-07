@@ -1,10 +1,10 @@
-import { saveImage, createImage, readImage } from '../utils/picture';
-import { mkdirs } from '../utils/fs';
-import { ColorHistogram } from '../utils/types';
-import { makeHistogram, makeRegionHistogram } from '../utils/histogram';
+import { saveImage, createImage, readImage } from '../../utils/picture';
+import { mkdirs } from '../../utils/fs';
+import { ColorHistogram } from '../../utils/types';
+import { makeHistogram, makeRegionHistogram } from '../../utils/histogram';
 
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/histogram`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/histogram`;
 mkdirs(OUTPUT_DIRECTORY);
 
 
@@ -38,7 +38,7 @@ const plotHistogram = (histogram: ColorHistogram, name = '') => {
   }
 };
 
-const inputPath = `${__dirname}/vegetables.png`;
+const inputPath = `${__dirname}/../vegetables.png`;
 const inputImage = readImage(inputPath);
 
 plotHistogram(makeHistogram(inputImage.buffer, inputImage.width, inputImage.height), 'vegetables');

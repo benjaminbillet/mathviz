@@ -1,7 +1,7 @@
 import { makeIdentity, makeIteratedMandelbrotFunction } from '../../transform';
 import { mkdirs } from '../../utils/fs';
 import { plotIfs } from '../util';
-import * as affine from '../../utils/affine';
+import affine from '../../utils/affine';
 import { compose2dFunctions } from '../../utils/misc';
 import { BI_UNIT_DOMAIN } from '../../utils/domain';
 import { makeDragon1, DRAGON1_DOMAIN, makeDragon2, makeDragon3, makeDragon4, DRAGON2_DOMAIN, DRAGON3_DOMAIN, DRAGON4_DOMAIN } from '../../ifs/misc-dragon';

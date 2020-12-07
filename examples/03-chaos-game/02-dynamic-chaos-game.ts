@@ -1,4 +1,4 @@
-import * as affine from '../../utils/affine';
+import affine from '../../utils/affine';
 import { complex, ComplexNumber } from '../../utils/complex';
 import { BI_UNIT_DOMAIN, scaleDomain } from '../../utils/domain';
 import { mkdirs } from '../../utils/fs';

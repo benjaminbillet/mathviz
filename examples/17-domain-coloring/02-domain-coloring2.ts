@@ -1,12 +1,12 @@
-import { ComplexNumber } from '../utils/complex';
+import { ComplexNumber } from '../../utils/complex';
 
-import { BI_UNIT_DOMAIN } from '../utils/domain';
-import { mkdirs } from '../utils/fs';
-import { plotDomainColoring } from './util';
-import { composeWaveFunctions, makeWave, makeMultiwave, makeMultipolar, makeRadialwave } from '../misc/wave';
-import { superellipse } from '../utils/distance';
+import { BI_UNIT_DOMAIN } from '../../utils/domain';
+import { mkdirs } from '../../utils/fs';
+import { plotDomainColoring } from '../util';
+import { composeWaveFunctions, makeWave, makeMultiwave, makeMultipolar, makeRadialwave } from '../../misc/wave';
+import { superellipse } from '../../utils/distance';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/domain-coloring`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/domain-coloring`;
 mkdirs(OUTPUT_DIRECTORY);
 
 

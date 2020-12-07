@@ -20,7 +20,7 @@ mkdirs(OUTPUT_DIRECTORY);
 
 const size = 2048;
 let domain = scaleDomain(BI_UNIT_DOMAIN, 2.5);
-const nbIterations = 10000000;
+const nbIterations = 10000000
 const colorFunc = makeMixedColorSteal(PURPLE_MAGIC, domain.xmax / 2, nbIterations, 0.5, 0.5);
 const attractor = makePeterDeJungAttractor(0.970, -1.899, 1.381, -1.506);
 const initialPointPicker = () => complex(0.1, 0.1);

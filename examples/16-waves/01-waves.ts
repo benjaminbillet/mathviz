@@ -1,18 +1,18 @@
-import { setRandomSeed } from '../utils/random';
-import { mkdirs } from '../utils/fs';
-import { manhattan, superellipse } from '../utils/distance';
-import { plotFunction } from './util';
-import { BI_UNIT_DOMAIN } from '../utils/domain';
-import { BLUE_MOON } from '../utils/palette';
-import { makeColorMapFunction, buildColorMap, buildSteppedColorMap } from '../utils/color';
-import { composeWaveFunctions, makeWave, makeMultiwave, makePolar, makeMultipolar, makeBiunitColorFunction, makeRadialwave, makeStripped } from '../misc/wave';
+import { setRandomSeed } from '../../utils/random';
+import { mkdirs } from '../../utils/fs';
+import { manhattan, superellipse } from '../../utils/distance';
+import { plotFunction } from '../util';
+import { BI_UNIT_DOMAIN } from '../../utils/domain';
+import { BLUE_MOON } from '../../utils/palette';
+import { makeColorMapFunction, buildColorMap, buildSteppedColorMap } from '../../utils/color';
+import { composeWaveFunctions, makeWave, makeMultiwave, makePolar, makeMultipolar, makeBiunitColorFunction, makeRadialwave, makeStripped } from '../../misc/wave';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/waves`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/waves`;
 mkdirs(OUTPUT_DIRECTORY);
 
-setRandomSeed(100);
+setRandomSeed('dioptase');
 
-const colorizer = makeBiunitColorFunction(makeColorMapFunction(buildColorMap(BLUE_MOON), 255));
+const colorizer = makeBiunitColorFunction(makeColorMapFunction(buildColorMap(BLUE_MOON)));
 
 plotFunction(`${OUTPUT_DIRECTORY}/wave.png`, 1024, 1024, makeWave(1, Math.PI / 2), BI_UNIT_DOMAIN, colorizer, false);
 plotFunction(`${OUTPUT_DIRECTORY}/multiwave.png`, 1024, 1024, makeMultiwave(7, 4, 0, true), BI_UNIT_DOMAIN, colorizer, false);
@@ -27,7 +27,7 @@ plotFunction(`${OUTPUT_DIRECTORY}/wave-stripped.png`, 1024, 1024, makeStripped(m
 plotFunction(`${OUTPUT_DIRECTORY}/multiwave-stripped.png`, 1024, 1024, makeStripped(makeMultiwave(7, 4, 0, true)), BI_UNIT_DOMAIN, colorizer, false);
 
 
-const stepColorizer = makeBiunitColorFunction(makeColorMapFunction(buildSteppedColorMap([ BLUE_MOON[0], BLUE_MOON[4] ]), 255));
+const stepColorizer = makeBiunitColorFunction(makeColorMapFunction(buildSteppedColorMap([ BLUE_MOON[0], BLUE_MOON[4] ])));
 
 plotFunction(`${OUTPUT_DIRECTORY}/multiwave-step.png`, 1024, 1024, makeMultiwave(7, 4, 0, true), BI_UNIT_DOMAIN, stepColorizer, false);
 plotFunction(`${OUTPUT_DIRECTORY}/multiwave-stripped-step.png`, 1024, 1024, makeStripped(makeMultiwave(7, 4, 0, true)), BI_UNIT_DOMAIN, stepColorizer, false);

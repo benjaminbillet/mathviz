@@ -2,7 +2,7 @@ import { makeIdentity, makeIteratedMandelbrotFunction } from '../../transform';
 import { mkdirs } from '../../utils/fs';
 import { plotIfs } from '../util';
 import { makeHeighwayDragonIfs, HEIGHWAY_DRAGON_DOMAIN, GOLDEN_DRAGON_DOMAIN, FUDGEFLAKE_DOMAIN, TERDRAGON_DOMAIN, TWIN_DRAGON_DOMAIN, makeTwinDragonIfs, makeTerdragonIfs, makeFudgeFlake, makeGoldenDragonIfs } from '../../ifs/heighway-dragon';
-import * as affine from '../../utils/affine';
+import affine from '../../utils/affine';
 import { compose2dRandomizedFunctions, compose2dFunctions } from '../../utils/misc';
 import { TWONDRAGON_DOMAIN, makeTwondragon } from '../../ifs/twondragon';
 import { scaleDomain } from '../../utils/domain';

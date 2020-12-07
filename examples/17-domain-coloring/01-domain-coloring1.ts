@@ -1,4 +1,4 @@
-import { complex } from '../utils/complex';
+import { complex } from '../../utils/complex';
 
 import {
   makeFanFunction,
@@ -56,12 +56,12 @@ import {
   makeHeartFunction,
   makeFan2Function,
   makePolynomialFunction
-} from '../transform';
-import { mkdirs } from '../utils/fs';
-import { Index, Transform2D } from '../utils/types';
-import { plotDomainColoring } from './util';
+} from '../../transform';
+import { mkdirs } from '../../utils/fs';
+import { Index, Transform2D } from '../../utils/types';
+import { plotDomainColoring } from '../util';
 
-const OUTPUT_DIRECTORY = `${__dirname}/../output/domain-coloring`;
+const OUTPUT_DIRECTORY = `${__dirname}/../../output/domain-coloring`;
 mkdirs(OUTPUT_DIRECTORY);
 
 const TRANSFORMATIONS: Index<Transform2D> = {
